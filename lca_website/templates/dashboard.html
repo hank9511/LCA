@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t('dashboard', 'page_title') }}{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <form id="batchDeleteProjectsForm" method="POST" action="{{ url_for('batch_delete_projects') }}">
+        <div class="dashboard-header">
+            <h1>{{ t('dashboard', 'welcome') }}{{ current_user.username }}!</h1>
+            <div class="dashboard-actions">
+                <a href="{{ url_for('new_project') }}" class="btn btn-primary">+ {{ t('dashboard', 'btn_new_project') }}</a>
+                <button
+                    id="batchDeleteBtn"
+                    type="submit"
+                    class="btn btn-danger"
+                    disabled
+                >
+                    {{ '批量删除' if get_lang() == 'zh' else 'Batch Delete' }}
+                </button>
+            </div>
+        </div>
+
+        <div class="dashboard-stats">
+            <div class="stat-card">
+                <div class="stat-number">{{ projects|length }}</div>
+                <div class="stat-label">{{ t('dashboard', 'project_name') if get_lang() == 'en' else '总项目数' }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ projects|selectattr('status', 'equalto', 'active')|list|length }}</div>
+                <div class="stat-label">{{ t('dashboard', 'status_active') }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ projects|selectattr('status', 'equalto', 'completed')|list|length }}</div>
+                <div class="stat-label">{{ t('dashboard', 'status_completed') }}</div>
+            </div>
+        </div>
+
+        <div class="projects-section">
+            <h2>{{ t('dashboard', 'title') }}</h2>
+            {% if projects %}
+                <div class="projects-grid">
+                    {% for project in projects %}
+                    <div class="project-card">
+                        <div class="project-header">
+                            <label class="project-select-label">
+                                <input
+                                    type="checkbox"
+                                    class="project-select-checkbox"
+                                    name="project_ids"
+                                    value="{{ project.id }}"
+                                >
+                                <span class="project-select-text">{{ '选择' if get_lang() == 'zh' else 'Select' }}</span>
+                            </label>
+                            <h3>{{ project.name }}</h3>
+                            <span class="project-status status-{{ project.status }}">
+                                {% if project.status == 'active' %}
+                                    {{ t('dashboard', 'status_active') }}
+                                {% elif project.status == 'completed' %}
+                                    {{ t('dashboard', 'status_completed') }}
+                                {% elif project.status == 'archived' %}
+                                    {{ t('dashboard', 'status_archived') }}
+                                {% endif %}
+                            </span>
+                        </div>
+                        <p class="project-description">{{ project.description or (t('common', 'info') if get_lang() == 'en' else '暂无描述') }}</p>
+                        <div class="project-meta">
+                            <span>{{ t('dashboard', 'created_at') }}: {{ project.created_at.strftime('%Y-%m-%d') }}</span>
+                        </div>
+                        <div class="project-actions">
+                            <a href="{{ url_for('project_detail', project_id=project.id) }}" class="btn btn-secondary">{{ t('dashboard', 'view') }}</a>
+                            <a href="{{ url_for('edit_project', project_id=project.id) }}" class="btn btn-outline">{{ t('dashboard', 'edit') }}</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <p>{{ t('dashboard', 'no_projects') }}</p>
+                    <a href="{{ url_for('new_project') }}" class="btn btn-primary">{{ t('dashboard', 'create_first') }}</a>
+                </div>
+            {% endif %}
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    (function () {
+        const form = document.getElementById('batchDeleteProjectsForm');
+        const batchDeleteBtn = document.getElementById('batchDeleteBtn');
+        const checkboxes = Array.from(document.querySelectorAll('.project-select-checkbox'));
+
+        if (!form || !batchDeleteBtn || checkboxes.length === 0) {
+            return;
+        }
+
+        const updateButtonState = () => {
+            const selectedCount = checkboxes.filter(checkbox => checkbox.checked).length;
+            batchDeleteBtn.disabled = selectedCount === 0;
+            batchDeleteBtn.textContent = selectedCount > 0
+                ? `{{ '批量删除' if get_lang() == 'zh' else 'Batch Delete' }} (${selectedCount})`
+                : `{{ '批量删除' if get_lang() == 'zh' else 'Batch Delete' }}`;
+        };
+
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateButtonState);
+        });
+
+        form.addEventListener('submit', (event) => {
+            const selectedCount = checkboxes.filter(checkbox => checkbox.checked).length;
+            const confirmMessage = `{{ '确认要删除选中的项目吗？该操作不可恢复。' if get_lang() == 'zh' else 'Are you sure you want to delete selected projects? This action cannot be undone.' }}`;
+            if (selectedCount === 0 || !window.confirm(confirmMessage)) {
+                event.preventDefault();
+            }
+        });
+    })();
+</script>
+{% endblock %}

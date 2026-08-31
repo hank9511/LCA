@@ -1,0 +1,16 @@
+Flask==2.3.3
+Flask-SQLAlchemy==3.0.5
+Flask-Login==0.6.3
+Werkzeug==2.3.7
+pandas==2.0.3
+openpyxl==3.1.2
+openai>=1.0.0
+python-dotenv>=1.0.0
+
+# 报告生成依赖
+reportlab>=4.0.0
+matplotlib>=3.7.0
+numpy>=1.24.0
+olca-ipc>=2.0.0
+olca-schema>=2.0.0
+Pillow>=10.0.0

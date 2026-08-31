@@ -1,0 +1,1023 @@
+{% extends "base.html" %}
+
+{% block title %}LCA核算向导 - {{ project.name }}{% endblock %}
+
+{% block content %}
+<div class="wizard-container">
+
+    <div class="wizard-header">
+        <a href="{{ url_for('project_detail', project_id=project.id) }}" class="btn btn-outline">
+            ← {{ '返回项目' if get_lang() == 'zh' else 'Back to Project' }}
+        </a>
+        <h1>🧭 {{ t('lca_wizard', 'title') }}</h1>
+        <p class="project-name">{{ t('lca_wizard', 'project_name_label') }}：{{ project.name }}</p>
+    </div>
+
+    <div class="wizard-progress">
+        <div class="progress-steps">
+            <div class="progress-step active" data-step="1">
+                <div class="step-number">1</div>
+                <div class="step-label">{{ '项目信息' if get_lang() == 'zh' else 'Project Info' }}</div>
+            </div>
+            <div class="progress-line"></div>
+            <div class="progress-step" data-step="2">
+                <div class="step-number">2</div>
+                <div class="step-label">{{ '评价边界' if get_lang() == 'zh' else 'Assessment Boundary' }}</div>
+            </div>
+            <div class="progress-line"></div>
+            <div class="progress-step" data-step="3">
+                <div class="step-number">3</div>
+                <div class="step-label">{{ '数据采集' if get_lang() == 'zh' else 'Data Collection' }}</div>
+            </div>
+            <div class="progress-line"></div>
+            <div class="progress-step" data-step="4">
+                <div class="step-number">4</div>
+                <div class="step-label">{{ 'LCA分析' if get_lang() == 'zh' else 'LCA Analysis' }}</div>
+            </div>
+            <div class="progress-line"></div>
+            <div class="progress-step" data-step="5">
+                <div class="step-number">5</div>
+                <div class="step-label">{{ '查看结果' if get_lang() == 'zh' else 'View Results' }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="wizard-content">
+
+        <div class="wizard-step" id="step-1" style="display: block;">
+            <div class="step-card">
+                <div class="step-header">
+                    <h2>📝 {{ '步骤1：确认项目基本信息' if get_lang() == 'zh' else 'Step 1: Confirm Project Information' }}</h2>
+                    <p class="step-desc">{{ '请确保项目基本信息完整准确' if get_lang() == 'zh' else 'Please ensure project information is complete and accurate' }}</p>
+                </div>
+                <div class="step-body">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>{{ '项目名称' if get_lang() == 'zh' else 'Project Name' }}</label>
+                            <div class="info-value">{{ project.name }}</div>
+                        </div>
+                        <div class="info-item">
+                            <label>{{ '项目状态' if get_lang() == 'zh' else 'Project Status' }}</label>
+                            <div class="info-value">
+                                <span class="status-badge status-{{ project.status }}">
+                                    {% if get_lang() == 'zh' %}{{ {'active': '进行中', 'completed': '已完成', 'archived': '已归档'}[project.status] }}{% else %}{{ {'active': 'Active', 'completed': 'Completed', 'archived': 'Archived'}[project.status] }}{% endif %}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="info-item full-width">
+                            <label>{{ '项目描述' if get_lang() == 'zh' else 'Project Description' }}</label>
+                            <div class="info-value">{{ project.description or ('暂无描述' if get_lang() == 'zh' else 'No description') }}</div>
+                        </div>
+                        <div class="info-item">
+                            <label>{{ '创建时间' if get_lang() == 'zh' else 'Created At' }}</label>
+                            <div class="info-value">{{ project.created_at.strftime('%Y-%m-%d %H:%M') }}</div>
+                        </div>
+                        <div class="info-item">
+                            <label>{{ '最后更新' if get_lang() == 'zh' else 'Last Updated' }}</label>
+                            <div class="info-value">{{ project.updated_at.strftime('%Y-%m-%d %H:%M') }}</div>
+                        </div>
+                    </div>
+                    <div class="step-tips">
+                        <div class="tip-icon">💡</div>
+                        <div class="tip-content">
+                            <strong>{{ '提示' if get_lang() == 'zh' else 'Tip' }}：</strong>{{ '如需修改项目信息，请返回项目详情页点击"编辑项目"按钮。' if get_lang() == 'zh' else 'To modify project information, please return to the project detail page and click the "Edit Project" button.' }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="wizard-step" id="step-2" style="display: none;">
+            <div class="step-card">
+                <div class="step-header">
+                    <h2>🎯 {{ '步骤2：设置评价边界' if get_lang() == 'zh' else 'Step 2: Set Assessment Boundary' }}</h2>
+                    <p class="step-desc">{{ '定义LCA评价的系统边界和生命周期环节' if get_lang() == 'zh' else 'Define the system boundary and lifecycle stages for LCA assessment' }}</p>
+                </div>
+                <div class="step-body">
+                    {% if project.assessment_boundary %}
+                    <div class="boundary-summary">
+                        <div class="summary-item">
+                            <label>{{ '生命周期模型' if get_lang() == 'zh' else 'Lifecycle Model' }}</label>
+                            <div class="summary-value">
+                                {% if get_lang() == 'zh' %}{{ {'cradle_to_gate': '摇篮到大门', 'cradle_to_grave': '摇篮到坟墓', 'gate_to_gate': '大门到大门', 'cradle_to_cradle': '摇篮到摇篮'}[project.assessment_boundary.lifecycle_model] or project.assessment_boundary.lifecycle_model }}{% else %}{{ {'cradle_to_gate': 'Cradle-to-Gate', 'cradle_to_grave': 'Cradle-to-Grave', 'gate_to_gate': 'Gate-to-Gate', 'cradle_to_cradle': 'Cradle-to-Cradle'}[project.assessment_boundary.lifecycle_model] or project.assessment_boundary.lifecycle_model }}{% endif %}
+                            </div>
+                        </div>
+                        <div class="summary-item">
+                            <label>{{ '功能单位' if get_lang() == 'zh' else 'Functional Unit' }}</label>
+                            <div class="summary-value">{{ project.assessment_boundary.functional_unit or ('未设置' if get_lang() == 'zh' else 'Not set') }}</div>
+                        </div>
+                        <div class="summary-item">
+                            <label>{{ '分配方法' if get_lang() == 'zh' else 'Allocation Method' }}</label>
+                            <div class="summary-value">
+                                {% if get_lang() == 'zh' %}{{ {'none': 'None（无分配）', 'mass': '质量分配', 'economic': '经济价值分配', 'physical': '物理因果关系分配', 'energy': '能量分配'}[project.assessment_boundary.allocation_method] or '质量分配' }}{% else %}{{ {'none': 'None', 'mass': 'Mass Allocation', 'economic': 'Economic Allocation', 'physical': 'Physical Allocation', 'energy': 'Energy Allocation'}[project.assessment_boundary.allocation_method] or 'Mass Allocation' }}{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <a href="{{ url_for('assessment_boundary', project_id=project.id) }}" class="btn btn-secondary" target="_blank">
+                            📝 {{ '编辑评价边界' if get_lang() == 'zh' else 'Edit Assessment Boundary' }}
+                        </a>
+                    </div>
+                    {% else %}
+                    <div class="empty-state">
+                        <div class="empty-icon">⚠️</div>
+                        <h3>{{ '尚未设置评价边界' if get_lang() == 'zh' else 'Assessment Boundary Not Set' }}</h3>
+                        <p>{{ '评价边界是LCA分析的重要基础，请先完成设置' if get_lang() == 'zh' else 'Assessment boundary is crucial for LCA analysis, please set it first' }}</p>
+                        <a href="{{ url_for('assessment_boundary', project_id=project.id) }}" class="btn btn-primary">
+                            🎯 {{ '前往设置评价边界' if get_lang() == 'zh' else 'Go to Set Assessment Boundary' }}
+                        </a>
+                    </div>
+                    {% endif %}
+
+                    <div class="step-tips">
+                        <div class="tip-icon">💡</div>
+                        <div class="tip-content">
+                            <strong>{{ '建议' if get_lang() == 'zh' else 'Recommendation' }}：</strong>{{ '评价边界定义了分析的范围和深度，建议根据ISO 14040/14044标准进行设置。' if get_lang() == 'zh' else 'Assessment boundary defines the scope and depth of analysis. It is recommended to set it according to ISO 14040/14044 standards.' }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="wizard-step" id="step-3" style="display: none;">
+            <div class="step-card">
+                <div class="step-header">
+                    <h2>📊 {{ '步骤3：数据采集与上传' if get_lang() == 'zh' else 'Step 3: Data Collection & Upload' }}</h2>
+                    <p class="step-desc">{{ '上传LCI（生命周期清单）数据文件' if get_lang() == 'zh' else 'Upload LCI (Life Cycle Inventory) data file' }}</p>
+                </div>
+                <div class="step-body">
+                    <div class="upload-area">
+                        <form method="POST" action="{{ url_for('upload_excel', project_id=project.id) }}" enctype="multipart/form-data" id="wizardUploadForm">
+                            <div class="upload-box">
+                                <div class="upload-icon">📤</div>
+                                <h3>{{ '上传Excel数据文件' if get_lang() == 'zh' else 'Upload Excel Data File' }}</h3>
+                                <p>{{ '支持 .xlsx 和 .xls 格式，文件大小不超过10MB' if get_lang() == 'zh' else 'Supports .xlsx and .xls formats, max 10MB' }}</p>
+                                <input type="file" id="wizard_excel_file" name="excel_file" accept=".xlsx,.xls" required style="display: none;">
+                                <button type="button" class="btn btn-primary" onclick="document.getElementById('wizard_excel_file').click()">
+                                    {{ '选择文件' if get_lang() == 'zh' else 'Select File' }}
+                                </button>
+                                <div id="selectedFileName" class="selected-file"></div>
+                            </div>
+                            <button type="submit" class="btn btn-success" id="wizardUploadBtn" disabled style="margin-top: 1rem;">
+                                {{ '上传并分析' if get_lang() == 'zh' else 'Upload & Analyze' }}
+                            </button>
+                        </form>
+                    </div>
+
+                    {% if project.excel_files|selectattr('is_deleted', 'equalto', false)|list|length > 0 %}
+                    <div class="uploaded-files">
+                        <h3>{{ '已上传的文件' if get_lang() == 'zh' else 'Uploaded Files' }}</h3>
+                        <div class="files-list-compact">
+                            {% for file in project.excel_files %}
+                            {% if not file.is_deleted %}
+                            <div class="file-item-compact">
+                                <div class="file-icon">📊</div>
+                                <div class="file-info">
+                                    <div class="file-name">{{ file.original_filename }}</div>
+                                    <div class="file-meta">
+                                        {{ (file.file_size / 1024) | round(1) }} KB | 
+                                        {{ file.upload_time.strftime('%m-%d %H:%M') }}
+                                    </div>
+                                </div>
+                                <div class="file-status">
+                                    {% if file.llm_analysis %}
+                                    <span class="badge badge-success">✓ {{ '已分析' if get_lang() == 'zh' else 'Analyzed' }}</span>
+                                    {% else %}
+                                    <span class="badge badge-warning">⏳ {{ '待分析' if get_lang() == 'zh' else 'Pending' }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="step-tips">
+                        <div class="tip-icon">💡</div>
+                        <div class="tip-content">
+                            <strong>{{ '数据要求' if get_lang() == 'zh' else 'Data Requirements' }}：</strong>
+                            <ul>
+                                <li>{{ 'Excel文件应包含完整的物质流数据（输入/输出）' if get_lang() == 'zh' else 'Excel file should contain complete flow data (input/output)' }}</li>
+                                <li>{{ '数据应对应评价边界中定义的生命周期环节' if get_lang() == 'zh' else 'Data should correspond to lifecycle stages defined in assessment boundary' }}</li>
+                                <li>{{ '建议包含数据来源和数据质量信息' if get_lang() == 'zh' else 'Recommended to include data sources and quality information' }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="wizard-step" id="step-4" style="display: none;">
+            <div class="step-card">
+                <div class="step-header">
+                    <h2>🧪 {{ '步骤4：运行LCA分析' if get_lang() == 'zh' else 'Step 4: Run LCA Analysis' }}</h2>
+                    <p class="step-desc">{{ '选择数据文件并运行生命周期评价分析' if get_lang() == 'zh' else 'Select data file and run life cycle assessment analysis' }}</p>
+                </div>
+                <div class="step-body">
+                    {% if project.excel_files|selectattr('is_deleted', 'equalto', false)|list|length > 0 %}
+                    <div class="analysis-files">
+                        <h3>{{ '选择要分析的文件' if get_lang() == 'zh' else 'Select File to Analyze' }}</h3>
+                        {% for file in project.excel_files %}
+                        {% if not file.is_deleted %}
+                        <div class="analysis-file-card">
+                            <div class="file-header">
+                                <div class="file-title">
+                                    <span class="file-icon">📊</span>
+                                    <strong>{{ file.original_filename }}</strong>
+                                </div>
+                            </div>
+
+                            
+                            <div class="lcia-method-selector" style="margin: 15px 0; padding: 15px; background: #f8f9fa; border-radius: 5px;">
+                                <label style="font-weight: bold; display: block; margin-bottom: 8px;">
+                                    <i class="fas fa-chart-line"></i> 
+                                    {{ 'LCIA影响评价方法' if get_lang() == 'zh' else 'LCIA Impact Assessment Method' }}
+                                </label>
+                                <select id="lcia-method-{{ file.id }}" class="form-control" style="width: 100%; margin-bottom: 8px;">
+                                    <option value="">{{ '正在加载方法列表...' if get_lang() == 'zh' else 'Loading methods...' }}</option>
+                                </select>
+                                <small style="color: #6c757d; display: block; margin-top: 5px;">
+                                    💡 {{ '优先级：用户选择 > Excel文件 > 默认配置' if get_lang() == 'zh' else 'Priority: User choice > Excel file > Default config' }}
+                                </small>
+                            </div>
+
+                            <div class="file-actions" style="text-align: right;">
+                                <button class="btn btn-success btn-sm" onclick="runWizardLCA({{ file.id }}, '{{ file.original_filename }}')">
+                                    🧪 {{ '运行分析' if get_lang() == 'zh' else 'Run Analysis' }}
+                                </button>
+                            </div>
+                            {% if file.lca_results|selectattr('analysis_status', 'equalto', 'completed')|list|length > 0 %}
+                            <div class="analysis-history">
+                                <p><strong>{{ '历史分析记录' if get_lang() == 'zh' else 'Analysis History' }}：</strong></p>
+                                <ul>
+                                    {% for result in file.lca_results %}
+                                    {% if result.analysis_status == 'completed' %}
+                                    <li>
+                                        {{ result.created_at.strftime('%Y-%m-%d %H:%M') }} - 
+                                        {{ '流程' if get_lang() == 'zh' else 'Flows' }}: {{ result.flows_count }}, {{ '过程' if get_lang() == 'zh' else 'Processes' }}: {{ result.processes_count }}
+                                        <button class="btn btn-outline btn-sm" onclick="viewWizardResult({{ result.id }})">
+                                            {{ '查看结果' if get_lang() == 'zh' else 'View Results' }}
+                                        </button>
+                                    </li>
+                                    {% endif %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="empty-state">
+                        <div class="empty-icon">📁</div>
+                        <h3>{{ '暂无数据文件' if get_lang() == 'zh' else 'No Data Files' }}</h3>
+                        <p>{{ '请先返回步骤3上传数据文件' if get_lang() == 'zh' else 'Please return to Step 3 to upload data files' }}</p>
+                        <button class="btn btn-secondary" onclick="goToStep(3)">
+                            {{ '返回步骤3' if get_lang() == 'zh' else 'Back to Step 3' }}
+                        </button>
+                    </div>
+                    {% endif %}
+
+                    <div class="step-tips">
+                        <div class="tip-icon">💡</div>
+                        <div class="tip-content">
+                            <strong>{{ '注意' if get_lang() == 'zh' else 'Note' }}：</strong>{{ '请确保OpenLCA软件正在运行并已启用IPC服务器（端口8080）。' if get_lang() == 'zh' else 'Please ensure OpenLCA software is running with IPC server enabled (port 8080).' }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="wizard-step" id="step-5" style="display: none;">
+            <div class="step-card">
+                <div class="step-header">
+                    <h2>📈 {{ '步骤5：查看分析结果' if get_lang() == 'zh' else 'Step 5: View Analysis Results' }}</h2>
+                    <p class="step-desc">{{ '浏览LCA分析结果和可视化图表' if get_lang() == 'zh' else 'Browse LCA analysis results and visualizations' }}</p>
+                </div>
+                <div class="step-body">
+                    {% set completed_results = [] %}
+                    {% for file in project.excel_files %}
+                        {% if not file.is_deleted %}
+                            {% for result in file.lca_results %}
+                                {% if result.analysis_status == 'completed' %}
+                                    {% set _ = completed_results.append({'file': file, 'result': result}) %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if completed_results|length > 0 %}
+                    <div class="results-grid">
+                        {% for item in completed_results %}
+                        <div class="result-card">
+                            <div class="result-header">
+                                <h3>{{ item.file.original_filename }}</h3>
+                                <span class="result-date">{{ item.result.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                            </div>
+                            <div class="result-stats">
+                                <div class="stat">
+                                    <label>{{ '流程数量' if get_lang() == 'zh' else 'Flows' }}</label>
+                                    <value>{{ item.result.flows_count or 0 }}</value>
+                                </div>
+                                <div class="stat">
+                                    <label>{{ '过程数量' if get_lang() == 'zh' else 'Processes' }}</label>
+                                    <value>{{ item.result.processes_count or 0 }}</value>
+                                </div>
+                                <div class="stat">
+                                    <label>{{ '分析用时' if get_lang() == 'zh' else 'Duration' }}</label>
+                                    <value>{{ '%.1f'|format(item.result.duration_seconds or 0) }}s</value>
+                                </div>
+                            </div>
+                            <div class="result-actions">
+                                <a href="{{ url_for('lca_visualization', result_id=item.result.id) }}" class="btn btn-success btn-sm" target="_blank">
+                                    📊 {{ '查看可视化' if get_lang() == 'zh' else 'View Visualization' }}
+                                </a>
+                                <button class="btn btn-info btn-sm" onclick="showLCAResultDetails({{ item.result.id }})">
+                                    {{ '详细信息' if get_lang() == 'zh' else 'Details' }}
+                                </button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="completion-message">
+                        <div class="completion-icon">🎉</div>
+                        <h2>{{ '恭喜！LCA核算流程已完成' if get_lang() == 'zh' else 'Congratulations! LCA Calculation Process Completed' }}</h2>
+                        <p>{{ '您可以继续生成报告或进行进一步分析' if get_lang() == 'zh' else 'You can continue to generate reports or perform further analysis' }}</p>
+                        <div class="completion-actions">
+                            <a href="{{ url_for('edit_report_info_page', project_id=project.id) }}" class="btn btn-primary">
+                                📝 {{ '生成LCA报告' if get_lang() == 'zh' else 'Generate LCA Report' }}
+                            </a>
+                            <a href="{{ url_for('project_detail', project_id=project.id) }}" class="btn btn-secondary">
+                                {{ '返回项目详情' if get_lang() == 'zh' else 'Back to Project' }}
+                            </a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="empty-state">
+                        <div class="empty-icon">🔍</div>
+                        <h3>{{ '暂无完成的分析结果' if get_lang() == 'zh' else 'No Completed Analysis Results' }}</h3>
+                        <p>{{ '请先完成LCA分析' if get_lang() == 'zh' else 'Please complete LCA analysis first' }}</p>
+                        <button class="btn btn-secondary" onclick="goToStep(4)">
+                            {{ '返回步骤4' if get_lang() == 'zh' else 'Back to Step 4' }}
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="wizard-navigation">
+        <button class="btn btn-secondary" id="prevBtn" onclick="previousStep()" disabled>
+            ← {{ '上一步' if get_lang() == 'zh' else 'Previous' }}
+        </button>
+        <button class="btn btn-primary" id="nextBtn" onclick="nextStep()">
+            {{ '下一步' if get_lang() == 'zh' else 'Next' }} →
+        </button>
+    </div>
+</div>
+
+<style>
+.wizard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.wizard-header {
+    margin-bottom: 2rem;
+}
+
+.wizard-header h1 {
+    margin: 1rem 0 0.5rem 0;
+    color: #2c3e50;
+}
+
+.project-name {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+/* 进度指示器 */
+.wizard-progress {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.progress-steps {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.progress-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 0 0 auto;
+}
+
+.step-number {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #ecf0f1;
+    color: #7f8c8d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s;
+}
+
+.progress-step.active .step-number {
+    background: #3498db;
+    color: white;
+    transform: scale(1.1);
+}
+
+.progress-step.completed .step-number {
+    background: #27ae60;
+    color: white;
+}
+
+.step-label {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    text-align: center;
+}
+
+.progress-step.active .step-label {
+    color: #2c3e50;
+    font-weight: bold;
+}
+
+.progress-line {
+    flex: 1;
+    height: 2px;
+    background: #ecf0f1;
+    margin: 0 1rem 2rem 1rem;
+}
+
+.progress-step.completed ~ .progress-line {
+    background: #27ae60;
+}
+
+/* 向导内容 */
+.wizard-content {
+    min-height: 400px;
+}
+
+.step-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.step-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem;
+}
+
+.step-header h2 {
+    margin: 0 0 0.5rem 0;
+}
+
+.step-desc {
+    margin: 0;
+    opacity: 0.9;
+}
+
+.step-body {
+    padding: 2rem;
+}
+
+/* 信息网格 */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.info-item.full-width {
+    grid-column: 1 / -1;
+}
+
+.info-item label {
+    display: block;
+    font-weight: 600;
+    color: #7f8c8d;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.info-value {
+    font-size: 1rem;
+    color: #2c3e50;
+}
+
+/* 提示框 */
+.step-tips {
+    background: #e3f2fd;
+    border-left: 4px solid #2196f3;
+    padding: 1rem;
+    border-radius: 4px;
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.tip-icon {
+    font-size: 1.5rem;
+}
+
+.tip-content {
+    flex: 1;
+}
+
+.tip-content ul {
+    margin: 0.5rem 0 0 1.5rem;
+    padding: 0;
+}
+
+/* 边界摘要 */
+.boundary-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.summary-item {
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.summary-item label {
+    display: block;
+    font-size: 0.85rem;
+    color: #7f8c8d;
+    margin-bottom: 0.5rem;
+}
+
+.summary-value {
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+/* 空状态 */
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+    color: #7f8c8d;
+    margin-bottom: 1.5rem;
+}
+
+/* 上传区域 */
+.upload-area {
+    margin-bottom: 2rem;
+}
+
+.upload-box {
+    border: 2px dashed #3498db;
+    border-radius: 8px;
+    padding: 3rem;
+    text-align: center;
+    background: #f8f9fa;
+    transition: all 0.3s;
+}
+
+.upload-box:hover {
+    background: #e3f2fd;
+    border-color: #2196f3;
+}
+
+.upload-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.selected-file {
+    margin-top: 1rem;
+    color: #27ae60;
+    font-weight: bold;
+}
+
+/* 文件列表 */
+.uploaded-files {
+    margin-top: 2rem;
+}
+
+.uploaded-files h3 {
+    margin-bottom: 1rem;
+    color: #2c3e50;
+}
+
+.files-list-compact {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.file-item-compact {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.file-icon {
+    font-size: 1.5rem;
+}
+
+.file-info {
+    flex: 1;
+}
+
+.file-name {
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.file-meta {
+    font-size: 0.85rem;
+    color: #7f8c8d;
+}
+
+.badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+.badge-success {
+    background: #d4edda;
+    color: #155724;
+}
+
+.badge-warning {
+    background: #fff3cd;
+    color: #856404;
+}
+
+/* 分析文件卡片 */
+.analysis-file-card {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.file-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.file-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.analysis-history {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #dee2e6;
+}
+
+.analysis-history ul {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0 0;
+}
+
+.analysis-history li {
+    padding: 0.5rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 结果网格 */
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.result-card {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.result-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #2c3e50;
+}
+
+.result-date {
+    font-size: 0.85rem;
+    color: #7f8c8d;
+}
+
+.result-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.result-stats .stat {
+    text-align: center;
+}
+
+.result-stats label {
+    display: block;
+    font-size: 0.75rem;
+    color: #7f8c8d;
+    margin-bottom: 0.25rem;
+}
+
+.result-stats value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.result-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* 完成消息 */
+.completion-message {
+    text-align: center;
+    padding: 3rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 8px;
+    margin-top: 2rem;
+}
+
+.completion-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.completion-message h2 {
+    margin: 0 0 0.5rem 0;
+}
+
+.completion-message p {
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+.completion-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+/* 导航按钮 */
+.wizard-navigation {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+    .progress-steps {
+        flex-wrap: wrap;
+    }
+
+    .progress-line {
+        display: none;
+    }
+
+    .info-grid,
+    .boundary-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .results-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+let currentStep = 1;
+const totalSteps = 5;
+
+document.getElementById('wizard_excel_file').addEventListener('change', function() {
+    const file = this.files[0];
+    const uploadBtn = document.getElementById('wizardUploadBtn');
+    const fileNameDiv = document.getElementById('selectedFileName');
+
+    if (file) {
+        fileNameDiv.textContent = `已选择: ${file.name}`;
+        uploadBtn.disabled = false;
+    } else {
+        fileNameDiv.textContent = '';
+        uploadBtn.disabled = true;
+    }
+});
+
+function nextStep() {
+    if (currentStep < totalSteps) {
+        goToStep(currentStep + 1);
+    }
+}
+
+function previousStep() {
+    if (currentStep > 1) {
+        goToStep(currentStep - 1);
+    }
+}
+
+function goToStep(step) {
+    
+    document.getElementById(`step-${currentStep}`).style.display = 'none';
+    document.querySelector(`.progress-step[data-step="${currentStep}"]`).classList.remove('active');
+
+    
+    currentStep = step;
+    document.getElementById(`step-${currentStep}`).style.display = 'block';
+    document.querySelector(`.progress-step[data-step="${currentStep}"]`).classList.add('active');
+
+    
+    document.getElementById('prevBtn').disabled = (currentStep === 1);
+    document.getElementById('nextBtn').disabled = (currentStep === totalSteps);
+
+    
+    for (let i = 1; i < currentStep; i++) {
+        document.querySelector(`.progress-step[data-step="${i}"]`).classList.add('completed');
+    }
+
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function loadLCIAMethods() {
+    console.log('📊 正在获取LCIA方法列表...');
+
+    fetch('/api/available_lcia_methods')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log(`✅ 成功获取 ${data.count} 个LCIA方法`);
+                
+                populateAllLCIASelectors(data.methods);
+            } else {
+                console.error('❌ 获取方法列表失败:', data.error);
+                setAllSelectorsError('加载失败 - ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('❌ 请求失败:', error);
+            setAllSelectorsError('网络错误 - 请刷新重试');
+        });
+}
+
+function populateAllLCIASelectors(methods) {
+    
+    const selectors = document.querySelectorAll('[id^="lcia-method-"]');
+
+    selectors.forEach(selector => {
+        
+        selector.innerHTML = '';
+
+        
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = '⚙️ {{ "使用Excel或配置文件中的默认方法" if get_lang() == "zh" else "Use default method from Excel or config" }}';
+        selector.appendChild(defaultOption);
+
+        
+        methods.forEach(method => {
+            const option = document.createElement('option');
+            option.value = method.name;
+            option.textContent = method.name;
+            option.title = method.description || method.name;
+            selector.appendChild(option);
+        });
+    });
+}
+
+function setAllSelectorsError(errorMsg) {
+    const selectors = document.querySelectorAll('[id^="lcia-method-"]');
+    selectors.forEach(selector => {
+        selector.innerHTML = `<option value="">${errorMsg}</option>`;
+    });
+}
+
+function runWizardLCA(fileId, fileName) {
+    
+    const selector = document.getElementById(`lcia-method-${fileId}`);
+    const selectedMethod = selector ? selector.value : '';
+
+    if (selectedMethod) {
+        console.log(`🎯 用户选择了LCIA方法: ${selectedMethod}`);
+    } else {
+        console.log('⚙️ 将使用Excel或配置文件中的默认方法');
+    }
+
+    
+    if (typeof runLCAAnalysisWithMethod === 'function') {
+        runLCAAnalysisWithMethod(fileId, fileName, selectedMethod);
+    } else if (typeof runLCAAnalysis === 'function') {
+        
+        runLCAAnalysis(fileId, fileName, selectedMethod);
+    } else {
+        console.error('runLCAAnalysis函数未定义，请确保lca_analysis.js已正确加载');
+        alert('运行LCA分析功能暂不可用\n\n可能原因：JavaScript文件未正确加载');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    
+    const originalGoToStep = goToStep;
+    goToStep = function(step) {
+        originalGoToStep(step);
+        if (step === 4) {
+            
+            setTimeout(loadLCIAMethods, 300);
+        }
+    };
+});
+
+function viewWizardResult(resultId) {
+    window.open(`/lca_result/${resultId}/visualization`, '_blank');
+}
+</script>
+
+<div id="lcaAnalysisModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeLCAAnalysisModal()">&times;</span>
+        <h2>LCA分析</h2>
+        <div id="lcaAnalysisContent">
+            <div class="lca-status-container">
+                <div class="lca-status-icon">⏳</div>
+                <div class="lca-status-text">准备中...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="lcaResultsModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeLCAResultsModal()">&times;</span>
+        <h2>LCA分析结果</h2>
+        <div id="lcaResultsContent"></div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/lca_analysis.js') }}"></script>
+
+{% endblock %}
+

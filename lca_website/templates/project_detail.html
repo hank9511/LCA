@@ -1,0 +1,2074 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project.name }} - {{ t('project_detail', 'project_info') }}{% endblock %}
+
+{% block content %}
+<div class="project-detail-container">
+    <div class="project-header">
+        <div class="project-title">
+            <h1>{{ project.name }}</h1>
+            <span class="project-status status-{{ project.status }}">
+                {% if project.status == 'active' %}{{ t('dashboard', 'status_active') }}{% elif project.status == 'completed' %}{{ t('dashboard', 'status_completed') }}{% else %}{{ t('dashboard', 'status_archived') }}{% endif %}
+            </span>
+        </div>
+        <div class="project-actions">
+            <a href="{{ url_for('lca_wizard', project_id=project.id) }}" class="btn btn-success" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+                🧭 {{ t('lca_wizard', 'title') if get_lang() == 'en' else 'LCA核算向导' }}
+            </a>
+            <a href="{{ url_for('assessment_boundary', project_id=project.id) }}" class="btn btn-info">🎯 {{ t('assessment_boundary', 'title') if get_lang() == 'en' else '评价边界设置' }}</a>
+            <a href="{{ url_for('edit_project', project_id=project.id) }}" class="btn btn-outline">{{ t('project_detail', 'edit_project') }}</a>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-outline">{{ t('project_detail', 'back_to_dashboard') }}</a>
+            <button class="btn btn-danger" onclick="deleteProject('{{ project.id }}', '{{ project.name }}')">{{ t('project_detail', 'delete_project') }}</button>
+        </div>
+    </div>
+
+    <div class="project-info">
+        <div class="info-card">
+            <h3>{{ t('project_detail', 'project_info') }}</h3>
+            <div class="info-item">
+                <span class="info-label">{{ t('project_detail', 'created_at') }}:</span>
+                <span class="info-value">{{ project.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">{{ t('project_detail', 'updated_at') }}:</span>
+                <span class="info-value">{{ project.updated_at.strftime('%Y-%m-%d %H:%M') }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">{{ t('project_detail', 'description') }}:</span>
+                <span class="info-value">{{ project.description or t('project_detail', 'no_description') }}</span>
+            </div>
+        </div>
+
+        
+        <div class="info-card">
+            <h3>📋 {{ t('report_info', 'title') if get_lang() == 'en' else '报告生成' }}</h3>
+            <p style="color: #666; font-size: 14px; margin-bottom: 15px;">
+                {{ '基于项目LCA分析结果生成专业的碳足迹评估报告' if get_lang() == 'zh' else 'Generate professional carbon footprint assessment reports based on project LCA analysis results' }}
+            </p>
+            <div class="report-actions" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+                <a href="{{ url_for('edit_report_info_page', project_id=project.id) }}" class="btn btn-info">
+                    <span>✏️</span> {{ t('common', 'edit') }} {{ t('report_info', 'title') if get_lang() == 'en' else '报告信息' }}
+                </a>
+                <button class="btn btn-success" onclick="showReportFormatModal()">
+                    <span>📄</span> {{ '生成LCA报告' if get_lang() == 'zh' else 'Generate LCA Report' }}
+                </button>
+                <button class="btn btn-outline" onclick="showReportsList()">
+                    <span>📚</span> {{ '查看历史报告' if get_lang() == 'zh' else 'View Report History' }}
+                </button>
+            </div>
+            <p style="color: #28a745; font-size: 13px; margin-top: 10px;">
+                💡 {{ '提示：支持生成Markdown和PDF两种格式，基于网站数据库中的分析结果' if get_lang() == 'zh' else 'Tip: Supports Markdown and PDF formats, based on analysis results in the database' }}
+            </p>
+        </div>
+    </div>
+
+    <div class="excel-metadata-section" style="margin-top: 20px;">
+        <div class="section-header" onclick="toggleExcelMetadata()" style="cursor: pointer; padding: 15px; background: #f8f9fa; border-radius: 8px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+            <span class="toggle-icon" id="metadataToggleIcon">▶</span>
+            <h3 style="margin: 0;">📝 {{ 'Excel文件信息' if get_lang() == 'zh' else 'Excel File Information' }}</h3>
+            <span style="color: #666; font-size: 14px; margin-left: auto;">{{ '包含产品信息、量化方法、量化目的、量化范围等' if get_lang() == 'zh' else 'Includes product info, methods, objectives, scope, etc.' }}</span>
+        </div>
+        <div class="metadata-content" id="excelMetadataContent" style="display: none;">
+            {% set excel_files = project.excel_files|selectattr('is_deleted', 'equalto', false)|list %}
+            {% if excel_files %}
+                {% for file in excel_files %}
+                    {% if file.metadata_json %}
+                    <div class="metadata-card" style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; margin-bottom: 15px; background: white;">
+                        <div class="metadata-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid #007bff; padding-bottom: 10px;">
+                            <h4 style="margin: 0; color: #333;">📄 {{ file.original_filename }}</h4>
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                <button class="btn btn-success btn-sm" onclick="syncToBoundary({{ file.id }})" title="{{ '将Excel元数据同步到评价边界设置' if get_lang() == 'zh' else 'Sync Excel metadata to assessment boundary' }}">
+                                    <span>🎯</span> {{ '同步到评价边界' if get_lang() == 'zh' else 'Sync to Boundary' }}
+                                </button>
+                                <button class="btn btn-info btn-sm" onclick="syncToReportInfo({{ file.id }})" title="{{ '将Excel元数据同步到LCA报告信息' if get_lang() == 'zh' else 'Sync Excel metadata to LCA report info' }}">
+                                    <span>📋</span> {{ '同步到报告信息' if get_lang() == 'zh' else 'Sync to Report' }}
+                                </button>
+                                <button class="btn btn-primary btn-sm" onclick="showEditMetadataModal({{ file.id }})">
+                                    <span>✏️</span> {{ '编辑元数据' if get_lang() == 'zh' else 'Edit Metadata' }}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="metadata-sections" id="metadata-display-{{ file.id }}">
+
+                            {% if file.metadata_json.product_info %}
+                            <div class="metadata-section" style="margin-bottom: 20px;">
+                                <h5 style="color: #007bff; margin-bottom: 10px;">🎯 产品信息</h5>
+                                <div class="info-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 10px;">
+                                    {% if file.metadata_json.product_info.product_name %}
+                                    <div class="info-item">
+                                        <strong>产品名称：</strong>{{ file.metadata_json.product_info.product_name }}
+                                    </div>
+                                    {% endif %}
+                                    {% if file.metadata_json.product_info.product_model %}
+                                    <div class="info-item">
+                                        <strong>产品规格型号：</strong>{{ file.metadata_json.product_info.product_model }}
+                                    </div>
+                                    {% endif %}
+                                    {% if file.metadata_json.product_info.product_function %}
+                                    <div class="info-item">
+                                        <strong>产品功能：</strong>{{ file.metadata_json.product_info.product_function }}
+                                    </div>
+                                    {% endif %}
+                                    {% if file.metadata_json.product_info.product_description %}
+                                    <div class="info-item" style="grid-column: 1 / -1;">
+                                        <strong>产品介绍：</strong>{{ file.metadata_json.product_info.product_description }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            
+                            {% if file.metadata_json.producer_info %}
+                            <div class="metadata-section" style="margin-bottom: 20px;">
+                                <h5 style="color: #28a745; margin-bottom: 10px;">🏭 生产者信息</h5>
+                                <div class="info-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 10px;">
+                                    {% for key, value in file.metadata_json.producer_info.items() %}
+                                    {% if value %}
+                                    <div class="info-item">
+                                        <strong>{{ key|replace('_', ' ')|title }}：</strong>{{ value }}
+                                    </div>
+                                    {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            
+                            {% if file.metadata_json.quantification_method and file.metadata_json.quantification_method.standard %}
+                            <div class="metadata-section" style="margin-bottom: 20px;">
+                                <h5 style="color: #17a2b8; margin-bottom: 10px;">📐 量化方法</h5>
+                                <div class="info-item">
+                                    <strong>依据标准：</strong>{{ file.metadata_json.quantification_method.standard }}
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            
+                            {% if file.metadata_json.quantification_purpose %}
+                            <div class="metadata-section" style="margin-bottom: 20px;">
+                                <h5 style="color: #ffc107; margin-bottom: 10px;">🎯 量化目的</h5>
+                                <div class="info-item">
+                                    {{ file.metadata_json.quantification_purpose }}
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            
+                            {% if file.metadata_json.quantification_scope %}
+                            <div class="metadata-section" style="margin-bottom: 20px;">
+                                <h5 style="color: #6f42c1; margin-bottom: 10px;">📏 量化范围</h5>
+                                <div class="info-grid" style="display: grid; grid-template-columns: 1fr; gap: 10px;">
+                                    {% for key, value in file.metadata_json.quantification_scope.items() %}
+                                    {% if value %}
+                                    <div class="info-item">
+                                        <strong>{{ key|replace('_', ' ')|title }}：</strong>{{ value }}
+                                    </div>
+                                    {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            
+                            {% if file.metadata_json.inventory_analysis %}
+                            <div class="metadata-section" style="margin-bottom: 20px;">
+                                <h5 style="color: #dc3545; margin-bottom: 10px;">📊 清单分析</h5>
+                                <div class="info-grid" style="display: grid; grid-template-columns: 1fr; gap: 10px;">
+                                    {% for key, value in file.metadata_json.inventory_analysis.items() %}
+                                    {% if value %}
+                                    <div class="info-item">
+                                        <strong>{{ key|replace('_', ' ')|title }}：</strong>{{ value }}
+                                    </div>
+                                    {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            
+                            {% if file.metadata_json.lifecycle_stages %}
+                            <div class="metadata-section" style="margin-bottom: 20px;">
+                                <h5 style="color: #20c997; margin-bottom: 10px;">🔄 生命周期阶段</h5>
+                                <div class="info-item">
+                                    {{ file.metadata_json.lifecycle_stages|join('、') }}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <div class="empty-state" style="text-align: center; padding: 40px; color: #666;">
+                    <p>{{ '暂无Excel文件元数据' if get_lang() == 'zh' else 'No Excel file metadata' }}</p>
+                    <p>{{ '请上传包含元数据的Excel文件' if get_lang() == 'zh' else 'Please upload Excel file with metadata' }}</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="excel-files-section">
+        <div class="lca-port-status-panel">
+            <div class="section-header no-toggle">
+                <h3>{{ 'openLCA IPC端口状态' if get_lang() == 'zh' else 'openLCA IPC Port Status' }}</h3>
+                <button
+                    id="refreshIpcStatusBtn"
+                    class="btn btn-outline-primary btn-sm"
+                    onclick="refreshIpcPortStatus()"
+                    style="margin-left: auto;"
+                >
+                    {{ '刷新端口状态' if get_lang() == 'zh' else 'Refresh Port Status' }}
+                </button>
+            </div>
+            <div id="lcaPortStatusSummary" class="lca-port-status-summary">
+                {{ '正在加载端口状态...' if get_lang() == 'zh' else 'Loading port status...' }}
+            </div>
+            <div id="lcaPortStatusGrid" class="lca-port-status-grid"></div>
+        </div>
+
+        <div class="section-header" onclick="toggleExcelFiles()">
+            <span class="toggle-icon">▶</span>
+            <h3>{{ '交互历史' if get_lang() == 'zh' else 'Interaction History' }}</h3>
+            <span class="file-count">({{ project.excel_files|length }}{{ '个文件' if get_lang() == 'zh' else ' files' }})</span>
+            {% if project.excel_files|selectattr('is_deleted', 'equalto', false)|list|length > 0 %}
+            <button class="btn btn-danger btn-sm" onclick="deleteAllExcelFilesAndHistory()" style="margin-left: auto;">{{ '删除所有文件及对话历史' if get_lang() == 'zh' else 'Delete All Files & History' }}</button>
+            {% endif %}
+        </div>
+        <div class="files-content" id="excelFilesContent" style="display: block;">
+            {% set excel_files = project.excel_files %}
+            {% if excel_files %}
+                <div class="files-list">
+                    {% for file in excel_files %}
+                    <div class="file-card" data-file-id="{{ file.id }}">
+                    <div class="file-header">
+                        <div class="file-icon">📊</div>
+                        <div class="file-info">
+                            <div class="file-title-row">
+                                <h4>{{ '第' if get_lang() == 'zh' else 'Round ' }}{{ loop.index }}{{ '轮数据交付' if get_lang() == 'zh' else ' Data Delivery' }}：{{ file.original_filename }} {{ (file.file_size / 1024) | round(1) }} KB | {{ (file.upload_time | localtime).strftime('%m-%d %H:%M') }}</h4>
+                            </div>
+                        </div>
+                        <div class="file-actions-top">
+                            {% if not file.is_deleted %}
+                                <a href="{{ url_for('download_excel', file_id=file.id) }}" class="btn btn-secondary btn-sm">{{ '下载文件' if get_lang() == 'zh' else 'Download' }}</a>
+                                <button class="btn btn-outline-primary btn-sm" onclick="showFileContent({{ file.id }}, '{{ file.original_filename }}')">{{ '文件内容' if get_lang() == 'zh' else 'File Content' }}</button>
+
+                                <button class="btn btn-success btn-sm" onclick="runLCAAnalysis({{ file.id }}, '{{ file.original_filename }}')" style="display: inline-block !important; background-color: #28a745 !important; color: white !important;">🧪 {{ '运行LCA分析' if get_lang() == 'zh' else 'Run LCA Analysis' }}</button>
+                                <button class="btn btn-info btn-sm" onclick="showLCAResults({{ file.id }})">📊 {{ '查看LCA结果' if get_lang() == 'zh' else 'View LCA Results' }}</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteFileAndAllRelated({{ file.id }}, '{{ file.original_filename }}')">{{ '删除此文件及所有相关内容' if get_lang() == 'zh' else 'Delete File & Related Content' }}</button>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                                        {% if file.llm_analysis %}
+                    <div class="llm-analysis-wide">
+                        <div class="analysis-header">
+                            <h5>{{ 'AI分析结果' if get_lang() == 'zh' else 'AI Analysis Result' }}：{% if '可用于LCA分析' in file.llm_analysis or '适合LCA分析' in file.llm_analysis or '碳核算' in file.llm_analysis %}✅ {{ '可用于LCA分析' if get_lang() == 'zh' else 'Ready for LCA Analysis' }}{% else %}⚠️ {{ '不可用，需要进一步完善数据' if get_lang() == 'zh' else 'Not ready, needs data improvement' }}{% endif %}</h5>
+                            <button class="btn btn-outline-secondary btn-sm" onclick="showFullAnalysis({{ file.id }})">
+                                {{ '查看LLM完整分析数据' if get_lang() == 'zh' else 'View Full LLM Analysis' }}
+                            </button>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="llm-analysis-wide no-analysis">
+                        <div class="analysis-header">
+                            <h5>{{ 'AI分析结果' if get_lang() == 'zh' else 'AI Analysis Result' }}：{{ '暂无分析结果' if get_lang() == 'zh' else 'No analysis yet' }}</h5>
+                        </div>
+                        <div class="analysis-placeholder">
+                            <p>{{ '文件已上传，暂无AI分析结果' if get_lang() == 'zh' else 'File uploaded, no AI analysis yet' }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if file.is_deleted %}
+                    <div class="deleted-notice">
+                        <span class="deleted-icon">🗑️</span>
+                        <span class="deleted-text">{{ '文件已删除' if get_lang() == 'zh' else 'File deleted' }} ({{ file.deleted_time.strftime('%Y-%m-%d %H:%M') }})，{{ '对话历史已保留' if get_lang() == 'zh' else 'conversation history retained' }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <p>{{ '暂无Excel文件' if get_lang() == 'zh' else 'No Excel files yet' }}</p>
+                <p>{{ '请上传LCI数据文件进行分析' if get_lang() == 'zh' else 'Please upload LCI data file for analysis' }}</p>
+            </div>
+            {% endif %}
+
+            
+            <div class="upload-section">
+                <h4>{{ '上传新文件开始新一轮对话' if get_lang() == 'zh' else 'Upload New File to Start New Conversation' }}</h4>
+                <form method="POST" action="{{ url_for('upload_excel', project_id=project.id) }}" enctype="multipart/form-data" class="inline-upload-form" id="uploadForm">
+                    <div class="upload-form-content">
+                        <div class="file-input-group">
+                            <input type="file" id="excel_file" name="excel_file" accept=".xlsx,.xls" required>
+                            <label for="excel_file" class="file-label">{{ '选择Excel文件' if get_lang() == 'zh' else 'Select Excel File' }}</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="uploadBtn" disabled>
+                            <span class="btn-text">{{ '上传并分析' if get_lang() == 'zh' else 'Upload & Analyze' }}</span>
+                            <span class="btn-loading" style="display: none;">{{ '上传中...' if get_lang() == 'zh' else 'Uploading...' }}</span>
+                        </button>
+                    </div>
+                    <small class="form-help">{{ '支持 .xlsx 和 .xls 格式，文件大小不超过10MB' if get_lang() == 'zh' else 'Supports .xlsx and .xls formats, max 10MB' }}</small>
+
+                    
+                    <div id="uploadStatus" class="upload-status" style="display: none;">
+                        <div class="status-item">
+                            <span class="status-icon">📤</span>
+                            <span class="status-text">文件上传中...</span>
+                        </div>
+                        <div class="status-item" id="fileUploadedStatus" style="display: none;">
+                            <span class="status-icon">✅</span>
+                            <span class="status-text">文件已上传</span>
+                        </div>
+                        <div class="status-item" id="analysisStatus" style="display: none;">
+                            <span class="status-icon">🤖</span>
+                            <span class="status-text">等待LLM反馈，喝杯咖啡吧 ☕</span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="fileContentModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Markdown文件</h2>
+            <div id="fileContentModalContent"></div>
+        </div>
+    </div>
+
+    
+    <div id="analysisModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>LLM反馈详情</h2>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    
+    <div id="deleteProjectModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>删除项目确认</h2>
+            <div id="deleteProjectMessage"></div>
+            <form id="deleteProjectForm" method="POST" style="margin-top: 1rem;">
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" onclick="closeDeleteProjectModal()">取消</button>
+                    <button type="submit" class="btn btn-danger">确认删除</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    
+    <div id="lcaAnalysisModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>LCA分析</h2>
+            <div id="lcaAnalysisContent">
+                <div class="lca-status-container">
+                    <div class="lca-status-icon">🔄</div>
+                    <div class="lca-status-text">正在进行LCA分析...</div>
+                    <div class="lca-status-details">请确保openLCA正在运行并已启用IPC服务器</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div id="lcaResultsModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>LCA分析结果</h2>
+            <div id="lcaResultsContent"></div>
+        </div>
+    </div>
+
+    
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <h2>确认删除</h2>
+            <p id="deleteMessage"></p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeDeleteModal()">取消</button>
+                <form id="deleteForm" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">确认删除</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    
+
+    
+    <div id="reportsListModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeReportsListModal()">&times;</span>
+            <h2>📚 历史报告列表</h2>
+            <div id="reportsListContent">
+                <div class="loading-indicator">
+                    <div class="spinner"></div>
+                    <span>加载中...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+
+document.addEventListener('DOMContentLoaded', function() {
+    
+    const fileLabel = document.querySelector('.file-label');
+    const excelFileInput = document.getElementById('excel_file');
+    const uploadBtn = document.getElementById('uploadBtn');
+
+    if (fileLabel && excelFileInput) {
+        fileLabel.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            excelFileInput.click();
+        });
+    }
+
+    
+    if (excelFileInput && uploadBtn) {
+        excelFileInput.addEventListener('change', function() {
+            const file = this.files[0];
+
+            if (file) {
+                
+                if (fileLabel) {
+                    fileLabel.textContent = `已选择: ${file.name}`;
+                    fileLabel.classList.add('file-selected');
+                }
+
+                
+                uploadBtn.disabled = false;
+            } else {
+                
+                if (fileLabel) {
+                    fileLabel.textContent = '选择Excel文件';
+                    fileLabel.classList.remove('file-selected');
+                }
+                uploadBtn.disabled = true;
+            }
+        });
+    }
+
+    
+    const uploadForm = document.getElementById('uploadForm');
+    if (uploadForm) {
+        uploadForm.addEventListener('submit', function(e) {
+            const btnText = uploadBtn ? uploadBtn.querySelector('.btn-text') : null;
+            const btnLoading = uploadBtn ? uploadBtn.querySelector('.btn-loading') : null;
+            const uploadStatus = document.getElementById('uploadStatus');
+            const fileUploadedStatus = document.getElementById('fileUploadedStatus');
+            const analysisStatus = document.getElementById('analysisStatus');
+
+            
+            if (btnText) btnText.style.display = 'none';
+            if (btnLoading) btnLoading.style.display = 'inline';
+            if (uploadStatus) uploadStatus.style.display = 'block';
+            if (uploadBtn) uploadBtn.disabled = true;
+
+            
+            setTimeout(() => {
+                const statusItem = document.querySelector('.status-item');
+                if (statusItem) statusItem.style.display = 'none';
+                if (fileUploadedStatus) fileUploadedStatus.style.display = 'flex';
+            }, 1000);
+
+            
+            setTimeout(() => {
+                if (fileUploadedStatus) fileUploadedStatus.style.display = 'none';
+                if (analysisStatus) analysisStatus.style.display = 'block';
+
+                
+                const analysisText = analysisStatus ? analysisStatus.querySelector('.status-text') : null;
+                if (analysisText) {
+                    analysisText.innerHTML = '🤖 已发送LLM分析，等待LLM反馈，喝杯咖啡吧 ☕';
+                }
+
+                
+                const startTime = Date.now();
+
+                
+                checkLLMAnalysisStatus(startTime);
+            }, 1500);
+        });
+    }
+});
+
+function checkLLMAnalysisStatus(startTime) {
+    const projectId = '{{ project.id }}';
+    const maxWaitTime = 300000; 
+    const checkInterval = 3000; 
+    let checkCount = 0;
+
+    function checkStatus() {
+        checkCount++;
+        const currentTime = Date.now();
+        const elapsedTime = Math.round((currentTime - startTime) / 1000);
+
+        
+        if (currentTime - startTime > maxWaitTime) {
+            
+            handleAnalysisTimeout(elapsedTime);
+            return;
+        }
+
+        
+        fetch(`/project/${projectId}/check_analysis_status`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.has_completed_analysis) {
+                    
+                    handleAnalysisComplete(elapsedTime);
+                } else {
+                    
+                    updateWaitingStatus(elapsedTime, checkCount);
+                    
+                    setTimeout(checkStatus, checkInterval);
+                }
+            })
+            .catch(error => {
+                console.error('检查LLM状态失败:', error);
+                
+                setTimeout(checkStatus, checkInterval);
+            });
+    }
+
+    
+    checkStatus();
+}
+
+function handleAnalysisComplete(responseTime) {
+    const uploadStatus = document.getElementById('uploadStatus');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const btnText = uploadBtn.querySelector('.btn-text');
+    const btnLoading = uploadBtn.querySelector('.btn-loading');
+
+    
+    uploadStatus.style.display = 'none';
+
+    
+    uploadBtn.disabled = false;
+    btnText.style.display = 'inline';
+    btnLoading.style.display = 'none';
+
+    
+    document.querySelector('.file-label').textContent = '选择Excel文件';
+    document.querySelector('.file-label').classList.remove('file-selected');
+    document.getElementById('excel_file').value = '';
+
+    
+    const uploadSection = document.querySelector('.upload-section');
+    const notification = document.createElement('div');
+    notification.className = 'analysis-complete-notification';
+    notification.innerHTML = `<span class="status-icon">✅</span><span class="status-text">LLM分析真正完成！响应时间：${responseTime}秒，正在刷新页面显示结果...</span>`;
+    uploadSection.appendChild(notification);
+
+    
+    ensureInteractionHistoryExpanded();
+
+    
+    setTimeout(() => {
+        notification.remove();
+        location.reload();
+    }, 2000);
+}
+
+function handleAnalysisTimeout(elapsedTime) {
+    const uploadStatus = document.getElementById('uploadStatus');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const btnText = uploadBtn.querySelector('.btn-text');
+    const btnLoading = uploadBtn.querySelector('.btn-loading');
+
+    
+    const uploadSection = document.querySelector('.upload-section');
+    const notification = document.createElement('div');
+    notification.className = 'analysis-timeout-notification';
+    notification.innerHTML = `<span class="status-icon">⏰</span><span class="status-text">LLM分析超时（${elapsedTime}秒），请检查网络或稍后刷新页面</span>`;
+    uploadSection.appendChild(notification);
+
+    
+    uploadStatus.style.display = 'none';
+    uploadBtn.disabled = false;
+    btnText.style.display = 'inline';
+    btnLoading.style.display = 'none';
+
+    
+    document.querySelector('.file-label').textContent = '选择Excel文件';
+    document.querySelector('.file-label').classList.remove('file-selected');
+    document.getElementById('excel_file').value = '';
+
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 5000);
+}
+
+function updateWaitingStatus(elapsedTime, checkCount) {
+    const analysisStatus = document.getElementById('analysisStatus');
+    const analysisText = analysisStatus.querySelector('.status-text');
+
+    
+    analysisText.innerHTML = `🤖 LLM分析进行中... 已等待${elapsedTime}秒，检查${checkCount}次，请耐心等待 ☕`;
+}
+
+function showFullAnalysis(fileId) {
+    const modal = document.getElementById('analysisModal');
+    const modalContent = document.getElementById('modalContent');
+
+    
+    const fileCard = document.querySelector(`[data-file-id="${fileId}"]`);
+    if (fileCard) {
+        const fileName = fileCard.querySelector('h4').textContent;
+
+        
+        fetch(`/excel_file/${fileId}/full_analysis`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.analysis) {
+                    modalContent.innerHTML = `
+                        <h3>${fileName}</h3>
+                        <div class="analysis-full-content">
+                            <pre style="white-space: pre-wrap; font-family: inherit; line-height: 1.6; max-height: 60vh; overflow-y: auto;">${data.analysis}</pre>
+                        </div>
+                    `;
+                } else {
+                    modalContent.innerHTML = `
+                        <h3>${fileName}</h3>
+                        <p>暂无分析结果</p>
+                    `;
+                }
+            })
+            .catch(error => {
+                console.error('Error loading analysis:', error);
+                modalContent.innerHTML = `
+                    <h3>${fileName}</h3>
+                    <p>加载分析结果失败</p>
+                `;
+            });
+    } else {
+        modalContent.innerHTML = `
+            <h3>文件ID: ${fileId}</h3>
+            <p>无法找到文件信息</p>
+        `;
+    }
+
+    modal.style.display = 'block';
+}
+
+function showFileContent(fileId, fileName) {
+    const modal = document.getElementById('fileContentModal');
+    const modalContent = document.getElementById('fileContentModalContent');
+
+    
+    fetch(`/excel_file/${fileId}/preview`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                let html = `<h3>${fileName}</h3>`;
+                html += '<div class="file-content-table">';
+                html += '<table class="content-preview-table">';
+                html += '<thead><tr><th>列名</th><th>数据类型</th><th>示例数据</th></tr></thead>';
+                html += '<tbody>';
+
+                
+                data.data.forEach((row, index) => {
+                    html += `<tr>
+                        <td>${row.column_name || 'N/A'}</td>
+                        <td>${row.data_type || 'N/A'}</td>
+                        <td>${row.sample_data || 'N/A'}</td>
+                    </tr>`;
+                });
+
+                html += '</tbody></table>';
+                html += `<p class="data-summary">共 ${data.data.length} 列数据</p>`;
+                html += '</div>';
+                modalContent.innerHTML = html;
+            } else {
+                modalContent.innerHTML = '<p class="error-text">文件内容加载失败</p>';
+            }
+        })
+        .catch(error => {
+            console.error('Error loading file content:', error);
+            modalContent.innerHTML = '<p class="error-text">文件内容加载失败</p>';
+        });
+
+    modal.style.display = 'block';
+}
+
+document.querySelectorAll('.close').forEach(function(closeBtn) {
+    closeBtn.onclick = function() {
+        this.closest('.modal').style.display = 'none';
+    }
+});
+
+window.onclick = function(event) {
+    if (event.target.classList.contains('modal')) {
+        event.target.style.display = 'none';
+    }
+}
+
+function toggleContentPreview(fileId) {
+    const content = document.getElementById(`contentPreview${fileId}`);
+    const toggleIcon = content.previousElementSibling.querySelector('.toggle-icon');
+
+    if (content.style.display === 'none') {
+        content.style.display = 'block';
+        toggleIcon.textContent = '▼';
+        
+        loadContentData(fileId);
+    } else {
+        content.style.display = 'none';
+        toggleIcon.textContent = '▶';
+    }
+}
+
+function toggleExcelFiles() {
+    const content = document.getElementById('excelFilesContent');
+    const toggleIcon = content.previousElementSibling.querySelector('.toggle-icon');
+
+    if (content.style.display === 'none') {
+        content.style.display = 'block';
+        toggleIcon.textContent = '▼';
+    } else {
+        content.style.display = 'none';
+        toggleIcon.textContent = '▶';
+    }
+}
+
+function ensureInteractionHistoryExpanded() {
+    const content = document.getElementById('excelFilesContent');
+    const toggleIcon = content.previousElementSibling.querySelector('.toggle-icon');
+
+    
+    if (content.style.display === 'none') {
+        content.style.display = 'block';
+        toggleIcon.textContent = '▼';
+    }
+}
+
+function loadContentData(fileId) {
+    const tbody = document.getElementById(`contentData${fileId}`);
+
+    
+    fetch(`/excel_file/${fileId}/preview`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                displayContentData(tbody, data.data);
+            } else {
+                tbody.innerHTML = '<tr><td colspan="3" class="error-text">数据加载失败</td></tr>';
+            }
+        })
+        .catch(error => {
+            console.error('Error loading content data:', error);
+            tbody.innerHTML = '<tr><td colspan="3" class="error-text">数据加载失败</td></tr>';
+        });
+}
+
+function displayContentData(tbody, contentData) {
+    if (!contentData || contentData.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" class="no-data">无数据</td></tr>';
+        return;
+    }
+
+    let html = '';
+    contentData.forEach((row, index) => {
+        if (index < 10) { 
+            html += `
+                <tr>
+                    <td>${row.column_name || 'N/A'}</td>
+                    <td>${row.data_type || 'N/A'}</td>
+                    <td>${row.sample_data || 'N/A'}</td>
+                </tr>
+            `;
+        }
+    });
+
+    if (contentData.length > 10) {
+        html += `<tr><td colspan="3" class="more-data">... 还有 ${contentData.length - 10} 行数据</tr>`;
+    }
+
+    tbody.innerHTML = html;
+}
+
+window.deleteProject = function(projectId, projectName) {
+    const deleteModal = document.getElementById('deleteProjectModal');
+    const deleteMessage = document.getElementById('deleteProjectMessage');
+    const deleteForm = document.getElementById('deleteProjectForm');
+
+    deleteMessage.innerHTML = `
+        <div class="delete-warning">
+            <p><strong>⚠️ 警告：您即将删除项目 "${projectName}"！</strong></p>
+            <p>此操作将：</p>
+            <ul>
+                <li>永久删除整个项目</li>
+                <li>永久删除所有Excel文件</li>
+                <li>永久删除所有AI分析结果和对话历史</li>
+                <li>永久删除所有项目数据</li>
+                <li>您将无法恢复此项目</li>
+            </ul>
+            <p class="warning-text"><strong>请确认您真的需要删除这个项目！</strong></p>
+        </div>
+    `;
+    deleteForm.action = `/project/${projectId}/delete`;
+
+    deleteModal.style.display = 'block';
+};
+
+window.closeDeleteProjectModal = function() {
+    document.getElementById('deleteProjectModal').style.display = 'none';
+};
+
+window.deleteFileAndAllRelated = function(fileId, fileName) {
+    console.log('🗑️ 删除文件函数被调用:', fileId, fileName);
+
+    const deleteModal = document.getElementById('deleteModal');
+    const deleteMessage = document.getElementById('deleteMessage');
+    const deleteForm = document.getElementById('deleteForm');
+
+    console.log('📋 获取到的元素:', {
+        modal: deleteModal,
+        message: deleteMessage,
+        form: deleteForm
+    });
+
+    if (!deleteModal || !deleteMessage || !deleteForm) {
+        console.error('❌ 找不到删除模态框元素！');
+        alert('删除功能初始化失败，请刷新页面重试');
+        return;
+    }
+
+    deleteMessage.innerHTML = `
+        <div class="delete-warning">
+            <p><strong>⚠️ 警告：您即将删除文件 "${fileName}" 及所有相关内容！</strong></p>
+            <p>此操作将：</p>
+            <ul>
+                <li>永久删除Excel文件</li>
+                <li>永久删除AI分析结果和对话历史</li>
+                <li>永久删除Markdown内容预览</li>
+                <li>您将无法重新下载原始文件</li>
+                <li>所有相关数据将完全丢失</li>
+            </ul>
+            <p class="warning-text"><strong>请确认您真的需要删除这个文件及所有相关内容！</strong></p>
+        </div>
+    `;
+
+    const actionUrl = `/excel_file/${fileId}/delete_and_all_related`;
+    deleteForm.action = actionUrl;
+    console.log('✅ 设置表单action为:', actionUrl);
+
+    deleteModal.style.display = 'block';
+    console.log('✅ 显示删除确认模态框');
+};
+
+window.closeDeleteModal = function() {
+    console.log('✖️ 关闭删除模态框');
+    document.getElementById('deleteModal').style.display = 'none';
+};
+
+window.deleteAllExcelFilesAndHistory = function() {
+    console.log('🗑️ 删除所有文件函数被调用');
+
+    const deleteModal = document.getElementById('deleteModal');
+    const deleteMessage = document.getElementById('deleteMessage');
+    const deleteForm = document.getElementById('deleteForm');
+
+    console.log('📋 获取到的元素:', {
+        modal: deleteModal,
+        message: deleteMessage,
+        form: deleteForm
+    });
+
+    if (!deleteModal || !deleteMessage || !deleteForm) {
+        console.error('❌ 找不到删除模态框元素！');
+        alert('删除功能初始化失败，请刷新页面重试');
+        return;
+    }
+
+    deleteMessage.innerHTML = `
+        <div class="delete-warning">
+            <p><strong>⚠️ 警告：您即将删除此项目的所有Excel文件及对话历史！</strong></p>
+            <p>此操作将：</p>
+            <ul>
+                <li>永久删除所有Excel文件</li>
+                <li>永久删除所有AI分析结果和对话历史</li>
+                <li>您将无法重新下载任何原始文件</li>
+                <li>所有分析数据将完全丢失</li>
+            </ul>
+            <p class="warning-text"><strong>请确认您真的需要删除所有文件及对话历史！此操作不可撤销！</strong></p>
+        </div>
+    `;
+
+    const actionUrl = `/project/{{ project.id }}/delete_all_excel_and_history`;
+    deleteForm.action = actionUrl;
+    console.log('✅ 设置表单action为:', actionUrl);
+
+    deleteModal.style.display = 'block';
+    console.log('✅ 显示删除确认模态框');
+};
+
+function toggleExcelMetadata() {
+    const content = document.getElementById('excelMetadataContent');
+    const toggleIcon = document.getElementById('metadataToggleIcon');
+
+    if (content.style.display === 'none') {
+        content.style.display = 'block';
+        toggleIcon.textContent = '▼';
+    } else {
+        content.style.display = 'none';
+        toggleIcon.textContent = '▶';
+    }
+}
+
+function showEditMetadataModal(fileId) {
+    
+    fetch(`/excel_file/${fileId}/metadata`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                
+                createMetadataEditModal(fileId, data.metadata);
+            } else {
+                alert('获取元数据失败: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('获取元数据失败:', error);
+            alert('获取元数据失败，请稍后重试');
+        });
+}
+
+function createMetadataEditModal(fileId, metadata) {
+    
+    const modalHTML = `
+        <div id="metadataEditModal" class="modal" style="display: block;">
+            <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+                <span class="close" onclick="closeMetadataEditModal()">&times;</span>
+                <h2>✏️ 编辑Excel元数据</h2>
+                <form id="metadataEditForm" onsubmit="saveMetadata(event, ${fileId})">
+
+                    <div class="form-section" style="margin-bottom: 25px;">
+                        <h3 style="color: #007bff; margin-bottom: 15px;">🎯 产品信息</h3>
+                        <div class="form-group">
+                            <label>产品名称：</label>
+                            <input type="text" name="product_info.product_name" value="${metadata.product_info?.product_name || ''}" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>产品规格型号：</label>
+                            <input type="text" name="product_info.product_model" value="${metadata.product_info?.product_model || ''}" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>产品功能：</label>
+                            <textarea name="product_info.product_function" class="form-control" rows="2">${metadata.product_info?.product_function || ''}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>产品介绍：</label>
+                            <textarea name="product_info.product_description" class="form-control" rows="3">${metadata.product_info?.product_description || ''}</textarea>
+                        </div>
+                    </div>
+
+                    
+                    <div class="form-section" style="margin-bottom: 25px;">
+                        <h3 style="color: #28a745; margin-bottom: 15px;">🏭 生产者信息</h3>
+                        <div class="form-group">
+                            <label>生产者名称：</label>
+                            <input type="text" name="producer_info.producer_name" value="${metadata.producer_info?.producer_name || ''}" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>地址：</label>
+                            <input type="text" name="producer_info.address" value="${metadata.producer_info?.address || ''}" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>法定代表人：</label>
+                            <input type="text" name="producer_info.legal_representative" value="${metadata.producer_info?.legal_representative || ''}" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>联系人：</label>
+                            <input type="text" name="producer_info.contact_person" value="${metadata.producer_info?.contact_person || ''}" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>联系电话：</label>
+                            <input type="text" name="producer_info.contact_phone" value="${metadata.producer_info?.contact_phone || ''}" class="form-control">
+                        </div>
+                    </div>
+
+                    
+                    <div class="form-section" style="margin-bottom: 25px;">
+                        <h3 style="color: #17a2b8; margin-bottom: 15px;">📐 量化方法</h3>
+                        <div class="form-group">
+                            <label>依据标准：</label>
+                            <input type="text" name="quantification_method.standard" value="${metadata.quantification_method?.standard || ''}" class="form-control">
+                        </div>
+                    </div>
+
+                    
+                    <div class="form-section" style="margin-bottom: 25px;">
+                        <h3 style="color: #ffc107; margin-bottom: 15px;">🎯 量化目的</h3>
+                        <div class="form-group">
+                            <textarea name="quantification_purpose" class="form-control" rows="4">${metadata.quantification_purpose || ''}</textarea>
+                        </div>
+                    </div>
+
+                    
+                    <div class="form-section" style="margin-bottom: 25px;">
+                        <h3 style="color: #6f42c1; margin-bottom: 15px;">📏 量化范围</h3>
+                        <div class="form-group">
+                            <label>功能单位：</label>
+                            <textarea name="quantification_scope.functional_unit" class="form-control" rows="2">${metadata.quantification_scope?.functional_unit || ''}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>系统边界：</label>
+                            <textarea name="quantification_scope.system_boundary" class="form-control" rows="3">${metadata.quantification_scope?.system_boundary || ''}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>取舍准则：</label>
+                            <textarea name="quantification_scope.cutoff_criteria" class="form-control" rows="2">${metadata.quantification_scope?.cutoff_criteria || ''}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>时间范围：</label>
+                            <input type="text" name="quantification_scope.time_scope" value="${metadata.quantification_scope?.time_scope || ''}" class="form-control">
+                        </div>
+                    </div>
+
+                    
+                    <div class="form-section" style="margin-bottom: 25px;">
+                        <h3 style="color: #dc3545; margin-bottom: 15px;">📊 清单分析</h3>
+                        <div class="form-group">
+                            <label>初级数据来源：</label>
+                            <textarea name="inventory_analysis.primary_data_source" class="form-control" rows="2">${metadata.inventory_analysis?.primary_data_source || ''}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>次级数据来源：</label>
+                            <textarea name="inventory_analysis.secondary_data_source" class="form-control" rows="2">${metadata.inventory_analysis?.secondary_data_source || ''}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>分配依据：</label>
+                            <input type="text" name="inventory_analysis.allocation_basis" value="${metadata.inventory_analysis?.allocation_basis || ''}" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>分配程序：</label>
+                            <textarea name="inventory_analysis.allocation_procedure" class="form-control" rows="2">${metadata.inventory_analysis?.allocation_procedure || ''}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="modal-actions" style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
+                        <button type="button" class="btn btn-secondary" onclick="closeMetadataEditModal()">取消</button>
+                        <button type="submit" class="btn btn-primary">保存</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    `;
+
+    
+    const existingModal = document.getElementById('metadataEditModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+}
+
+function closeMetadataEditModal() {
+    const modal = document.getElementById('metadataEditModal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+function saveMetadata(event, fileId) {
+    event.preventDefault();
+
+    const form = document.getElementById('metadataEditForm');
+    const formData = new FormData(form);
+
+    
+    const metadata = {
+        product_info: {},
+        producer_info: {},
+        quantification_method: {},
+        quantification_purpose: '',
+        quantification_scope: {},
+        inventory_analysis: {}
+    };
+
+    for (const [key, value] of formData.entries()) {
+        const parts = key.split('.');
+        if (parts.length === 2) {
+            metadata[parts[0]][parts[1]] = value;
+        } else {
+            metadata[key] = value;
+        }
+    }
+
+    
+    fetch(`/excel_file/${fileId}/metadata`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(metadata)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('✅ 元数据更新成功！');
+            closeMetadataEditModal();
+            
+            location.reload();
+        } else {
+            alert('❌ 更新失败: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('保存元数据失败:', error);
+        alert('❌ 保存失败，请稍后重试');
+    });
+}
+
+function syncToBoundary(fileId) {
+    const isZh = document.documentElement.lang === 'zh';
+    const confirmMsg = isZh ? 
+        '确定要将此Excel文件的元数据同步到评价边界设置吗？\n\n这将覆盖评价边界中的相关字段。' : 
+        'Are you sure you want to sync this Excel file metadata to assessment boundary?\n\nThis will overwrite related fields in the boundary.';
+
+    if (!confirm(confirmMsg)) {
+        return;
+    }
+
+    
+    const button = event.target.closest('button');
+    const originalText = button.innerHTML;
+    button.disabled = true;
+    button.innerHTML = isZh ? '<span>⏳</span> 同步中...' : '<span>⏳</span> Syncing...';
+
+    
+    fetch(`/excel_file/${fileId}/sync_to_boundary`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        button.disabled = false;
+        button.innerHTML = originalText;
+
+        if (data.success) {
+            const boundaryLabel = isZh ? '评价边界设置' : 'Assessment Boundary Settings';
+            const successMsg = isZh ? 
+                '✅ ' + data.message + '\n\n您可以前往"🎯 ' + boundaryLabel + '"页面查看同步的内容。' : 
+                '✅ ' + data.message + '\n\nYou can go to the "🎯 ' + boundaryLabel + '" page to view the synced content.';
+            alert(successMsg);
+        } else {
+            const errorMsg = isZh ? '❌ 同步失败: ' : '❌ Sync failed: ';
+            alert(errorMsg + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('同步失败:', error);
+        button.disabled = false;
+        button.innerHTML = originalText;
+        alert('❌ 同步失败，请稍后重试');
+    });
+}
+
+function syncToReportInfo(fileId) {
+    if (!confirm('确定要将此Excel文件的元数据同步到LCA报告信息吗？\n\n这将覆盖报告信息中的相关字段。')) {
+        return;
+    }
+
+    
+    const button = event.target.closest('button');
+    const originalText = button.innerHTML;
+    button.disabled = true;
+    button.innerHTML = '<span>⏳</span> 同步中...';
+
+    
+    fetch(`/excel_file/${fileId}/sync_to_report_info`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        button.disabled = false;
+        button.innerHTML = originalText;
+
+        if (data.success) {
+            alert('✅ ' + data.message + '\n\n您可以前往"📋 编辑LCA报告信息"页面查看同步的内容。');
+        } else {
+            alert('❌ 同步失败: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('同步失败:', error);
+        button.disabled = false;
+        button.innerHTML = originalText;
+        alert('❌ 同步失败，请稍后重试');
+    });
+}
+
+function runLCAAnalysis(fileId, fileName) {
+    const modal = document.getElementById('lcaAnalysisModal');
+    const content = document.getElementById('lcaAnalysisContent');
+
+    
+    content.innerHTML = `
+        <div class="lca-status-container">
+            <div class="lca-status-icon">🚀</div>
+            <div class="lca-status-text">正在启动LCA分析...</div>
+            <div class="lca-status-details">分析文件: ${fileName}</div>
+            <div style="margin-top: 20px;">
+                <div style="display: inline-block; width: 50px; height: 50px; border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+            </div>
+        </div>
+    `;
+
+    modal.style.display = 'block';
+
+    
+    fetch(`/excel_file/${fileId}/run_lca_analysis_async`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            
+            if (typeof pollLCATaskStatusEnhanced === 'function') {
+                pollLCATaskStatusEnhanced(data.task_id, fileId, fileName);
+            } else {
+                
+                pollLCATaskStatus(data.task_id, fileId, fileName);
+            }
+        } else {
+            showLCAError(data.error, fileId, fileName);
+        }
+    })
+    .catch(error => {
+        console.error('启动LCA分析失败:', error);
+        showLCAError('启动分析失败，请检查网络连接', fileId, fileName);
+    });
+}
+
+function pollLCATaskStatus(taskId, fileId, fileName) {
+    const content = document.getElementById('lcaAnalysisContent');
+    let startTime = Date.now();
+
+    
+    const timerInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        const timerElement = document.getElementById('analysisTimer');
+        if (timerElement) {
+            timerElement.textContent = elapsed;
+        }
+    }, 1000);
+
+    
+    function checkStatus() {
+        fetch(`/lca_task/${taskId}/status`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const status = data.status;
+                const progress = data.progress || 0;
+                const duration = data.duration || 0;
+
+                
+                const stepInfo = data.step_name || 'Processing...';
+                const currentStep = data.current_step || 0;
+                const totalSteps = data.total_steps || 7;
+
+                content.innerHTML = `
+                    <div class="lca-status-container">
+                        <div class="lca-status-icon">${status === 'completed' ? '✅' : status === 'failed' ? '❌' : '🔄'}</div>
+                        <div class="lca-status-text">${getStatusText(status)}</div>
+                        <div class="lca-status-details">
+                            分析文件: ${fileName}<br>
+                            任务ID: ${taskId}<br>
+                            <strong>当前步骤: ${stepInfo}</strong><br>
+                            进度: ${currentStep}/${totalSteps} 步骤 (${progress}%)
+                        </div>
+                        <div class="lca-progress-bar">
+                            <div class="lca-progress" style="width: ${progress}%"></div>
+                        </div>
+                        <div class="lca-step-indicator">
+                            <small>📍 ${stepInfo}</small>
+                        </div>
+                        <div class="lca-status-timer">
+                            <small>已用时: ${Math.floor(duration)} 秒</small>
+                            <br>
+                            <small>💡 后台分析中，您可以安全关闭此窗口...</small>
+                        </div>
+                        ${status === 'completed' || status === 'failed' ? getCompletionActions(status, data, fileId, fileName) : ''}
+                    </div>
+                `;
+
+                if (status === 'completed' || status === 'failed') {
+                    clearInterval(timerInterval);
+                    if (status === 'completed') {
+                        
+                        saveLCAResultToDB(fileId, data);
+                    }
+                } else {
+                    
+                    setTimeout(checkStatus, 3000); 
+                }
+            } else {
+                clearInterval(timerInterval);
+                if (data.error && data.error.includes('Task not found')) {
+                    
+                    checkLCACompletionInDB(fileId, fileName, timerInterval);
+                } else {
+                    showLCAError('获取分析状态失败: ' + (data.error || '未知错误'), fileId, fileName);
+                }
+            }
+        })
+        .catch(error => {
+            console.error('检查状态失败:', error);
+            
+            setTimeout(checkStatus, 5000); 
+        });
+    }
+
+    
+    setTimeout(checkStatus, 2000); 
+}
+
+function getStatusText(status) {
+    const statusMap = {
+        'queued': '排队中，等待可用并发槽位...',
+        'running': '正在进行LCA分析...',
+        'connecting': '连接openLCA中...',
+        'parsing': '解析Excel文件中...',
+        'creating_flows': '创建LCA流程中...',
+        'building_processes': '建立流程关系中...',
+        'creating_system': '创建产品系统中...',
+        'running_assessment': '运行影响评估中...',
+        'saving_results': '保存结果中...',
+        'completed': 'LCA分析完成！',
+        'failed': 'LCA分析失败'
+    };
+    return statusMap[status] || '处理中...';
+}
+
+function getCompletionActions(status, data, fileId, fileName) {
+    if (status === 'completed') {
+        const result = data.result;
+        return `
+            <div class="lca-completion-details">
+                <p><strong>分析结果摘要：</strong></p>
+                <ul>
+                    <li>分析状态: ${result?.success ? '成功' : '失败'}</li>
+                    <li>分析耗时: ${Math.floor(data.duration)} 秒</li>
+                </ul>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-primary" onclick="showLCAResults(${fileId})">查看详细结果</button>
+                <button class="btn btn-secondary" onclick="closeLCAAnalysisModal()">关闭</button>
+            </div>
+        `;
+    } else {
+        return `
+            <div class="lca-error-details">
+                <p><strong>错误信息：</strong></p>
+                <p class="error-text">${data.error || '未知错误'}</p>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeLCAAnalysisModal()">关闭</button>
+                <button class="btn btn-primary" onclick="closeLCAAnalysisModal(); runLCAAnalysis(${fileId}, '${fileName}')">重试</button>
+            </div>
+        `;
+    }
+}
+
+function showLCAError(errorMessage, fileId, fileName) {
+    const content = document.getElementById('lcaAnalysisContent');
+    content.innerHTML = `
+        <div class="lca-status-container">
+            <div class="lca-status-icon">❌</div>
+            <div class="lca-status-text">启动分析失败</div>
+            <div class="lca-status-details">
+                <p class="error-text">${errorMessage}</p>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeLCAAnalysisModal()">关闭</button>
+                <button class="btn btn-primary" onclick="closeLCAAnalysisModal(); runLCAAnalysis(${fileId}, '${fileName}')">重试</button>
+            </div>
+        </div>
+    `;
+}
+
+function saveLCAResultToDB(fileId, data) {
+    
+    
+    console.log('LCA分析完成，结果:', data);
+}
+
+function checkLCACompletionInDB(fileId, fileName, timerInterval) {
+    const content = document.getElementById('lcaAnalysisContent');
+
+    
+    content.innerHTML = `
+        <div class="lca-status-container">
+            <div class="lca-status-icon">🔍</div>
+            <div class="lca-status-text">检查分析完成状态...</div>
+            <div class="lca-status-details">正在查询数据库中的LCA结果记录...</div>
+        </div>
+    `;
+
+    fetch(`/excel_file/${fileId}/check_lca_completion`)
+    .then(response => response.json())
+    .then(data => {
+        if (data.success && data.has_results) {
+            const result = data.latest_result;
+            const statusIcon = result.status === 'completed' ? '✅' : result.status === 'failed' ? '❌' : '⏳';
+            const statusText = result.status === 'completed' ? 'LCA分析已完成' : 
+                              result.status === 'failed' ? 'LCA分析失败' : 'LCA分析状态未知';
+
+            content.innerHTML = `
+                <div class="lca-status-container">
+                    <div class="lca-status-icon">${statusIcon}</div>
+                    <div class="lca-status-text">${statusText}</div>
+                    <div class="lca-status-details">
+                        <p><strong>从数据库记录恢复的信息：</strong></p>
+                        <ul style="text-align: left; display: inline-block;">
+                            <li>分析状态: ${result.status}</li>
+                            <li>创建时间: ${new Date(result.created_at).toLocaleString()}</li>
+                            ${result.duration ? `<li>分析耗时: ${Math.floor(result.duration)} 秒</li>` : ''}
+                        </ul>
+                    </div>
+                    <div class="modal-actions">
+                        ${result.status === 'completed' ? `<button class="btn btn-primary" onclick="showLCAResults(${fileId})">查看详细结果</button>` : ''}
+                        <button class="btn btn-warning" onclick="closeLCAAnalysisModal(); runLCAAnalysis(${fileId}, '${fileName}')">重新分析</button>
+                        <button class="btn btn-secondary" onclick="closeLCAAnalysisModal()">关闭</button>
+                    </div>
+                </div>
+            `;
+        } else {
+            
+            content.innerHTML = `
+                <div class="lca-status-container">
+                    <div class="lca-status-icon">⚠️</div>
+                    <div class="lca-status-text">任务状态丢失</div>
+                    <div class="lca-status-details">
+                        <p>分析任务状态信息丢失，且数据库中没有找到完成的结果记录。</p>
+                        <p><strong>可能原因：</strong></p>
+                        <ul style="text-align: left; display: inline-block;">
+                            <li>服务器重启导致内存中的任务状态丢失</li>
+                            <li>分析可能还在进行中，但无法跟踪状态</li>
+                            <li>分析可能已完成但未保存到数据库</li>
+                        </ul>
+                        <p><strong>建议操作：</strong></p>
+                        <ul style="text-align: left; display: inline-block;">
+                            <li>检查openLCA软件中是否有新创建的模型</li>
+                            <li>重新运行分析以确保完成</li>
+                        </ul>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="btn btn-primary" onclick="showLCAResults(${fileId})">查看历史结果</button>
+                        <button class="btn btn-success" onclick="createManualLCAResult(${fileId})">标记为已完成</button>
+                        <button class="btn btn-warning" onclick="closeLCAAnalysisModal(); runLCAAnalysis(${fileId}, '${fileName}')">重新分析</button>
+                        <button class="btn btn-secondary" onclick="closeLCAAnalysisModal()">关闭</button>
+                    </div>
+                </div>
+            `;
+        }
+    })
+    .catch(error => {
+        console.error('检查完成状态失败:', error);
+        content.innerHTML = `
+            <div class="lca-status-container">
+                <div class="lca-status-icon">❌</div>
+                <div class="lca-status-text">检查失败</div>
+                <div class="lca-status-details">
+                    <p>无法检查分析完成状态：${error.message}</p>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-warning" onclick="closeLCAAnalysisModal(); runLCAAnalysis(${fileId}, '${fileName}')">重新分析</button>
+                    <button class="btn btn-secondary" onclick="closeLCAAnalysisModal()">关闭</button>
+                </div>
+            </div>
+        `;
+    });
+}
+
+function createManualLCAResult(fileId) {
+    const content = document.getElementById('lcaAnalysisContent');
+
+    content.innerHTML = `
+        <div class="lca-status-container">
+            <div class="lca-status-icon">⏳</div>
+            <div class="lca-status-text">正在创建LCA完成记录...</div>
+        </div>
+    `;
+
+    fetch(`/excel_file/${fileId}/create_manual_lca_result`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            content.innerHTML = `
+                <div class="lca-status-container">
+                    <div class="lca-status-icon">✅</div>
+                    <div class="lca-status-text">LCA分析已标记为完成！</div>
+                    <div class="lca-status-details">
+                        <p>已成功创建LCA完成记录。</p>
+                        <p><strong>记录ID:</strong> ${data.result_id}</p>
+                        <p>现在您可以查看LCA结果了。</p>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="btn btn-primary" onclick="showLCAResults(${fileId})">查看LCA结果</button>
+                        <button class="btn btn-secondary" onclick="closeLCAAnalysisModal()">关闭</button>
+                    </div>
+                </div>
+            `;
+        } else {
+            content.innerHTML = `
+                <div class="lca-status-container">
+                    <div class="lca-status-icon">❌</div>
+                    <div class="lca-status-text">创建记录失败</div>
+                    <div class="lca-status-details">
+                        <p class="error-text">${data.error}</p>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="btn btn-secondary" onclick="closeLCAAnalysisModal()">关闭</button>
+                    </div>
+                </div>
+            `;
+        }
+    })
+    .catch(error => {
+        console.error('创建LCA记录失败:', error);
+        content.innerHTML = `
+            <div class="lca-status-container">
+                <div class="lca-status-icon">❌</div>
+                <div class="lca-status-text">网络错误</div>
+                <div class="lca-status-details">
+                    <p class="error-text">创建记录时发生网络错误</p>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="closeLCAAnalysisModal()">关闭</button>
+                </div>
+            </div>
+        `;
+    });
+}
+
+function showLCAResults(fileId) {
+    const modal = document.getElementById('lcaResultsModal');
+    const content = document.getElementById('lcaResultsContent');
+
+    
+    content.innerHTML = `
+        <div class="loading-container">
+            <div class="loading-icon">⏳</div>
+            <div class="loading-text">正在加载LCA分析结果...</div>
+        </div>
+    `;
+
+    modal.style.display = 'block';
+
+    
+    fetch(`/excel_file/${fileId}/lca_results`)
+    .then(response => response.json())
+    .then(data => {
+        if (data.success && data.results.length > 0) {
+            let html = '<div class="lca-results-container">';
+
+            data.results.forEach((result, index) => {
+                const statusIcon = {
+                    'completed': '✅',
+                    'failed': '❌',
+                    'running': '🔄',
+                    'pending': '⏳'
+                }[result.status] || '❓';
+
+                const statusText = {
+                    'completed': '已完成',
+                    'failed': '失败',
+                    'running': '运行中',
+                    'pending': '等待中'
+                }[result.status] || '未知';
+
+                html += `
+                    <div class="lca-result-card ${result.status}">
+                        <div class="result-header">
+                            <h4>${statusIcon} 分析 #${index + 1} - ${statusText}</h4>
+                            <div class="result-time">
+                                开始时间: ${result.start_time || 'N/A'}<br>
+                                ${result.end_time ? `结束时间: ${result.end_time}` : ''}
+                            </div>
+                        </div>
+                        <div class="result-details">
+                `;
+
+                if (result.status === 'completed') {
+                    html += `
+                        <div class="success-details">
+                            <p><strong>分析结果:</strong></p>
+                            <ul>
+                                <li>流程数量: ${result.flows_count || 'N/A'}</li>
+                                <li>过程数量: ${result.processes_count || 'N/A'}</li>
+                                <li>产品系统数量: ${result.product_systems_count || 'N/A'}</li>
+                                <li>分析耗时: ${result.duration_seconds ? result.duration_seconds.toFixed(2) + '秒' : 'N/A'}</li>
+                                <li>openLCA连接: ${result.openLCA_connected ? '✅ 已连接' : '❌ 未连接'}</li>
+                            </ul>
+                            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                                <a href="/lca_result/${result.id}/visualization" class="btn btn-success btn-sm" target="_blank">📊 查看可视化图表</a>
+                                <button class="btn btn-info btn-sm" onclick="showLCAResultDetails(${result.id})">查看详细信息</button>
+                            </div>
+                        </div>
+                    `;
+                } else if (result.status === 'failed') {
+                    html += `
+                        <div class="error-details">
+                            <p><strong>错误信息:</strong></p>
+                            <p class="error-text">${result.error_message || '未知错误'}</p>
+                        </div>
+                    `;
+                } else if (result.status === 'running') {
+                    html += `
+                        <div class="running-details">
+                            <p>分析正在进行中，请稍候...</p>
+                            <button class="btn btn-secondary btn-sm" onclick="refreshLCAResults(${fileId})">刷新状态</button>
+                        </div>
+                    `;
+                }
+
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            content.innerHTML = html;
+        } else {
+            content.innerHTML = `
+                <div class="no-results">
+                    <div class="no-results-icon">📊</div>
+                    <div class="no-results-text">暂无LCA分析结果</div>
+                    <div class="no-results-details">此文件尚未进行LCA分析，请点击"运行LCA分析"按钮开始分析</div>
+                    <button class="btn btn-primary" onclick="closeLCAResultsModal(); runLCAAnalysis(${fileId}, 'Excel文件')">开始LCA分析</button>
+                </div>
+            `;
+        }
+    })
+    .catch(error => {
+        console.error('获取LCA结果失败:', error);
+        content.innerHTML = `
+            <div class="error-container">
+                <div class="error-icon">❌</div>
+                <div class="error-text">获取LCA分析结果失败</div>
+                <div class="error-details">请检查网络连接或稍后重试</div>
+            </div>
+        `;
+    });
+}
+
+function showLCAResultDetails(resultId) {
+    fetch(`/lca_result/${resultId}/details`)
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const result = data.result;
+            const detailsWindow = window.open('', '_blank', 'width=800,height=600,scrollbars=yes');
+            detailsWindow.document.write(`
+                <html>
+                <head>
+                    <title>LCA分析详细结果</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; }
+                        .header { background: #f5f5f5; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+                        .section { margin-bottom: 20px; }
+                        .section h3 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 5px; }
+                        pre { background: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto; }
+                        .status-completed { color: #28a745; }
+                        .status-failed { color: #dc3545; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>LCA分析详细结果 #${result.id}</h1>
+                        <p><strong>状态:</strong> <span class="status-${result.status}">${result.status}</span></p>
+                        <p><strong>开始时间:</strong> ${result.start_time || 'N/A'}</p>
+                        <p><strong>结束时间:</strong> ${result.end_time || 'N/A'}</p>
+                        <p><strong>分析耗时:</strong> ${result.duration_seconds ? result.duration_seconds.toFixed(2) + '秒' : 'N/A'}</p>
+                    </div>
+
+                    <div class="section">
+                        <h3>分析统计</h3>
+                        <p><strong>流程数量:</strong> ${result.flows_count || 'N/A'}</p>
+                        <p><strong>过程数量:</strong> ${result.processes_count || 'N/A'}</p>
+                        <p><strong>产品系统数量:</strong> ${result.product_systems_count || 'N/A'}</p>
+                        <p><strong>openLCA连接状态:</strong> ${result.openLCA_connected ? '✅ 已连接' : '❌ 未连接'}</p>
+                    </div>
+
+                    ${result.error_message ? `
+                    <div class="section">
+                        <h3>错误信息</h3>
+                        <pre>${result.error_message}</pre>
+                    </div>
+                    ` : ''}
+
+                    ${result.analysis_details && result.analysis_details.comprehensive_results ? `
+                    <div class="section">
+                        <h3>📊 Inventory Results (物质流清单结果)</h3>
+                        ${result.analysis_details.comprehensive_results.inventory_results ? `
+                            <p><strong>总流程数:</strong> ${result.analysis_details.comprehensive_results.inventory_results.total_flows || 0}</p>
+                            <p><strong>输入流程数:</strong> ${result.analysis_details.comprehensive_results.inventory_results.input_count || 0}</p>
+                            <p><strong>输出流程数:</strong> ${result.analysis_details.comprehensive_results.inventory_results.output_count || 0}</p>
+                            ${result.analysis_details.comprehensive_results.inventory_results.flow_results && result.analysis_details.comprehensive_results.inventory_results.flow_results.length > 0 ? `
+                                <h4>主要流程 (前10个):</h4>
+                                <ul>
+                                    ${result.analysis_details.comprehensive_results.inventory_results.flow_results.slice(0, 10).map(flow => 
+                                        `<li><strong>${flow.flow_name}</strong>: ${flow.value} ${flow.unit} (${flow.is_input ? '输入' : '输出'})</li>`
+                                    ).join('')}
+                                </ul>
+                            ` : '<p>无流程数据</p>'}
+                        ` : '<p>无inventory数据</p>'}
+                    </div>
+
+                    <div class="section">
+                        <h3>🎯 Impact Analysis (影响评估)</h3>
+                        ${result.analysis_details.comprehensive_results.impact_analysis ? `
+                            <p><strong>评估方法:</strong> ${result.analysis_details.comprehensive_results.impact_analysis.method_name || 'N/A'}</p>
+                            <p><strong>总影响类别数:</strong> ${result.analysis_details.comprehensive_results.impact_analysis.total_categories || 0}</p>
+                            <p><strong>中点指标数:</strong> ${result.analysis_details.comprehensive_results.impact_analysis.midpoint_count || 0}</p>
+                            <p><strong>终点指标数:</strong> ${result.analysis_details.comprehensive_results.impact_analysis.endpoint_count || 0}</p>
+                            ${result.analysis_details.comprehensive_results.impact_analysis.impact_results && result.analysis_details.comprehensive_results.impact_analysis.impact_results.length > 0 ? `
+                                <h4>影响评估结果:</h4>
+                                <ul>
+                                    ${result.analysis_details.comprehensive_results.impact_analysis.impact_results.map(impact => 
+                                        `<li><strong>${impact.category}</strong>: ${impact.value} ${impact.unit}</li>`
+                                    ).join('')}
+                                </ul>
+                            ` : '<p>无影响评估数据</p>'}
+                        ` : '<p>无影响评估数据</p>'}
+                    </div>
+
+                    <div class="section">
+                        <h3>⚙️ Process Results (过程结果)</h3>
+                        ${result.analysis_details.comprehensive_results.process_results ? `
+                            <p><strong>总过程数:</strong> ${result.analysis_details.comprehensive_results.process_results.total_processes || 0}</p>
+                            <p><strong>过程分类数:</strong> ${result.analysis_details.comprehensive_results.process_results.category_count || 0}</p>
+                            ${result.analysis_details.comprehensive_results.process_results.process_list && result.analysis_details.comprehensive_results.process_results.process_list.length > 0 ? `
+                                <h4>过程列表 (前10个):</h4>
+                                <ul>
+                                    ${result.analysis_details.comprehensive_results.process_results.process_list.slice(0, 10).map(proc => 
+                                        `<li><strong>${proc.name}</strong> (${proc.category || '未分类'}) - ${proc.location || '无位置'}</li>`
+                                    ).join('')}
+                                </ul>
+                            ` : '<p>无过程数据</p>'}
+                        ` : '<p>无过程数据</p>'}
+                    </div>
+
+                    <div class="section">
+                        <h3>🌳 Contribution Analysis (贡献分析)</h3>
+                        ${result.analysis_details.comprehensive_results.contribution_analysis ? `
+                            <p><strong>参考过程:</strong> ${result.analysis_details.comprehensive_results.contribution_analysis.system_structure?.reference_process || 'N/A'}</p>
+                            <p><strong>系统总过程数:</strong> ${result.analysis_details.comprehensive_results.contribution_analysis.system_structure?.total_processes || 0}</p>
+                            <p><strong>参考交换:</strong> ${result.analysis_details.comprehensive_results.contribution_analysis.system_structure?.reference_exchange || 'N/A'}</p>
+                        ` : '<p>无贡献分析数据</p>'}
+                    </div>
+
+                    <div class="section">
+                        <h3>📊 Grouping (分组分析)</h3>
+                        ${result.analysis_details.comprehensive_results.grouping ? `
+                            <p><strong>流程分类数:</strong> ${result.analysis_details.comprehensive_results.grouping.flow_grouping?.total_categories || 0}</p>
+                            <p><strong>过程分类数:</strong> ${result.analysis_details.comprehensive_results.grouping.process_grouping?.total_categories || 0}</p>
+                        ` : '<p>无分组数据</p>'}
+                    </div>
+
+                    <div class="section">
+                        <h3>🌍 Locations (位置分析)</h3>
+                        ${result.analysis_details.comprehensive_results.locations ? `
+                            <p><strong>总位置数:</strong> ${result.analysis_details.comprehensive_results.locations.total_locations || 0}</p>
+                            <p><strong>使用的位置数:</strong> ${result.analysis_details.comprehensive_results.locations.used_count || 0}</p>
+                            ${result.analysis_details.comprehensive_results.locations.used_locations && result.analysis_details.comprehensive_results.locations.used_locations.length > 0 ? `
+                                <p><strong>使用的位置:</strong> ${result.analysis_details.comprehensive_results.locations.used_locations.join(', ')}</p>
+                            ` : '<p>无位置信息</p>'}
+                        ` : '<p>无位置数据</p>'}
+                    </div>
+
+                    <div class="section">
+                        <h3>📈 Sankey Diagram (桑基图)</h3>
+                        ${result.analysis_details.comprehensive_results.sankey_diagram ? `
+                            <p><strong>节点数:</strong> ${result.analysis_details.comprehensive_results.sankey_diagram.nodes?.length || 0}</p>
+                            <p><strong>连接数:</strong> ${result.analysis_details.comprehensive_results.sankey_diagram.links?.length || 0}</p>
+                            <p><em>${result.analysis_details.comprehensive_results.sankey_diagram.note || ''}</em></p>
+                        ` : '<p>无桑基图数据</p>'}
+                    </div>
+
+                    <div class="section">
+                        <h3>✅ LCIA Checks (LCIA检查)</h3>
+                        ${result.analysis_details.comprehensive_results.lcia_checks ? `
+                            <h4>系统完整性:</h4>
+                            <ul>
+                                <li>有参考过程: ${result.analysis_details.comprehensive_results.lcia_checks.system_completeness?.has_reference_process ? '✅' : '❌'}</li>
+                                <li>有过程: ${result.analysis_details.comprehensive_results.lcia_checks.system_completeness?.has_processes ? '✅' : '❌'}</li>
+                                <li>有参考交换: ${result.analysis_details.comprehensive_results.lcia_checks.system_completeness?.has_reference_exchange ? '✅' : '❌'}</li>
+                            </ul>
+                            <h4>方法可用性:</h4>
+                            <ul>
+                                <li>影响方法数量: ${result.analysis_details.comprehensive_results.lcia_checks.method_availability?.impact_methods_count || 0}</li>
+                                <li>首选方法可用: ${result.analysis_details.comprehensive_results.lcia_checks.method_availability?.preferred_method_available ? '✅' : '❌'}</li>
+                                ${result.analysis_details.comprehensive_results.lcia_checks.method_availability?.preferred_method_name ? 
+                                    `<li>首选方法: ${result.analysis_details.comprehensive_results.lcia_checks.method_availability.preferred_method_name}</li>` : ''}
+                            </ul>
+                            <h4>数据质量:</h4>
+                            <ul>
+                                <li>总流程数: ${result.analysis_details.comprehensive_results.lcia_checks.data_quality?.total_flows || 0}</li>
+                                <li>总过程数: ${result.analysis_details.comprehensive_results.lcia_checks.data_quality?.total_processes || 0}</li>
+                                <li>总产品系统数: ${result.analysis_details.comprehensive_results.lcia_checks.data_quality?.total_product_systems || 0}</li>
+                            </ul>
+                        ` : '<p>无LCIA检查数据</p>'}
+                    </div>
+
+                    <div class="section">
+                        <h3>🎲 Uncertainty Analysis (不确定性分析)</h3>
+                        ${result.analysis_details.comprehensive_results.uncertainty_analysis ? `
+                            <p><strong>蒙特卡洛迭代数:</strong> ${result.analysis_details.comprehensive_results.uncertainty_analysis.monte_carlo_runs || 'N/A'}</p>
+                            <p><strong>统计结果数:</strong> ${Object.keys(result.analysis_details.comprehensive_results.uncertainty_analysis.statistics || {}).length}</p>
+                            ${result.analysis_details.comprehensive_results.generated_plots && result.analysis_details.comprehensive_results.generated_plots.length > 0 ? `
+                                <p><strong>生成的图表:</strong> ${result.analysis_details.comprehensive_results.generated_plots.length} 个</p>
+                                <ul>
+                                    ${result.analysis_details.comprehensive_results.generated_plots.map(plot => `<li>${plot}</li>`).join('')}
+                                </ul>
+                            ` : '<p>无生成的图表</p>'}
+                        ` : '<p>不确定性分析未启用或无数据</p>'}
+                    </div>
+                    ` : `
+                    <div class="section">
+                        <h3>原始分析数据</h3>
+                        <pre>${JSON.stringify(result.analysis_details, null, 2)}</pre>
+                    </div>
+                    `}
+                </body>
+                </html>
+            `);
+        } else {
+            alert('获取详细结果失败: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('获取LCA详细结果失败:', error);
+        alert('获取详细结果失败，请稍后重试');
+    });
+}
+
+function refreshLCAResults(fileId) {
+    showLCAResults(fileId);
+}
+
+function closeLCAAnalysisModal() {
+    document.getElementById('lcaAnalysisModal').style.display = 'none';
+}
+
+function closeLCAResultsModal() {
+    document.getElementById('lcaResultsModal').style.display = 'none';
+}
+
+function showReportFormatModal() {
+    const lang = '{{ get_lang() }}';
+
+    
+    const langLabel = lang === 'zh' ? '中文' : 'English';
+    const confirmMsg = lang === 'zh'
+        ? `即将生成${langLabel}PDF报告。\n\n请确保：\n1. 已填写项目报告信息\n2. 已完成LCA分析\n\n是否继续？`
+        : `About to generate ${langLabel} PDF report.\n\nPlease ensure:\n1. Report information is filled\n2. LCA analysis is completed\n\nContinue?`;
+
+    if (!confirm(confirmMsg)) {
+        return;
+    }
+
+    
+    const btn = event.target;
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = lang === 'zh' ? '⏳ 生成中...' : '⏳ Generating...';
+
+    
+    fetch('{{ url_for("generate_markdown_report", project_id=project.id) }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            language: lang  
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+
+        if (data.success) {
+            const message = lang === 'zh'
+                ? `✅ ${langLabel}PDF报告生成成功！\n\n文件名：${data.filename}\n\n报告将自动下载...`
+                : `✅ ${langLabel} PDF report generated successfully!\n\nFilename: ${data.filename}\n\nReport will download automatically...`;
+
+            alert(message);
+
+            
+            if (data.download_url) {
+                window.open(data.download_url, '_blank');
+            }
+        } else {
+            const errorMsg = lang === 'zh'
+                ? `❌ 报告生成失败：\n\n${data.error}\n\n请确保：\n1. 已填写项目报告信息（点击"编辑报告信息"）\n2. 已上传Excel文件并完成LCA分析`
+                : `❌ Report generation failed:\n\n${data.error}\n\nPlease ensure:\n1. Report information is filled (click "Edit Report Info")\n2. Excel file uploaded and LCA analysis completed`;
+            alert(errorMsg);
+        }
+    })
+    .catch(error => {
+        console.error('Report generation failed:', error);
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        alert((lang === 'zh' ? '❌ 生成报告失败：' : '❌ Report generation failed: ') + error.message);
+    });
+}
+
+function closeReportFormatModal() {
+    const modal = document.getElementById('reportFormatModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+function selectFormat(language) {
+    showReportFormatModal();
+}
+
+function showReportsList() {
+    const modal = document.getElementById('reportsListModal');
+    modal.style.display = 'block';
+
+    
+    fetch('{{ url_for("list_reports", project_id=project.id) }}')
+    .then(response => response.json())
+    .then(data => {
+        const content = document.getElementById('reportsListContent');
+
+        if (data.success) {
+            if (data.reports && data.reports.length > 0) {
+                let html = '<div class="reports-table"><table class="table">';
+                html += '<thead><tr><th>文件名</th><th>大小</th><th>生成时间</th><th>操作</th></tr></thead>';
+                html += '<tbody>';
+
+                data.reports.forEach(report => {
+                    const sizeKB = (report.size / 1024).toFixed(2);
+                    html += `
+                        <tr>
+                            <td>${report.filename}</td>
+                            <td>${sizeKB} KB</td>
+                            <td>${report.created_time}</td>
+                            <td>
+                                <a href="${report.download_url}" class="btn btn-sm btn-primary">
+                                    <span>📥</span> 下载
+                                </a>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                html += '</tbody></table></div>';
+                content.innerHTML = html;
+            } else {
+                content.innerHTML = `
+                    <div class="empty-state">
+                        <p>📂 还没有生成任何报告</p>
+                        <p>点击"生成LCA报告"按钮开始生成您的第一份报告</p>
+                    </div>
+                `;
+            }
+        } else {
+            content.innerHTML = `
+                <div class="error-state">
+                    <p>❌ 加载报告列表失败</p>
+                    <p>${data.error}</p>
+                </div>
+            `;
+        }
+    })
+    .catch(error => {
+        console.error('加载报告列表失败:', error);
+        document.getElementById('reportsListContent').innerHTML = `
+            <div class="error-state">
+                <p>❌ 加载报告列表失败</p>
+                <p>请检查网络连接</p>
+            </div>
+        `;
+    });
+}
+
+function closeReportsListModal() {
+    document.getElementById('reportsListModal').style.display = 'none';
+}
+
+window.onclick = function(event) {
+    const formatModal = document.getElementById('reportFormatModal');
+    const reportsModal = document.getElementById('reportsListModal');
+
+    if (event.target == formatModal) {
+        closeReportFormatModal();
+    }
+    if (event.target == reportsModal) {
+        closeReportsListModal();
+    }
+}
+
+const formatOptions = document.querySelectorAll('.format-option');
+formatOptions.forEach(option => {
+    option.addEventListener('mouseenter', function() {
+        this.style.borderColor = '#2196F3';
+        this.style.boxShadow = '0 2px 8px rgba(33, 150, 243, 0.2)';
+    });
+    option.addEventListener('mouseleave', function() {
+        this.style.borderColor = '#e0e0e0';
+        this.style.boxShadow = 'none';
+    });
+});
+
+const deleteForm = document.getElementById('deleteForm');
+if (deleteForm) {
+    deleteForm.addEventListener('submit', function(e) {
+        console.log('📤 删除表单即将提交');
+        console.log('📋 表单action:', this.action);
+        console.log('📋 表单method:', this.method);
+        console.log('📋 表单数据:', new FormData(this));
+
+        
+        return true;
+    });
+    console.log('✅ 删除表单submit监听器已注册');
+} else {
+    console.warn('⚠️ 找不到deleteForm元素，可能页面尚未完全加载');
+}
+</script>
+
+<script src="{{ url_for('static', filename='js/lca_analysis.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/lca_progress_enhanced.js') }}"></script>
+{% endblock %}

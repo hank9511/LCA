@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project.name }} - 项目详情{% endblock %}
+
+{% block content %}
+<div class="project-detail-container">
+    <div class="project-header">
+        <div class="project-title">
+            <h1>{{ project.name }}</h1>
+            <span class="project-status status-{{ project.status }}">
+                {{ {'active': '进行中', 'completed': '已完成', 'archived': '已归档'}[project.status] }}
+            </span>
+        </div>
+        <div class="project-actions">
+            <a href="{{ url_for('edit_project', project_id=project.id) }}" class="btn btn-outline">编辑项目</a>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-outline">返回仪表板</a>
+        </div>
+    </div>
+
+    <div class="project-info">
+        <div class="info-card">
+            <h3>项目信息</h3>
+            <div class="info-item">
+                <span class="info-label">创建时间:</span>
+                <span class="info-value">{{ project.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">最后更新:</span>
+                <span class="info-value">{{ project.updated_at.strftime('%Y-%m-%d %H:%M') }}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">项目描述:</span>
+                <span class="info-value">{{ project.description or '暂无描述' }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="excel-upload-section">
+        <h3>上传LCI Excel文件</h3>
+        <form method="POST" action="{{ url_for('upload_excel', project_id=project.id) }}" enctype="multipart/form-data" class="inline-upload-form" id="uploadForm">
+            <div class="upload-form-content">
+                <div class="file-input-group">
+                    <input type="file" id="excel_file" name="excel_file" accept=".xlsx,.xls" required>
+                    <label for="excel_file" class="file-label">选择Excel文件</label>
+                </div>
+                <button type="submit" class="btn btn-primary" id="uploadBtn">
+                    <span class="btn-text">上传并分析</span>
+                    <span class="btn-loading" style="display: none;">上传中...</span>
+                </button>
+            </div>
+            <small class="form-help">支持 .xlsx 和 .xls 格式，文件大小不超过10MB</small>
+
+            
+            <div id="uploadStatus" class="upload-status" style="display: none;">
+                <div class="status-item">
+                    <span class="status-icon">📤</span>
+                    <span class="status-text">文件上传中...</span>
+                </div>
+                <div class="status-item" id="analysisStatus" style="display: none;">
+                    <span class="status-icon">🤖</span>
+                    <span class="status-text">AI分析中...</span>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="excel-files-section">
+        <h3>已上传的Excel文件</h3>
+        {% if project.excel_files %}
+            <div class="files-grid">
+                {% for file in project.excel_files %}
+                <div class="file-card" data-file-id="{{ file.id }}">
+                    <div class="file-header">
+                        <div class="file-icon">📊</div>
+                        <div class="file-info">
+                            <h4>{{ file.original_filename }}</h4>
+                            <span class="file-size">{{ (file.file_size / 1024) | round(1) }} KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-meta">
+                        <span class="upload-time">上传时间: {{ file.upload_time.strftime('%Y-%m-%d %H:%M') }}</span>
+                        {% if file.analysis_time %}
+                            <span class="analysis-time">分析时间: {{ file.analysis_time.strftime('%Y-%m-%d %H:%M') }}</span>
+                        {% endif %}
+                    </div>
+
+                    {% if file.llm_analysis %}
+                    <div class="llm-analysis">
+                        <h5>AI分析结果:</h5>
+                        <div class="analysis-content" data-full-analysis="{{ file.llm_analysis }}">
+                            {{ file.llm_analysis[:150] }}{% if file.llm_analysis|length > 150 %}...{% endif %}
+                        </div>
+                        <button class="btn btn-outline btn-sm" onclick="showFullAnalysis({{ file.id }})">查看完整分析</button>
+                    </div>
+                    {% endif %}
+
+                    <div class="file-actions">
+                        <a href="{{ url_for('download_excel', file_id=file.id) }}" class="btn btn-secondary btn-sm">下载</a>
+                        {% if file.llm_analysis %}
+                            <button class="btn btn-primary btn-sm" onclick="showFullAnalysis({{ file.id }})">查看分析</button>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <p>暂无Excel文件</p>
+                <p>请上传LCI数据文件进行分析</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div id="analysisModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>AI分析结果</h2>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+
+document.querySelector('.file-label').addEventListener('click', function() {
+    document.getElementById('excel_file').click();
+});
+
+document.getElementById('excel_file').addEventListener('change', function() {
+    const fileName = this.files[0] ? this.files[0].name : '选择Excel文件';
+    document.querySelector('.file-label').textContent = fileName;
+});
+
+document.getElementById('uploadForm').addEventListener('submit', function(e) {
+    const uploadBtn = document.getElementById('uploadBtn');
+    const btnText = uploadBtn.querySelector('.btn-text');
+    const btnLoading = uploadBtn.querySelector('.btn-loading');
+    const uploadStatus = document.getElementById('uploadStatus');
+    const analysisStatus = document.getElementById('analysisStatus');
+
+    
+    btnText.style.display = 'none';
+    btnLoading.style.display = 'inline';
+    uploadStatus.style.display = 'block';
+    uploadBtn.disabled = true;
+
+    
+    setTimeout(() => {
+        analysisStatus.style.display = 'block';
+    }, 1000);
+});
+
+function showFullAnalysis(fileId) {
+    const modal = document.getElementById('analysisModal');
+    const modalContent = document.getElementById('modalContent');
+
+    
+    const fileCard = document.querySelector(`[data-file-id="${fileId}"]`);
+    if (fileCard) {
+        const analysisContent = fileCard.querySelector('.analysis-content');
+        const fileName = fileCard.querySelector('h4').textContent;
+
+        if (analysisContent) {
+            
+            const fullAnalysis = analysisContent.getAttribute('data-full-analysis') || analysisContent.textContent;
+
+            modalContent.innerHTML = `
+                <h3>${fileName}</h3>
+                <div class="analysis-full-content">
+                    <pre style="white-space: pre-wrap; font-family: inherit; line-height: 1.6;">${fullAnalysis}</pre>
+                </div>
+            `;
+        } else {
+            modalContent.innerHTML = `
+                <h3>${fileName}</h3>
+                <p>暂无分析结果</p>
+            `;
+        }
+    } else {
+        modalContent.innerHTML = `
+            <h3>文件ID: ${fileId}</h3>
+            <p>无法找到文件信息</p>
+        `;
+    }
+
+    modal.style.display = 'block';
+}
+
+document.querySelector('.close').onclick = function() {
+    document.getElementById('analysisModal').style.display = 'none';
+}
+
+window.onclick = function(event) {
+    if (event.target == document.getElementById('analysisModal')) {
+        document.getElementById('analysisModal').style.display = 'none';
+    }
+}
+</script>
+{% endblock %}

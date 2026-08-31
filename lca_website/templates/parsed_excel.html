@@ -1,0 +1,376 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Excel解析结果' if get_lang() == 'zh' else 'Excel Parsing Results' }} - {{ project.name }}{% endblock %}
+
+{% block content %}
+<div class="parsed-excel-container">
+    <div class="page-header">
+        <div class="header-left">
+            <a href="{{ url_for('project_detail', project_id=project.id) }}" class="btn btn-outline">
+                ← {{ t('project_detail', 'back_to_project') }}
+            </a>
+            <h1>📊 {{ 'Excel解析结果' if get_lang() == 'zh' else 'Excel Parsing Results' }}</h1>
+            <p class="file-name">{{ t('project_detail', 'filename') if get_lang() == 'en' else '文件' }}：{{ excel_file.original_filename }}</p>
+        </div>
+    </div>
+
+    <div class="content-sections">
+
+        <div class="section">
+            <h2>🏭 过程与生命周期环节匹配</h2>
+            <p class="section-description">
+                系统已自动为每个过程匹配了生命周期环节。您可以点击下拉框手动修改。
+            </p>
+
+            {% if stage_mappings %}
+            <div class="mappings-table-wrapper">
+                <table class="mappings-table">
+                    <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>过程名称</th>
+                            <th>生命周期环节</th>
+                            <th>匹配方式</th>
+                            <th>置信度</th>
+                            <th>匹配理由</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for mapping in stage_mappings %}
+                        <tr data-process="{{ mapping.process_name }}">
+                            <td>{{ loop.index }}</td>
+                            <td class="process-name">{{ mapping.process_name }}</td>
+                            <td class="stage-cell">
+                                <select class="stage-select" data-process="{{ mapping.process_name }}" data-original="{{ mapping.lifecycle_stage }}">
+                                    {% for key, info in available_stages.items() %}
+                                    <option value="{{ key }}" {% if key == mapping.lifecycle_stage %}selected{% endif %}>
+                                        {{ info.name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td class="match-type">
+                                {% if mapping.is_auto_matched %}
+                                <span class="badge badge-auto">自动匹配</span>
+                                {% else %}
+                                <span class="badge badge-manual">人工修改</span>
+                                {% endif %}
+                            </td>
+                            <td class="confidence">
+                                {% if mapping.confidence_score %}
+                                <div class="confidence-bar">
+                                    <div class="confidence-fill" style="width: {{ (mapping.confidence_score * 100)|int }}%"></div>
+                                    <span class="confidence-text">{{ "%.0f"|format(mapping.confidence_score * 100) }}%</span>
+                                </div>
+                                {% else %}
+                                <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td class="reasoning">
+                                {{ mapping.llm_reasoning or '-' }}
+                            </td>
+                            <td class="actions">
+                                <button class="btn btn-sm btn-save" 
+                                        data-process="{{ mapping.process_name }}"
+                                        style="display: none;">
+                                    💾 保存
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="no-data">
+                <p>暂无过程数据</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="section actions-section">
+            <div class="btn-group">
+                <a href="{{ url_for('project_detail', project_id=project.id) }}" class="btn btn-secondary">
+                    返回项目
+                </a>
+                <button class="btn btn-primary" onclick="proceedToLCA()">
+                    ✓ 确认并进行LCA分析
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.parsed-excel-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.header-left h1 {
+    margin: 1rem 0 0.5rem 0;
+    color: #2c3e50;
+}
+
+.file-name {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+.content-sections {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.section {
+    padding: 2rem;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+.section:last-child {
+    border-bottom: none;
+}
+
+.section h2 {
+    color: #2c3e50;
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+}
+
+.section-description {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+}
+
+.mappings-table-wrapper {
+    overflow-x: auto;
+}
+
+.mappings-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.mappings-table th,
+.mappings-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+.mappings-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #2c3e50;
+    position: sticky;
+    top: 0;
+}
+
+.mappings-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.process-name {
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.stage-select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.stage-select:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.stage-select.changed {
+    border-color: #f39c12;
+    background-color: #fef9e7;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.badge-auto {
+    background-color: #d5f4e6;
+    color: #27ae60;
+}
+
+.badge-manual {
+    background-color: #fdeaa8;
+    color: #f39c12;
+}
+
+.confidence-bar {
+    position: relative;
+    width: 100px;
+    height: 24px;
+    background-color: #ecf0f1;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.confidence-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: linear-gradient(90deg, #e74c3c 0%, #f39c12 50%, #27ae60 100%);
+    transition: width 0.3s;
+}
+
+.confidence-text {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.reasoning {
+    max-width: 300px;
+    font-size: 0.85rem;
+    color: #7f8c8d;
+}
+
+.btn-save {
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+
+.btn-save:hover {
+    background-color: #229954;
+}
+
+.no-data {
+    text-align: center;
+    padding: 3rem;
+    color: #7f8c8d;
+}
+
+.actions-section {
+    text-align: center;
+}
+
+.btn-group {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.text-muted {
+    color: #95a5a6;
+}
+</style>
+
+<script>
+
+document.querySelectorAll('.stage-select').forEach(select => {
+    const originalValue = select.dataset.original;
+
+    select.addEventListener('change', function() {
+        const processName = this.dataset.process;
+        const newValue = this.value;
+
+        
+        if (newValue !== originalValue) {
+            this.classList.add('changed');
+            
+            const saveBtn = document.querySelector(`button.btn-save[data-process="${processName}"]`);
+            if (saveBtn) {
+                saveBtn.style.display = 'inline-block';
+            }
+        } else {
+            this.classList.remove('changed');
+            
+            const saveBtn = document.querySelector(`button.btn-save[data-process="${processName}"]`);
+            if (saveBtn) {
+                saveBtn.style.display = 'none';
+            }
+        }
+    });
+});
+
+document.querySelectorAll('.btn-save').forEach(btn => {
+    btn.addEventListener('click', async function() {
+        const processName = this.dataset.process;
+        const select = document.querySelector(`.stage-select[data-process="${processName}"]`);
+        const newStage = select.value;
+
+        try {
+            const response = await fetch(`/excel_file/{{ excel_file.id }}/update_lifecycle_stage`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    process_name: processName,
+                    lifecycle_stage: newStage
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                
+                select.dataset.original = newStage;
+                select.classList.remove('changed');
+                this.style.display = 'none';
+
+                
+                const row = this.closest('tr');
+                const matchTypeCell = row.querySelector('.match-type');
+                matchTypeCell.innerHTML = '<span class="badge badge-manual">人工修改</span>';
+
+                alert('✓ 保存成功');
+            } else {
+                alert('保存失败: ' + result.error);
+            }
+        } catch (error) {
+            alert('保存失败: ' + error.message);
+        }
+    });
+});
+
+function proceedToLCA() {
+    
+    const changedSelects = document.querySelectorAll('.stage-select.changed');
+    if (changedSelects.length > 0) {
+        if (!confirm(`还有 ${changedSelects.length} 个未保存的更改。是否继续？`)) {
+            return;
+        }
+    }
+
+    
+    window.location.href = "{{ url_for('project_detail', project_id=project.id) }}";
+}
+</script>
+{% endblock %}
+

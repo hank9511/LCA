@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t('index', 'page_title') }}{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="hero-content">
+        <h1 class="hero-title">{{ t('index', 'hero_title') }}</h1>
+        {% if t('index', 'hero_subtitle') %}
+        <p class="hero-subtitle">
+            {{ t('index', 'hero_subtitle') }}
+        </p>
+        {% endif %}
+        <div class="hero-buttons">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('dashboard') }}" class="btn btn-primary">{{ t('index', 'btn_enter_dashboard') }}</a>
+            {% else %}
+                <a href="{{ url_for('register') }}" class="btn btn-primary">{{ t('index', 'btn_register_now') }}</a>
+                <a href="{{ url_for('login') }}" class="btn btn-secondary">{{ t('index', 'btn_login_account') }}</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="features-section">
+    <div class="container">
+        <h2 class="section-title">{{ t('index', 'services_title') }}</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>{{ t('index', 'service_lca_title') }}</h3>
+                <p>{{ t('index', 'service_lca_desc') }}</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🌱</div>
+                <h3>{{ t('index', 'service_carbon_title') }}</h3>
+                <p>{{ t('index', 'service_carbon_desc') }}</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📈</div>
+                <h3>{{ t('index', 'service_data_title') }}</h3>
+                <p>{{ t('index', 'service_data_desc') }}</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📋</div>
+                <h3>{{ t('index', 'service_report_title') }}</h3>
+                <p>{{ t('index', 'service_report_desc') }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

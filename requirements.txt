@@ -1,0 +1,8 @@
+olca-ipc
+olca-schema
+openai
+python-levenshtein
+pandas
+openpyxl
+matplotlib
+numpy

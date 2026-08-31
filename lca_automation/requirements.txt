@@ -1,0 +1,22 @@
+# LCA自动化系统依赖包
+
+# OpenLCA核心库
+olca-ipc>=2.0.0
+olca-schema>=2.0.0
+
+# 数据处理
+pandas>=1.5.0
+openpyxl>=3.0.0
+numpy>=1.20.0
+
+# 文本处理
+python-Levenshtein>=0.12.0
+
+# LLM集成
+openai>=1.0.0
+
+# 图表生成
+matplotlib>=3.5.0
+
+# 环境变量管理（可选）
+python-dotenv>=0.19.0

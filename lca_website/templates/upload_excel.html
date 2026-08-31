@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t('upload_excel', 'page_title') }} - {{ project.name }}{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-card">
+        <h2 class="form-title">{{ t('upload_excel', 'title') }}</h2>
+        <div class="project-info">
+            <h3>{{ t('project_detail', 'project_name') }}: {{ project.name }}</h3>
+            <p>{{ project.description or (t('project_detail', 'no_description') if get_lang() == 'en' else '暂无描述') }}</p>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" class="upload-form">
+            <div class="form-group">
+                <label for="excel_file">{{ t('upload_excel', 'select_file') }}</label>
+                <input type="file" id="excel_file" name="excel_file" accept=".xlsx,.xls" required>
+                <small class="form-help">{{ t('upload_excel', 'requirement_1') }}</small>
+            </div>
+
+            <div class="form-actions">
+                <a href="{{ url_for('project_detail', project_id=project.id) }}" class="btn btn-secondary">{{ t('project_detail', 'back_to_project') }}</a>
+                <button type="submit" class="btn btn-primary">{{ t('upload_excel', 'btn_upload') }}</button>
+            </div>
+        </form>
+
+        <div class="upload-tips">
+            <h4>{{ t('upload_excel', 'file_requirements') }}:</h4>
+            <ul>
+                <li>{{ t('upload_excel', 'requirement_1') }}</li>
+                <li>{{ t('upload_excel', 'requirement_2') }}</li>
+                <li>{{ t('upload_excel', 'requirement_3') }}</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,1764 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t('lca_visualization', 'page_title') }} - {{ project.name }}{% endblock %}
+
+{% block content %}
+<div class="lca-visualization-container">
+    <div class="page-header">
+        <div class="header-left">
+            <a href="{{ url_for('project_detail', project_id=project.id) }}" class="btn btn-outline">
+                ← {{ t('project_detail', 'back_to_project') }}
+            </a>
+            <h1>{{ t('lca_visualization', 'title') }}</h1>
+            <p class="project-info">{{ t('project_detail', 'project_name') }}：{{ project.name }} | {{ '分析ID' if get_lang() == 'zh' else 'Analysis ID' }}：{{ result.id }}</p>
+        </div>
+        <div class="header-right">
+            <span class="status-badge status-{{ result.analysis_status }}">
+                {% if result.analysis_status == 'completed' %}{{ '已完成' if get_lang() == 'zh' else 'Completed' }}{% elif result.analysis_status == 'failed' %}{{ '失败' if get_lang() == 'zh' else 'Failed' }}{% elif result.analysis_status == 'running' %}{{ '运行中' if get_lang() == 'zh' else 'Running' }}{% else %}{{ '待处理' if get_lang() == 'zh' else 'Pending' }}{% endif %}
+            </span>
+            {% if result.analysis_status == 'completed' %}
+            <button class="btn btn-sm btn-primary" onclick="generateReportFromVisualization()" style="margin-left: 1rem;">
+                📄 {{ '基于此结果生成报告' if get_lang() == 'zh' else 'Generate Report' }}
+            </button>
+            {% endif %}
+            <button class="btn btn-sm btn-outline" onclick="showRawDebugData()" style="margin-left: 1rem;">
+                🔍 {{ '调试数据' if get_lang() == 'zh' else 'Debug Data' }}
+            </button>
+        </div>
+    </div>
+
+    {% if result.analysis_status == 'completed' %}
+
+    <div class="global-impact-selector-container" id="globalImpactSelectorContainer" style="display: none;">
+        <div class="global-selector-card">
+            <div class="selector-icon">🎯</div>
+            <div class="selector-content">
+                <label for="globalImpactCategorySelect" class="selector-label">
+                    {{ '选择影响类别：' if get_lang() == 'zh' else 'Select Impact Category:' }}
+                </label>
+                <select id="globalImpactCategorySelect" class="global-category-select">
+                    <option value="">{{ '加载中...' if get_lang() == 'zh' else 'Loading...' }}</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="overview-cards">
+        <div class="stat-card">
+            <div class="stat-icon">🔄</div>
+            <div class="stat-info">
+                <div class="stat-value">{{ result.flows_count or 0 }}</div>
+                <div class="stat-label">{{ '物质流数量' if get_lang() == 'zh' else 'Number of Flows' }}</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">⚙️</div>
+            <div class="stat-info">
+                <div class="stat-value">{{ result.processes_count or 0 }}</div>
+                <div class="stat-label">{{ '过程数量' if get_lang() == 'zh' else 'Number of Processes' }}</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🏭</div>
+            <div class="stat-info">
+                <div class="stat-value">{{ result.product_systems_count or 0 }}</div>
+                <div class="stat-label">{{ '产品系统数量' if get_lang() == 'zh' else 'Number of Product Systems' }}</div>
+            </div>
+        </div>
+        <div class="stat-card timing-breakdown-card">
+            <div class="stat-icon">⏱️</div>
+            <div class="stat-info">
+                {% if timing_display %}
+                <div class="timing-rows">
+                    <div class="timing-row">
+                        <span class="timing-label">{{ '模型构建' if get_lang() == 'zh' else 'Model Build' }}</span>
+                        <span class="timing-value">{{ timing_display.model_build }}</span>
+                    </div>
+                    <div class="timing-row">
+                        <span class="timing-label">{{ 'LCA计算' if get_lang() == 'zh' else 'LCA Calc' }}</span>
+                        <span class="timing-value">{{ timing_display.lca_calc }}</span>
+                    </div>
+                    <div class="timing-row timing-total">
+                        <span class="timing-label">{{ '总计' if get_lang() == 'zh' else 'Total' }}</span>
+                        <span class="timing-value">{{ timing_display.total }}</span>
+                    </div>
+                </div>
+                {% else %}
+                <div class="stat-value">{{ '%.2f'|format(result.duration_seconds or 0) }}s</div>
+                <div class="stat-label">{{ '分析用时' if get_lang() == 'zh' else 'Analysis Duration' }}</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="charts-container">
+
+        <div class="chart-card lifecycle-pie-card">
+            <div class="chart-header">
+                <h2>⭕ {{ '生命周期环节贡献分析' if get_lang() == 'zh' else 'Lifecycle Stage Contribution Analysis' }}</h2>
+                <p class="chart-desc">{{ '各环节对总体影响的贡献占比' if get_lang() == 'zh' else 'Contribution ratio of each stage to overall impact' }}</p>
+            </div>
+            <div class="chart-body">
+                <canvas id="lifecyclePieChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card process-chart-card">
+            <div class="chart-header">
+                <h2>🔗 {{ '主要过程贡献排名' if get_lang() == 'zh' else 'Top Process Contributions' }}</h2>
+                <p class="chart-desc">{{ '贡献最大的前5个过程' if get_lang() == 'zh' else 'Top 5 processes with largest contributions' }}</p>
+            </div>
+            <div class="chart-body">
+                <canvas id="processHorizontalChart"></canvas>
+            </div>
+        </div>
+
+        
+        <div class="chart-card full-width" id="uncertaintyAnalysisCard" style="display: none;">
+            <div class="chart-header">
+                <h2>📊 {{ '不确定性分析结果' if get_lang() == 'zh' else 'Uncertainty Analysis Results' }}</h2>
+                <p class="chart-desc">{{ '基于Monte Carlo模拟的不确定性分析（迭代次数：' if get_lang() == 'zh' else 'Uncertainty analysis based on Monte Carlo simulation (Iterations: ' }}<span id="uncertaintyIterations">N/A</span>{{ '）' if get_lang() == 'zh' else ')' }}</p>
+            </div>
+
+            
+            <div class="uncertainty-stats-banner" id="uncertaintyStatsBanner">
+
+            </div>
+
+            
+            <div class="chart-body" style="height: 450px;">
+                <canvas id="uncertaintyChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+
+    <div class="alert-box alert-warning">
+        <h3>⚠️ {{ '分析尚未完成' if get_lang() == 'zh' else 'Analysis Not Completed' }}</h3>
+        <p>{{ '当前分析状态' if get_lang() == 'zh' else 'Current analysis status' }}：{{ result.analysis_status }}</p>
+        {% if result.error_message %}
+        <p class="error-text">{{ '错误信息' if get_lang() == 'zh' else 'Error message' }}：{{ result.error_message }}</p>
+        {% endif %}
+        <a href="{{ url_for('project_detail', project_id=project.id) }}" class="btn btn-primary">{{ '返回项目' if get_lang() == 'zh' else 'Back to Project' }}</a>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.lca-visualization-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #ecf0f1;
+}
+
+.header-left h1 {
+    margin: 0.5rem 0;
+    color: #2c3e50;
+}
+
+.project-info {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.status-completed {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-failed {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.status-running {
+    background: #fff3cd;
+    color: #856404;
+}
+
+/* 全局影响类别选择器 */
+.global-impact-selector-container {
+    margin-bottom: 2rem;
+}
+
+.global-selector-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    color: white;
+}
+
+.selector-icon {
+    font-size: 2.5rem;
+    flex-shrink: 0;
+}
+
+.selector-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.selector-label {
+    font-size: 1rem;
+    font-weight: 500;
+    color: white;
+    opacity: 0.95;
+}
+
+.global-category-select {
+    width: 100%;
+    max-width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #2c3e50;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 500;
+}
+
+.global-category-select:hover {
+    background: white;
+    border-color: rgba(255, 255, 255, 0.6);
+    transform: translateY(-1px);
+}
+
+.global-category-select:focus {
+    outline: none;
+    background: white;
+    border-color: white;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+}
+
+/* 概览卡片 */
+.overview-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: transform 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.stat-label {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+/* 耗时细分卡片 */
+.timing-breakdown-card .stat-info {
+    flex: 1;
+}
+
+.timing-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.timing-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    padding: 0.15rem 0;
+    border-bottom: 1px dashed #ecf0f1;
+}
+
+.timing-row:last-child {
+    border-bottom: none;
+}
+
+.timing-label {
+    color: #7f8c8d;
+    white-space: nowrap;
+}
+
+.timing-value {
+    font-weight: 600;
+    color: #2c3e50;
+    font-family: 'Courier New', monospace;
+    margin-left: 0.5rem;
+}
+
+.timing-total {
+    margin-top: 0.2rem;
+    padding-top: 0.3rem;
+    border-top: 2px solid #bdc3c7 !important;
+    border-bottom: none !important;
+}
+
+.timing-total .timing-label {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.timing-total .timing-value {
+    color: #e74c3c;
+    font-size: 0.95rem;
+}
+
+/* 图表容器 */
+.charts-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.chart-card {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.chart-card.full-width {
+    grid-column: 1 / -1;
+}
+
+/* 生命周期饼图和过程图表并排显示 */
+.chart-card.lifecycle-pie-card,
+.chart-card.process-chart-card {
+    grid-column: span 1;
+}
+
+.chart-header {
+    margin-bottom: 1.5rem;
+}
+
+.chart-card h2 {
+    color: #2c3e50;
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+}
+
+.chart-header-with-selector {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    gap: 2rem;
+}
+
+.chart-title-section {
+    flex: 1;
+}
+
+.impact-category-selector {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    min-width: 300px;
+}
+
+.impact-category-selector label {
+    font-size: 0.9rem;
+    color: #5a6c7d;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.category-select {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    background: white;
+    color: #2c3e50;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.category-select:hover {
+    border-color: #667eea;
+}
+
+.category-select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.chart-desc {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+.chart-impact-category {
+    color: #5a6c7d;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0;
+    padding: 0.5rem;
+    background: #f8f9fa;
+    border-left: 3px solid #667eea;
+    border-radius: 4px;
+}
+
+.chart-impact-category strong {
+    color: #2c3e50;
+}
+
+.chart-body {
+    position: relative;
+    height: 400px;
+}
+
+.chart-card.full-width .chart-body {
+    height: 500px;
+}
+
+/* 生命周期饼图和过程图表高度 - 统一高度以保持视觉平衡 */
+.chart-card.lifecycle-pie-card .chart-body,
+.chart-card.process-chart-card .chart-body {
+    height: 450px;
+}
+
+/* 不确定性分析样式 */
+.uncertainty-stats-banner {
+    background: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    margin: 1rem 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.uncertainty-stats-banner .stats-line {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    align-items: center;
+    font-size: 0.95rem;
+}
+
+.uncertainty-stats-banner .stat-item {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
+}
+
+.uncertainty-stats-banner .stat-label {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.uncertainty-stats-banner .stat-value {
+    color: #0066cc;
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+}
+
+/* 提示框 */
+.alert-box {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.alert-warning {
+    border-left: 4px solid #ffc107;
+}
+
+.error-text {
+    color: #dc3545;
+    margin: 1rem 0;
+}
+
+/* 响应式 */
+@media (max-width: 1024px) {
+    .charts-container {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-card.lifecycle-pie-card,
+    .chart-card.process-chart-card {
+        grid-column: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .overview-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .global-selector-card {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .selector-icon {
+        font-size: 2rem;
+    }
+
+    .global-category-select {
+        max-width: 100%;
+    }
+}
+</style>
+
+<script>
+
+const currentLang = '{{ get_lang() }}';
+
+const chartTranslations = {
+    zh: {
+        impact_value: '影响值',
+        lifecycle_stage: '生命周期环节',
+        contribution_ratio: '贡献占比',
+        contribution_percent: '贡献百分比',
+        value: '数值',
+        percentage: '占比',
+        includes: '包含',
+        climate_categories: '个Climate Change类别',
+        no_climate_result: '未找到Climate Change影响评估结果',
+        loading: '正在加载数据...',
+        no_data: '该类别暂无过程贡献数据',
+        network_error: '网络请求失败',
+        no_impact_data: '暂无影响类别数据',
+        processes: '个过程',
+        view_details: '查看详情',
+        hide_details: '收起详情',
+        
+        '总体环节': '总体环节',
+        '原材料获取': '原材料获取',
+        '生产制造': '生产制造',
+        '运输配送': '运输配送',
+        '使用阶段': '使用阶段',
+        '废弃处理': '废弃处理',
+        '回收再利用': '回收再利用',
+        '未分类': '未分类'
+    },
+    en: {
+        impact_value: 'Impact Value',
+        lifecycle_stage: 'Lifecycle Stage',
+        contribution_ratio: 'Contribution Ratio',
+        contribution_percent: 'Contribution Percentage',
+        value: 'Value',
+        percentage: 'Percentage',
+        includes: 'Includes',
+        climate_categories: 'Climate Change categories',
+        no_climate_result: 'No Climate Change impact assessment results found',
+        loading: 'Loading data...',
+        no_data: 'No process contribution data for this category',
+        network_error: 'Network request failed',
+        no_impact_data: 'No impact category data available',
+        processes: 'processes',
+        view_details: 'View Details',
+        hide_details: 'Hide Details',
+        
+        '总体环节': 'Overall Stage',
+        '原材料获取': 'Raw Material Acquisition',
+        '生产制造': 'Production & Manufacturing',
+        '运输配送': 'Transportation & Distribution',
+        '使用阶段': 'Use Phase',
+        '废弃处理': 'Waste Treatment',
+        '回收再利用': 'Recycling & Reuse',
+        '未分类': 'Uncategorized'
+    }
+};
+
+function chartT(key) {
+    return chartTranslations[currentLang][key] || chartTranslations['zh'][key] || key;
+}
+
+function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function translateCategoryName(name) {
+    if (currentLang === 'zh') {
+        return name; 
+    }
+
+    
+    const translations = {
+        '化石': 'Fossil',
+        '生物源': 'Biogenic',
+        '土地利用': 'Land Use',
+        '无长期': 'no LT',
+        '包括': 'including',
+        '短寿命': 'SLCFs',
+        '气候变化': 'Climate Change',
+        '全球变暖潜势': 'GWP',
+        '全球温度变化潜势': 'GTP',
+        '生物源，': 'Biogenic, ',
+        '+短寿命': '+SLCFs'
+    };
+
+    let translatedName = name;
+
+    
+    for (const [zh, en] of Object.entries(translations)) {
+        const escapedZh = escapeRegExp(zh);
+        translatedName = translatedName.replace(new RegExp(escapedZh, 'g'), en);
+    }
+
+    return translatedName;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const resultId = {{ result.id }};
+    currentResultId = resultId;  
+
+    console.log('开始加载图表数据，结果ID:', resultId);
+
+    
+    fetch(`/lca_result/${resultId}/chart_data`)
+        .then(response => response.json())
+        .then(data => {
+            console.log('接收到图表数据:', data);
+
+            
+            if (data.debug_info) {
+                console.log('=== 调试信息 ===');
+                console.log('top_level_keys:', data.debug_info.top_level_keys);
+                console.log('has_impact_analysis:', data.debug_info.has_impact_analysis);
+                console.log('impact_results_count:', data.debug_info.impact_results_count);
+                console.log('has_inventory:', data.debug_info.has_inventory);
+                console.log('flow_count:', data.debug_info.flow_count);
+                console.log('has_process_results:', data.debug_info.has_process_results);
+                console.log('process_count:', data.debug_info.process_count);
+                console.log('=================');
+            }
+
+            
+            console.log('影响类别数量:', data.impact_categories?.length || 0);
+            console.log('生命周期环节数量:', data.lifecycle_stages?.length || 0);
+            console.log('过程贡献数量:', data.process_contributions?.length || 0);
+
+            if (data.success) {
+                
+                currentChartData = data;
+
+                
+                initializeGlobalImpactSelector(data);
+
+                
+                if (data.climate_categories && data.climate_categories.length > 0) {
+                    const firstCategory = data.climate_categories[0].category;
+                    loadAllChartsForCategory(firstCategory);
+                }
+
+                
+                if (!data.impact_categories?.length && 
+                    !data.lifecycle_stages?.length && 
+                    !data.process_contributions?.length) {
+                    showDebugInfo(data);
+                }
+            } else {
+                console.error('获取图表数据失败:', data.error);
+                if (data.debug_info?.exception) {
+                    console.error('异常详情:', data.debug_info.exception);
+                }
+                showError('无法加载图表数据: ' + (data.error || '未知错误'));
+            }
+        })
+        .catch(error => {
+            console.error('请求失败:', error);
+            showError('网络请求失败: ' + error.message);
+        });
+});
+
+function formatImpactValue(value, minPrecision = 3) {
+    if (value === 0 || isNaN(value) || !isFinite(value)) {
+        return '0.000';
+    }
+
+    const absValue = Math.abs(value);
+
+    
+    if (absValue < 0.001) {
+        return value.toExponential(minPrecision - 1);
+    }
+
+    
+    if (absValue < 1000) {
+        
+        if (absValue >= 1) {
+            return value.toFixed(3);
+        } else if (absValue >= 0.1) {
+            return value.toFixed(4);
+        } else if (absValue >= 0.01) {
+            return value.toFixed(5);
+        } else {
+            return value.toFixed(6);
+        }
+    }
+
+    
+    if (absValue >= 1000000) {
+        return value.toExponential(minPrecision - 1);
+    } else {
+        return value.toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    }
+}
+
+function simplifyImpactCategoryName(fullName) {
+    
+    let simplified = fullName.replace(/^climate change:\s*/i, '');
+
+    
+    const keywords = {
+        'land use': '土地利用',
+        'fossil': '化石',
+        'biogenic': '生物源',
+        'including SLCFs': '+短寿命',
+        'no LT': '(无长期)',
+        'GWP100': 'GWP100',
+        'GWP20': 'GWP20',
+        'GTP100': 'GTP100',
+        'GTP50': 'GTP50',
+        'global warming potential': 'GWP',
+        'global temperature change potential': 'GTP'
+    };
+
+    
+    for (const [key, value] of Object.entries(keywords)) {
+        simplified = simplified.replace(new RegExp(key, 'gi'), value);
+    }
+
+    
+    if (simplified.length > 35) {
+        simplified = simplified.substring(0, 32) + '...';
+    }
+
+    return simplified;
+}
+
+function generateColors(count) {
+    
+    
+    const baseColors = [
+        '#4E79A7',  
+        '#F28E2B',  
+        '#E15759',  
+        '#76B7B2',  
+        '#59A14F',  
+        '#EDC948',  
+        '#B07AA1',  
+        '#FF9DA7',  
+        '#9C755F',  
+        '#BAB0AC'   
+    ];
+
+    const colors = [];
+    for (let i = 0; i < count; i++) {
+        colors.push(baseColors[i % baseColors.length]);
+    }
+    return colors;
+}
+
+function initializeGlobalImpactSelector(data) {
+    const selectorContainer = document.getElementById('globalImpactSelectorContainer');
+    const selectElement = document.getElementById('globalImpactCategorySelect');
+
+    
+    const categories = data.all_available_categories && data.all_available_categories.length > 0 
+        ? data.all_available_categories 
+        : data.climate_categories;
+
+    if (!categories || categories.length === 0) {
+        console.log('⚠️ 没有可用的影响类别，隐藏全局选择器');
+        selectorContainer.style.display = 'none';
+        return;
+    }
+
+    console.log(`✅ 初始化全局影响类别选择器，共 ${categories.length} 个类别`);
+    console.log(`   数据来源: ${data.all_available_categories && data.all_available_categories.length > 0 ? 'all_available_categories（所有类别）' : 'climate_categories（仅气候变化）'}`);
+
+    
+    selectElement.innerHTML = '';
+
+    categories.forEach((cat, index) => {
+        const option = document.createElement('option');
+        option.value = cat.category;
+        
+        const formattedValue = formatImpactValue(cat.value);
+        option.textContent = `${cat.category} (${formattedValue} ${cat.unit})`;
+
+        
+        if (index === 0) {
+            option.selected = true;
+        }
+
+        selectElement.appendChild(option);
+    });
+
+    
+    selectorContainer.style.display = 'block';
+
+    
+    selectElement.removeEventListener('change', handleGlobalCategoryChange);
+    selectElement.addEventListener('change', handleGlobalCategoryChange);
+
+    
+    displayUncertaintyAnalysis(data);
+}
+
+function handleGlobalCategoryChange(event) {
+    const selectedCategory = event.target.value;
+    console.log('\n' + '='.repeat(80));
+    console.log('🌍 全局影响类别选择改变');
+    console.log('🌍 选择的类别:', selectedCategory);
+    console.log('='.repeat(80));
+
+    if (!selectedCategory || !currentResultId) {
+        console.warn('⚠️ 缺少类别或 result ID');
+        return;
+    }
+
+    
+    loadAllChartsForCategory(selectedCategory);
+}
+
+function loadAllChartsForCategory(categoryName) {
+    console.log(`\n📊 开始为类别 "${categoryName}" 加载所有图表...`);
+
+    
+    loadLifecycleChartForCategory(categoryName);
+
+    
+    loadProcessChartForCategory(categoryName);
+
+    
+    if (currentChartData.uncertainty_analysis && 
+        currentChartData.uncertainty_analysis.statistics &&
+        currentChartData.uncertainty_analysis.statistics[categoryName]) {
+        loadUncertaintyChartForCategory(categoryName);
+    }
+}
+
+function loadLifecycleChartForCategory(categoryName) {
+    console.log(`\n🔄 加载生命周期环节图表: ${categoryName}`);
+
+    const chartCanvas = document.getElementById('lifecyclePieChart');
+    const ctx = chartCanvas.getContext('2d');
+    ctx.clearRect(0, 0, chartCanvas.width, chartCanvas.height);
+    ctx.font = '16px Arial';
+    ctx.fillStyle = '#667eea';
+    ctx.textAlign = 'center';
+    ctx.fillText(chartT('loading'), chartCanvas.width / 2, chartCanvas.height / 2);
+
+    const apiUrl = `/lca_result/${currentResultId}/lifecycle_by_category?category=${encodeURIComponent(categoryName)}`;
+    console.log('📡 API请求:', apiUrl);
+
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(result => {
+            if (result.success && result.lifecycle_stages && result.lifecycle_stages.length > 0) {
+                console.log('✅ 获取到生命周期数据，共', result.lifecycle_stages.length, '个环节');
+                updateLifecyclePieChart(result.lifecycle_stages);
+            } else {
+                console.warn('⚠️ 生命周期数据为空');
+                ctx.fillStyle = '#ffc107';
+                ctx.fillText('该类别暂无生命周期环节数据', chartCanvas.width / 2, chartCanvas.height / 2);
+            }
+        })
+        .catch(error => {
+            console.error('❌ 加载生命周期数据失败:', error);
+            ctx.fillStyle = '#dc3545';
+            ctx.fillText(chartT('network_error'), chartCanvas.width / 2, chartCanvas.height / 2);
+        });
+}
+
+function loadProcessChartForCategory(categoryName) {
+    console.log(`\n🔄 加载过程贡献图表: ${categoryName}`);
+
+    const chartCanvas = document.getElementById('processHorizontalChart');
+    const ctx = chartCanvas.getContext('2d');
+    ctx.clearRect(0, 0, chartCanvas.width, chartCanvas.height);
+    ctx.font = '16px Arial';
+    ctx.fillStyle = '#667eea';
+    ctx.textAlign = 'center';
+    ctx.fillText(chartT('loading'), chartCanvas.width / 2, chartCanvas.height / 2);
+
+    const apiUrl = `/lca_result/${currentResultId}/process_by_category?category=${encodeURIComponent(categoryName)}`;
+    console.log('📡 API请求:', apiUrl);
+
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(result => {
+            if (result.success && result.process_contributions && result.process_contributions.length > 0) {
+                console.log('✅ 获取到过程贡献数据，共', result.process_contributions.length, '个过程');
+                updateProcessChart(result.process_contributions);
+            } else {
+                console.warn('⚠️ 过程贡献数据为空');
+                ctx.fillStyle = '#ffc107';
+                ctx.fillText(chartT('no_data'), chartCanvas.width / 2, chartCanvas.height / 2);
+            }
+        })
+        .catch(error => {
+            console.error('❌ 加载过程贡献数据失败:', error);
+            ctx.fillStyle = '#dc3545';
+            ctx.fillText(chartT('network_error'), chartCanvas.width / 2, chartCanvas.height / 2);
+        });
+}
+
+function loadUncertaintyChartForCategory(categoryName) {
+    console.log(`\n🔄 加载不确定性分析图表: ${categoryName}`);
+
+    const stats = currentChartData.uncertainty_analysis.statistics[categoryName];
+    const rawData = currentChartData.uncertainty_analysis.raw_data ? 
+                    currentChartData.uncertainty_analysis.raw_data[categoryName] : null;
+
+    displayUncertaintyStats(categoryName, stats, rawData);
+}
+
+let lifecycleChartInstance = null;
+let processChartInstance = null;
+let uncertaintyChartInstance = null;
+let currentChartData = null;
+let currentResultId = null;
+
+function updateProcessChart(processContributions) {
+    console.log('\n' + '='.repeat(60));
+    console.log('🎨 开始更新过程贡献图表');
+    console.log('🎨 输入参数:', {
+        是否有数据: !!processContributions,
+        过程数量: processContributions?.length,
+        当前图表实例: !!processChartInstance
+    });
+
+    if (!processContributions || processContributions.length === 0) {
+        console.warn('⚠️ 没有过程贡献数据');
+        return;
+    }
+
+    
+    console.log('\n📊 详细过程数据:');
+    processContributions.forEach((proc, idx) => {
+        const stage = proc.lifecycle_stage || '未分类';
+        console.log(`  ${idx + 1}. ${proc.process_name}: ${proc.impact_value.toFixed(6)} ${proc.unit} (${proc.contribution_percent.toFixed(2)}%) [${stage}]`);
+    });
+
+    
+    if (processChartInstance) {
+        console.log('\n🗑️ 销毁旧图表实例');
+        processChartInstance.destroy();
+        processChartInstance = null;
+        console.log('✅ 旧图表已销毁');
+    }
+
+    
+    const topProcesses = processContributions.slice(0, 5);
+    const labels = topProcesses.map(item => item.process_name || 'Unknown');
+    const values = topProcesses.map(item => item.impact_value || 0);
+    const percentages = topProcesses.map(item => item.contribution_percent || 0);
+    const stages = topProcesses.map(item => item.lifecycle_stage || '未分类');
+    const unit = topProcesses[0]?.unit || 'kg CO2 eq';
+
+    
+    const backgroundColors = stages.map(stage => getStageColor(stage, 'background'));
+    const borderColors = stages.map(stage => getStageColor(stage, 'border'));
+
+    const total = values.reduce((sum, v) => sum + v, 0);
+    console.log('\n📊 处理后的图表数据:');
+    console.log('  标签:', labels);
+    console.log('  数值:', values.map(v => v.toFixed(6)));
+    console.log('  百分比:', percentages.map(p => p.toFixed(2) + '%'));
+    console.log('  生命周期环节:', stages);
+    console.log('  单位:', unit);
+    console.log('  总计:', total.toFixed(6));
+    console.log('  背景颜色:', backgroundColors);
+
+    
+    const ctx = document.getElementById('processHorizontalChart').getContext('2d');
+    console.log('\n🎨 创建新图表实例...');
+
+    processChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: `${chartT('impact_value')} (${unit})`,
+                data: values,
+                backgroundColor: backgroundColors,
+                borderColor: borderColors,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: {
+                padding: {
+                    left: 10,
+                    right: 10
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    grid: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: `${chartT('impact_value')} (${unit})`
+                    }
+                },
+                y: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        font: {
+                            size: 11
+                        },
+                        autoSkip: false,
+                        padding: 5,
+                        callback: function(value, index, ticks) {
+                            const label = this.getLabelForValue(value);
+                            
+                            if (label.length > 80) {
+                                return label.substring(0, 77) + '...';
+                            }
+                            return label;
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const index = context.dataIndex;
+                            const value = values[index];
+                            const percent = percentages[index];
+                            return [
+                                `${chartT('impact_value')}: ${value.toFixed(3)} ${unit}`,
+                                `${chartT('contribution_ratio')}: ${percent.toFixed(2)}%`
+                            ];
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    console.log('\n✅ 新图表创建完成');
+    console.log('✅ 图表实例 ID:', processChartInstance.id);
+    console.log('✅ 图表数据点数:', values.length);
+    console.log('='.repeat(60) + '\n');
+}
+
+function generateReportFromVisualization() {
+    const resultId = {{ result.id }};
+    const projectId = '{{ project.id }}';
+    const lang = '{{ get_lang() }}';
+
+    
+    const language = lang;  
+
+    const confirmMsg = lang === 'zh'
+        ? `即将基于当前LCA分析结果（ID: ${resultId}）生成中文PDF报告。\n\n请确保已填写项目报告信息。\n\n是否继续？`
+        : `About to generate English PDF report based on current LCA results (ID: ${resultId}).\n\nPlease ensure report information is filled.\n\nContinue?`;
+
+    if (!confirm(confirmMsg)) {
+        return;
+    }
+
+    
+    const btn = event.target;
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = lang === 'zh' ? '⏳ 生成中...' : '⏳ Generating...';
+
+    
+    fetch(`/project/${projectId}/generate_markdown_report`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            language: language,
+            result_id: resultId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+
+        if (data.success) {
+            const langLabel = lang === 'zh' ? '中文' : 'English';
+            const message = lang === 'zh' 
+                ? `✅ ${langLabel}PDF报告生成成功！\n\n文件名: ${data.filename}`
+                : `✅ ${langLabel} PDF report generated successfully!\n\nFilename: ${data.filename}`;
+
+            alert(message);
+
+            
+            if (data.download_url) {
+                window.open(data.download_url, '_blank');
+            }
+        } else {
+            const errorMsg = lang === 'zh' 
+                ? `❌ 报告生成失败：\n\n${data.error}\n\n请确保：\n1. 已填写项目报告信息\n2. 当前LCA分析已完成`
+                : `❌ Report generation failed:\n\n${data.error}\n\nPlease ensure:\n1. Report information is filled\n2. LCA analysis is completed`;
+            alert(errorMsg);
+        }
+    })
+    .catch(error => {
+        console.error('Report generation failed:', error);
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        alert((lang === 'zh' ? '❌ 生成报告失败：' : '❌ Report generation failed: ') + error.message);
+    });
+}
+
+const LIFECYCLE_COLORS = {
+    '总体环节': { background: '#FF6384', border: '#E5334F' },
+    '原材料获取': { background: '#36A2EB', border: '#1E8BC3' },
+    '生产制造': { background: '#FFCE56', border: '#E6B547' },
+    '运输配送': { background: '#4BC0C0', border: '#26A69A' },
+    '使用阶段': { background: '#9966FF', border: '#7E57C2' },
+    '废弃处理': { background: '#FF9F40', border: '#E68A2E' },
+    '回收再利用': { background: '#8BC34A', border: '#7CB342' },
+    '未分类': { background: '#95A5A6', border: '#7F8C8D' }
+};
+
+function getStageColor(stageName, type = 'background') {
+    const colors = LIFECYCLE_COLORS[stageName] || LIFECYCLE_COLORS['未分类'];
+    return colors[type];
+}
+
+function updateLifecyclePieChart(lifecycleStages) {
+    console.log('🎨 开始创建生命周期环节饼图...', {
+        stagesCount: lifecycleStages?.length,
+        hasInstance: !!lifecycleChartInstance
+    });
+
+    if (!lifecycleStages || lifecycleStages.length === 0) {
+        console.warn('⚠️ 没有生命周期数据');
+        return;
+    }
+
+    
+    const filteredStages = lifecycleStages.filter(item => item.stage !== '总体环节');
+
+    console.log(`📊 原始环节数: ${lifecycleStages.length}, 过滤后: ${filteredStages.length}`);
+
+    if (filteredStages.length === 0) {
+        console.warn('⚠️ 过滤后没有数据');
+        const ctx = document.getElementById('lifecyclePieChart').getContext('2d');
+        ctx.font = '16px Arial';
+        ctx.fillStyle = '#7f8c8d';
+        ctx.textAlign = 'center';
+        ctx.fillText(chartT('no_data'), ctx.canvas.width / 2, ctx.canvas.height / 2);
+        return;
+    }
+
+    
+    const originalStages = filteredStages.map(item => item.stage);
+    const labels = filteredStages.map(item => chartT(item.stage));
+    const values = filteredStages.map(item => item.value);
+    const unit = filteredStages[0]?.unit || 'kg CO2 eq';
+
+    const total = values.reduce((sum, v) => sum + v, 0);
+    console.log('📊 饼图数据:', {
+        labels: labels,
+        values: values.map(v => v.toFixed(6)),
+        unit: unit,
+        total: total.toFixed(6)
+    });
+
+    
+    const percentages = values.map(value => total > 0 ? ((value / total) * 100) : 0);
+    const roundedPercentages = percentages.map(p => Math.round(p * 100) / 100);
+    const sum = roundedPercentages.reduce((a, b) => a + b, 0);
+    const diff = Math.round((100 - sum) * 100) / 100;
+
+    
+    if (diff !== 0) {
+        const maxIndex = roundedPercentages.indexOf(Math.max(...roundedPercentages));
+        roundedPercentages[maxIndex] = Math.round((roundedPercentages[maxIndex] + diff) * 100) / 100;
+    }
+
+    console.log('📊 调整后的百分比:', roundedPercentages, '总和:', roundedPercentages.reduce((a, b) => a + b, 0));
+
+    
+    const backgroundColors = originalStages.map(stage => getStageColor(stage, 'background'));
+    const borderColors = originalStages.map(stage => getStageColor(stage, 'border'));
+
+    
+    if (lifecycleChartInstance) {
+        console.log('🗑️ 销毁旧图表实例');
+        lifecycleChartInstance.destroy();
+        lifecycleChartInstance = null;
+    }
+
+    
+    const ctx = document.getElementById('lifecyclePieChart').getContext('2d');
+    console.log('🎨 创建新饼图实例...');
+
+    lifecycleChartInstance = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: values,
+                backgroundColor: backgroundColors,
+                borderColor: borderColors,
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: {
+                padding: {
+                    bottom: 10
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    align: 'start',
+                    labels: {
+                        font: { size: 11 },
+                        padding: 10,
+                        boxWidth: 15,
+                        boxHeight: 15,
+                        generateLabels: function(chart) {
+                            const data = chart.data;
+                            if (data.labels.length && data.datasets.length) {
+                                return data.labels.map((label, i) => {
+                                    return {
+                                        text: `${label}: ${roundedPercentages[i].toFixed(2)}%`,
+                                        fillStyle: data.datasets[0].backgroundColor[i],
+                                        strokeStyle: data.datasets[0].borderColor[i],
+                                        lineWidth: 2,
+                                        hidden: false,
+                                        index: i
+                                    };
+                                });
+                            }
+                            return [];
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        title: function(context) {
+                            return labels[context[0].dataIndex];
+                        },
+                        label: function(context) {
+                            const value = context.parsed || 0;
+                            const index = context.dataIndex;
+                            const percent = roundedPercentages[index];
+                            const stage = filteredStages[index];
+                            let label = `${chartT('value')}: ${value.toFixed(3)} ${unit}`;
+                            const percentLabel = `${chartT('percentage')}: ${percent.toFixed(2)}%`;
+                            if (stage.process_count) {
+                                return [label, percentLabel, `${chartT('processes')}: ${stage.process_count}`];
+                            }
+                            return [label, percentLabel];
+                        }
+                    },
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleFont: { size: 13, weight: 'bold' },
+                    bodyFont: { size: 12 },
+                    padding: 12
+                }
+            }
+        }
+    });
+
+    console.log('✅ 生命周期饼图创建完成');
+    console.log('✅ 图表实例 ID:', lifecycleChartInstance.id);
+    console.log('✅ 图表数据点数:', values.length);
+}
+
+function createProcessHorizontalChart(data) {
+    const ctx = document.getElementById('processHorizontalChart').getContext('2d');
+
+    if (!data.process_contributions || data.process_contributions.length === 0) {
+        ctx.font = '16px Arial';
+        ctx.fillStyle = '#7f8c8d';
+        ctx.textAlign = 'center';
+        ctx.fillText(chartT('no_data'), ctx.canvas.width / 2, ctx.canvas.height / 2);
+        return;
+    }
+
+    
+    const labels = data.process_contributions.map(item => {
+        
+        const name = item.name || 'Unknown';
+        return name.length > 40 ? name.substring(0, 37) + '...' : name;
+    });
+
+    
+    const values = data.process_contributions.map(item => {
+        if (item.percentage && item.percentage > 0) {
+            return item.percentage;
+        } else if (item.value && item.value > 0) {
+            return item.value * 100; 
+        }
+        return 0;
+    });
+
+    
+    const backgroundColors = data.process_contributions.map(item => {
+        const stageName = item.lifecycle_stage || '未分类';
+        return getStageColor(stageName, 'background');
+    });
+
+    const borderColors = data.process_contributions.map(item => {
+        const stageName = item.lifecycle_stage || '未分类';
+        return getStageColor(stageName, 'border');
+    });
+
+    
+    const hasPercentage = data.process_contributions.some(item => item.percentage && item.percentage > 0);
+    const unit = hasPercentage ? '%' : (data.process_contributions[0]?.unit || 'kg CO2 eq');
+
+    
+    processChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: hasPercentage ? `${chartT('contribution_percent')} (%)` : `${chartT('impact_value')} (${unit})`,
+                data: values,
+                backgroundColor: backgroundColors,
+                borderColor: borderColors,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    grid: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: hasPercentage ? `${chartT('contribution_percent')} (%)` : `${chartT('impact_value')} (${unit})`
+                    }
+                },
+                y: {
+                    grid: {
+                        display: false
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const index = context.dataIndex;
+                            const item = data.process_contributions[index];
+                            const stageName = item.lifecycle_stage || '未分类';
+                            if (hasPercentage) {
+                                return `${stageName}: ${item.percentage.toFixed(2)}% (${item.value.toFixed(3)} ${item.unit})`;
+                            } else {
+                                return `${stageName}: ${context.parsed.x.toFixed(3)} ${unit}`;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function showError(message) {
+    document.querySelectorAll('.chart-body').forEach(body => {
+        body.innerHTML = `<p style="text-align: center; color: #dc3545; padding: 2rem;">${message}</p>`;
+    });
+}
+
+function displayUncertaintyAnalysis(data) {
+    console.log('📊 检查不确定性分析数据...');
+
+    const uncertaintyCard = document.getElementById('uncertaintyAnalysisCard');
+    const uncertaintyData = data.uncertainty_analysis;
+
+    if (!uncertaintyData || !uncertaintyData.statistics || Object.keys(uncertaintyData.statistics).length === 0) {
+        console.log('⚠️ 没有不确定性分析数据');
+        uncertaintyCard.style.display = 'none';
+        return;
+    }
+
+    console.log('✅ 找到不确定性分析数据');
+    console.log('  迭代次数:', uncertaintyData.iterations);
+    console.log('  可用类别数:', uncertaintyData.available_categories ? uncertaintyData.available_categories.length : 0);
+
+    
+    uncertaintyCard.style.display = 'block';
+
+    
+    document.getElementById('uncertaintyIterations').textContent = uncertaintyData.iterations || 'N/A';
+}
+
+function displayUncertaintyStats(categoryName, stats, rawData) {
+    console.log('📊 显示不确定性统计数据:', categoryName);
+
+    
+    const banner = document.getElementById('uncertaintyStatsBanner');
+    const unit = stats.unit || 'kg CO2 eq';
+
+    banner.innerHTML = `
+        <div class="stats-line">
+            <div class="stat-item">
+                <span class="stat-label">Results:</span>
+                <span class="stat-value">${stats.sample_size}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Mean:</span>
+                <span class="stat-value">${stats.mean.toFixed(3)}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Std Dev:</span>
+                <span class="stat-value">${stats.std_dev.toFixed(3)}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">5%:</span>
+                <span class="stat-value">${stats.percentile_5.toFixed(3)}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Median:</span>
+                <span class="stat-value">${stats.median.toFixed(3)}</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">95%:</span>
+                <span class="stat-value">${stats.percentile_95.toFixed(3)}</span>
+            </div>
+        </div>
+    `;
+
+    
+    createUncertaintyChart(categoryName, stats, rawData);
+}
+
+function createUncertaintyChart(categoryName, stats, rawData) {
+    console.log('🎨 创建不确定性分析直方图...');
+
+    
+    if (uncertaintyChartInstance) {
+        uncertaintyChartInstance.destroy();
+    }
+
+    const ctx = document.getElementById('uncertaintyChart').getContext('2d');
+    const unit = stats.unit || 'kg CO2 eq';
+
+    if (!rawData || rawData.length === 0) {
+        console.warn('⚠️ 没有原始模拟数据，无法绘制直方图');
+        
+        ctx.font = '16px Arial';
+        ctx.fillStyle = '#7f8c8d';
+        ctx.textAlign = 'center';
+        ctx.fillText('原始模拟数据不可用，无法绘制直方图', ctx.canvas.width / 2, ctx.canvas.height / 2);
+        return;
+    }
+
+    console.log('📊 原始数据点数:', rawData.length);
+
+    
+    const numBins = 50;  
+    const minValue = Math.min(...rawData);
+    const maxValue = Math.max(...rawData);
+    const binWidth = (maxValue - minValue) / numBins;
+
+    console.log('📊 数值范围:', minValue.toFixed(3), '-', maxValue.toFixed(3));
+    console.log('📊 Bin宽度:', binWidth.toFixed(6));
+
+    
+    const bins = new Array(numBins).fill(0);
+    const binLabels = [];
+
+    for (let i = 0; i < numBins; i++) {
+        binLabels.push((minValue + i * binWidth).toFixed(3));
+    }
+
+    
+    rawData.forEach(value => {
+        const binIndex = Math.min(Math.floor((value - minValue) / binWidth), numBins - 1);
+        bins[binIndex]++;
+    });
+
+    
+    const chartContext = {
+        minValue: minValue,
+        maxValue: maxValue,
+        binWidth: binWidth,
+        numBins: numBins,
+        stats: stats
+    };
+
+    uncertaintyChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: binLabels,
+            datasets: [{
+                label: 'Frequency',
+                data: bins,
+                backgroundColor: 'rgba(128, 128, 128, 0.7)',
+                borderColor: 'rgba(64, 64, 64, 1)',
+                borderWidth: 1,
+                barPercentage: 1.0,
+                categoryPercentage: 1.0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        title: function(context) {
+                            const index = context[0].dataIndex;
+                            const binStart = minValue + index * binWidth;
+                            const binEnd = binStart + binWidth;
+                            return `Range: ${binStart.toFixed(3)} - ${binEnd.toFixed(3)} ${unit}`;
+                        },
+                        label: function(context) {
+                            return `Frequency: ${context.parsed.y}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: false
+                    },
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        font: {
+                            size: 11
+                        }
+                    }
+                },
+                x: {
+                    title: {
+                        display: false
+                    },
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        display: true,
+                        maxTicksLimit: 10,
+                        font: {
+                            size: 11
+                        },
+                        callback: function(value, index, ticks) {
+                            
+                            if (index === 0 || index === ticks.length - 1) {
+                                return this.getLabelForValue(value);
+                            }
+                            return '';
+                        }
+                    }
+                }
+            },
+            
+            animation: {
+                onComplete: function() {
+                    const chart = this;
+                    const ctx = chart.ctx;
+                    const xScale = chart.scales.x;
+                    const yScale = chart.scales.y;
+
+                    
+                    function findBinIndex(value) {
+                        if (value <= chartContext.minValue) return 0;
+                        if (value >= chartContext.maxValue) return chartContext.numBins - 1;
+                        return Math.floor((value - chartContext.minValue) / chartContext.binWidth);
+                    }
+
+                    
+                    const bin5 = findBinIndex(chartContext.stats.percentile_5);
+                    const x5 = xScale.getPixelForValue(bin5);
+                    ctx.strokeStyle = 'red';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(x5, yScale.top);
+                    ctx.lineTo(x5, yScale.bottom);
+                    ctx.stroke();
+
+                    
+                    const binMedian = findBinIndex(chartContext.stats.median);
+                    const xMedian = xScale.getPixelForValue(binMedian);
+                    ctx.beginPath();
+                    ctx.moveTo(xMedian, yScale.top);
+                    ctx.lineTo(xMedian, yScale.bottom);
+                    ctx.stroke();
+
+                    
+                    const bin95 = findBinIndex(chartContext.stats.percentile_95);
+                    const x95 = xScale.getPixelForValue(bin95);
+                    ctx.beginPath();
+                    ctx.moveTo(x95, yScale.top);
+                    ctx.lineTo(x95, yScale.bottom);
+                    ctx.stroke();
+
+                    console.log('🎨 绘制红色标记线:');
+                    console.log('  5%分位:', chartContext.stats.percentile_5.toFixed(3), '-> bin', bin5, '-> x:', x5.toFixed(1));
+                    console.log('  中位数:', chartContext.stats.median.toFixed(3), '-> bin', binMedian, '-> x:', xMedian.toFixed(1));
+                    console.log('  95%分位:', chartContext.stats.percentile_95.toFixed(3), '-> bin', bin95, '-> x:', x95.toFixed(1));
+                }
+            }
+        }
+    });
+
+    console.log('✅ 不确定性分析直方图创建完成');
+}
+
+function showDebugInfo(data) {
+    if (!data.debug_info) return;
+
+    const debugHtml = `
+        <div style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 2rem; margin-top: 2rem;">
+            <h3 style="color: #856404; margin-top: 0;">🔍 诊断信息：未获取到影响评估结果</h3>
+            <p style="color: #856404;"><strong>问题：</strong>确定性影响评估返回了空结果或所有值为0。</p>
+
+            <div style="background: #fff; border: 1px solid #ffc107; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+                <h4 style="color: #856404; margin-top: 0;">❌ 可能原因</h4>
+                <ul style="color: #856404; text-align: left; margin-bottom: 0;">
+                    <li><strong>产品系统未在OpenLCA中正确计算</strong> - 这是最常见的原因</li>
+                    <li>影响评估方法没有适用于该产品系统的特征化因子</li>
+                    <li>产品系统的参考流数量设置为0</li>
+                    <li>系统中所有交换的数值都是0</li>
+                </ul>
+            </div>
+
+            <div style="background: #d4edda; border: 1px solid #28a745; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+                <h4 style="color: #155724; margin-top: 0;">✅ 解决方案</h4>
+                <ol style="color: #155724; text-align: left; margin-bottom: 0;">
+                    <li><strong>打开OpenLCA软件</strong></li>
+                    <li><strong>找到产品系统</strong>：导航至"Product systems" → 找到 <code style="background: #fff; padding: 2px 6px; border-radius: 3px;">{{ result.excel_file.product_system_name }}</code></li>
+                    <li><strong>右键点击产品系统</strong> → 选择 <strong>"Calculate"（计算）</strong></li>
+                    <li><strong>选择影响评估方法</strong>：确保选择了方法（如 <code style="background: #fff; padding: 2px 6px; border-radius: 3px;">IPCC 2013 GWP 100a</code>）</li>
+                    <li><strong>运行计算</strong>：等待计算完成（可能需要几分钟）</li>
+                    <li><strong>验证结果</strong>：在OpenLCA中查看"Impact analysis"标签页，确认有非零结果</li>
+                    <li><strong>返回本平台</strong>：重新运行LCA分析</li>
+                </ol>
+            </div>
+
+            <div style="background: #d1ecf1; border: 1px solid #17a2b8; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+                <h4 style="color: #0c5460; margin-top: 0;">ℹ️ 注意事项</h4>
+                <p style="color: #0c5460; margin-bottom: 0;">
+                    不确定性分析（蒙特卡洛模拟）显示有结果，但<strong>确定性分析需要在OpenLCA中先手动运行一次完整的影响评估计算</strong>。
+                    这是OpenLCA IPC API的已知行为。
+                </p>
+            </div>
+
+            <details style="margin-top: 1rem;">
+                <summary style="cursor: pointer; color: #856404; font-weight: bold;">点击查看技术详情</summary>
+                <pre style="background: white; padding: 1rem; border-radius: 4px; overflow: auto; font-size: 0.85rem; margin-top: 1rem; border: 1px solid #ddd;">
+${JSON.stringify(data.debug_info, null, 2)}
+                </pre>
+            </details>
+
+            <div style="margin-top: 1rem; display: flex; gap: 10px;">
+                <button class="btn btn-primary" onclick="showRawDebugData()">
+                    📄 查看完整原始数据
+                </button>
+                <button class="btn btn-info" onclick="window.location.reload()">
+                    🔄 刷新页面
+                </button>
+            </div>
+        </div>
+    `;
+
+    
+    const chartsContainer = document.querySelector('.charts-container');
+    if (chartsContainer) {
+        const debugDiv = document.createElement('div');
+        debugDiv.innerHTML = debugHtml;
+        chartsContainer.parentNode.insertBefore(debugDiv, chartsContainer.nextSibling);
+    }
+}
+
+function showRawDebugData() {
+    const resultId = {{ result.id }};
+    const debugUrl = `/lca_result/${resultId}/debug_raw_data`;
+
+    
+    window.open(debugUrl, '_blank');
+}
+</script>
+
+{% endblock %}
+

@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Excel文件列表 - {{ project.name }}{% endblock %}
+
+{% block content %}
+<div class="excel-files-container">
+    <div class="page-header">
+        <h1>Excel文件列表</h1>
+        <div class="header-actions">
+            <a href="{{ url_for('upload_excel', project_id=project.id) }}" class="btn btn-primary">+ 上传新文件</a>
+            <a href="{{ url_for('project_detail', project_id=project.id) }}" class="btn btn-secondary">返回项目</a>
+        </div>
+    </div>
+
+    <div class="project-info-card">
+        <h3>{{ project.name }}</h3>
+        <p>{{ project.description or '暂无描述' }}</p>
+    </div>
+
+    {% if excel_files %}
+        <div class="files-grid">
+            {% for file in excel_files %}
+            <div class="file-card">
+                <div class="file-header">
+                    <div class="file-icon">📊</div>
+                    <div class="file-info">
+                        <h4>{{ file.original_filename }}</h4>
+                        <span class="file-size">{{ (file.file_size / 1024) | round(1) }} KB</span>
+                    </div>
+                </div>
+
+                <div class="file-meta">
+                    <span class="upload-time">上传时间: {{ (file.upload_time | localtime).strftime('%Y-%m-%d %H:%M') }}</span>
+                    {% if file.analysis_time %}
+                        <span class="analysis-time">分析时间: {{ (file.analysis_time | localtime).strftime('%Y-%m-%d %H:%M') }}</span>
+                    {% endif %}
+                </div>
+
+                {% if file.llm_analysis %}
+                <div class="llm-analysis">
+                    <h5>AI分析结果:</h5>
+                    <div class="analysis-content">
+                        {{ file.llm_analysis[:200] }}{% if file.llm_analysis|length > 200 %}...{% endif %}
+                    </div>
+                    <button class="btn btn-outline btn-sm" onclick="showFullAnalysis({{ file.id }})">查看完整分析</button>
+                </div>
+                {% endif %}
+
+                <div class="file-actions">
+                    <a href="{{ url_for('download_excel', file_id=file.id) }}" class="btn btn-secondary btn-sm">下载</a>
+                    {% if file.llm_analysis %}
+                        <button class="btn btn-primary btn-sm" onclick="showFullAnalysis({{ file.id }})">查看分析</button>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <p>暂无Excel文件</p>
+            <a href="{{ url_for('upload_excel', project_id=project.id) }}" class="btn btn-primary">上传第一个文件</a>
+        </div>
+    {% endif %}
+</div>
+
+<div id="analysisModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>AI分析结果</h2>
+        <div id="modalContent"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function showFullAnalysis(fileId) {
+    
+    
+    document.getElementById('analysisModal').style.display = 'block';
+    
+}
+
+document.querySelector('.close').onclick = function() {
+    document.getElementById('analysisModal').style.display = 'none';
+}
+
+window.onclick = function(event) {
+    if (event.target == document.getElementById('analysisModal')) {
+        document.getElementById('analysisModal').style.display = 'none';
+    }
+}
+</script>
+{% endblock %}

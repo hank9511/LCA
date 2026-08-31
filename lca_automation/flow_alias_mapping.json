@@ -1,0 +1,3423 @@
+{
+  "version": 1,
+  "description": "Alias→canonical ecoinvent flow name map. Keys: fuzzed English (lowercased) and Chinese names. Values: original ecoinvent flow name to match in the database. Generated from LCA_md/流名称翻译对照表.md by lca_automation/build_desensitized.py.",
+  "key_normalization": "English keys: strip+lowercase+collapse-whitespace. Chinese keys: strip only.",
+  "count": 683,
+  "aliases": {
+    "abs copolymer": {
+      "canonical": "acrylonitrile-butadiene-styrene copolymer",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "丙烯腈-丁二烯-苯乙烯共聚物（ABS）": {
+      "canonical": "acrylonitrile-butadiene-styrene copolymer",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "alkyd paint": {
+      "canonical": "alkyd paint, white, without solvent, in 60% solution state",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "醇酸漆，白色，无溶剂，60%溶液状态": {
+      "canonical": "alkyd paint, white, without solvent, in 60% solution state",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "aluminium alloy": {
+      "canonical": "aluminium alloy, AlMg3",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "铝合金，AlMg3": {
+      "canonical": "aluminium alloy, AlMg3",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "aluminium oxide": {
+      "canonical": "aluminium oxide, non-metallurgical",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "氧化铝，非冶金级": {
+      "canonical": "aluminium oxide, non-metallurgical",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "cast aluminium alloy": {
+      "canonical": "aluminium, cast alloy",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "铝，铸造合金": {
+      "canonical": "aluminium, cast alloy",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "wrought aluminium alloy": {
+      "canonical": "aluminium, wrought alloy",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "铝，变形合金": {
+      "canonical": "aluminium, wrought alloy",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "ammonia": {
+      "canonical": "ammonia, anhydrous, liquid",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "氨，无水，液态": {
+      "canonical": "ammonia, anhydrous, liquid",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "ammonium sulphate": {
+      "canonical": "ammonium sulfate",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "硫酸铵": {
+      "canonical": "ammonium sulfate",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "battery cell": {
+      "canonical": "battery cell, Li-ion, LFP",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "电池单体，锂离子，磷酸铁锂（LFP）": {
+      "canonical": "battery cell, Li-ion, LFP",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "battery management system": {
+      "canonical": "battery management system, for Li-ion battery",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "电池管理系统，用于锂离子电池": {
+      "canonical": "battery management system, for Li-ion battery",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "battery module packaging": {
+      "canonical": "battery module packaging, Li-ion",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "电池模组封装，锂离子": {
+      "canonical": "battery module packaging, Li-ion",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "battery, lfp": {
+      "canonical": "battery, Li-ion, LFP, rechargeable",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "电池，锂离子，磷酸铁锂（LFP），可充电": {
+      "canonical": "battery, Li-ion, LFP, rechargeable",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "battery, nca": {
+      "canonical": "battery, Li-ion, NCA, rechargeable",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "电池，锂离子，镍钴铝（NCA），可充电": {
+      "canonical": "battery, Li-ion, NCA, rechargeable",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "blower and heat exchange unit": {
+      "canonical": "blower and heat exchange unit, Twl-700",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "风机及热交换单元，Twl-700": {
+      "canonical": "blower and heat exchange unit, Twl-700",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "brass alloy": {
+      "canonical": "brass",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "黄铜": {
+      "canonical": "brass",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "building": {
+      "canonical": "building, hall",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "建筑，厂房": {
+      "canonical": "building, hall",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "building, steel": {
+      "canonical": "building, hall, steel construction",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "建筑，厂房，钢结构": {
+      "canonical": "building, hall, steel construction",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "cable, connector": {
+      "canonical": "cable, connector for computer, without plugs",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "电缆，计算机连接用，不含插头": {
+      "canonical": "cable, connector for computer, without plugs",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "cable, ribbon": {
+      "canonical": "cable, ribbon cable, 20-pin, with plugs",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "电缆，排线，20针，含插头": {
+      "canonical": "cable, ribbon cable, 20-pin, with plugs",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "cable": {
+      "canonical": "cable, unspecified",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "电缆，未指定": {
+      "canonical": "cable, unspecified",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "capacitor, electrolytic": {
+      "canonical": "capacitor, electrolyte type, > 2cm height",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "电容器，电解型，高度>2cm": {
+      "canonical": "capacitor, electrolyte type, > 2cm height",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "capacitor, film": {
+      "canonical": "capacitor, film type, for through-hole mounting",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "电容器，薄膜型，通孔安装": {
+      "canonical": "capacitor, film type, for through-hole mounting",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "capacitor, tantalum": {
+      "canonical": "capacitor, tantalum-, for through-hole mounting",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "电容器，钽电容，通孔安装": {
+      "canonical": "capacitor, tantalum-, for through-hole mounting",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "carbon black powder": {
+      "canonical": "carbon black",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "炭黑": {
+      "canonical": "carbon black",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "iron, cast": {
+      "canonical": "cast iron",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "铸铁": {
+      "canonical": "cast iron",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "casting": {
+      "canonical": "casting, brass",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "铸造，黄铜": {
+      "canonical": "casting, brass",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "ceramics plant": {
+      "canonical": "ceramic factory",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "陶瓷厂": {
+      "canonical": "ceramic factory",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "ceramic tiling": {
+      "canonical": "ceramic tile",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "陶瓷砖": {
+      "canonical": "ceramic tile",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "chemical factory": {
+      "canonical": "chemical factory, organics",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "化工厂，有机化学品": {
+      "canonical": "chemical factory, organics",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "inorganic chemical": {
+      "canonical": "chemical, inorganic",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "化学品，无机": {
+      "canonical": "chemical, inorganic",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "organic chemical": {
+      "canonical": "chemical, organic, basic precursors and materials",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "化学品，有机，基础前体及原料": {
+      "canonical": "chemical, organic, basic precursors and materials",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "chromium metal": {
+      "canonical": "chromium",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "铬": {
+      "canonical": "chromium",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "clay mineral": {
+      "canonical": "clay",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "黏土": {
+      "canonical": "clay",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "cobalt metal": {
+      "canonical": "cobalt",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "钴": {
+      "canonical": "cobalt",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "compressed air, high pressure": {
+      "canonical": "compressed air, 1000 kPa gauge",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "压缩空气，1000 kPa（表压）": {
+      "canonical": "compressed air, 1000 kPa gauge",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "compressed air, low pressure": {
+      "canonical": "compressed air, 600 kPa gauge",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "压缩空气，600 kPa（表压）": {
+      "canonical": "compressed air, 600 kPa gauge",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "concrete masonry block": {
+      "canonical": "concrete block",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "混凝土砌块": {
+      "canonical": "concrete block",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "consumer electronics, smartphone": {
+      "canonical": "consumer electronics, mobile device, smartphone",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "消费电子产品，移动设备，智能手机": {
+      "canonical": "consumer electronics, mobile device, smartphone",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "consumer electronics, tablet": {
+      "canonical": "consumer electronics, mobile device, tablet",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "消费电子产品，移动设备，平板电脑": {
+      "canonical": "consumer electronics, mobile device, tablet",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "cooking stove": {
+      "canonical": "cookstove",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "炉灶": {
+      "canonical": "cookstove",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "anode copper": {
+      "canonical": "copper, anode",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "铜，阳极": {
+      "canonical": "copper, anode",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "cathode copper": {
+      "canonical": "copper, cathode",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "铜，阴极": {
+      "canonical": "copper, cathode",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "corrugated cardboard box": {
+      "canonical": "corrugated board box",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "瓦楞纸箱": {
+      "canonical": "corrugated board box",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "diammonium phosphate (dap)": {
+      "canonical": "diammonium phosphate",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "磷酸氢二铵": {
+      "canonical": "diammonium phosphate",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "diesel": {
+      "canonical": "diesel, burned in diesel-electric generating set, 18.5kW",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "柴油，在18.5kW柴油发电机组中燃烧": {
+      "canonical": "diesel, burned in diesel-electric generating set, 18.5kW",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "diode, auxiliaries": {
+      "canonical": "diode, auxilliaries and energy use",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "二极管，辅助材料及能耗": {
+      "canonical": "diode, auxilliaries and energy use",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "diode, glass": {
+      "canonical": "diode, glass-, for through-hole mounting",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "二极管，玻璃封装，通孔安装": {
+      "canonical": "diode, glass-, for through-hole mounting",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "electric connector, buss": {
+      "canonical": "electric connector, peripheral type buss",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "电连接器，外设总线型": {
+      "canonical": "electric connector, peripheral type buss",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "electric connector": {
+      "canonical": "electric connector, wire clamp",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "电连接器，线夹型": {
+      "canonical": "electric connector, wire clamp",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "high voltage electricity": {
+      "canonical": "electricity, high voltage",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "电力，高压": {
+      "canonical": "electricity, high voltage",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "low voltage electricity": {
+      "canonical": "electricity, low voltage",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "电力，低压": {
+      "canonical": "electricity, low voltage",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "medium voltage electricity": {
+      "canonical": "electricity, medium voltage",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "电力，中压": {
+      "canonical": "electricity, medium voltage",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "electronic components plant": {
+      "canonical": "electronic component factory",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "电子元件厂": {
+      "canonical": "electronic component factory",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "electronic component, earpiece and speaker": {
+      "canonical": "electronic component, passive, mobile, earpiece and speaker",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "电子元件，无源，移动设备，听筒及扬声器": {
+      "canonical": "electronic component, passive, mobile, earpiece and speaker",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "electronic component": {
+      "canonical": "electronic component, passive, unspecified",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "电子元件，无源，未指定": {
+      "canonical": "electronic component, passive, unspecified",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "electronics for control units": {
+      "canonical": "electronics, for control units",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "电子器件，用于控制单元": {
+      "canonical": "electronics, for control units",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "energy and auxiliary inputs, metal working": {
+      "canonical": "energy and auxilliary inputs, metal working factory",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "能源及辅助投入，金属加工厂": {
+      "canonical": "energy and auxilliary inputs, metal working factory",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "epoxy resin insulator": {
+      "canonical": "epoxy resin insulator, SiO2",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "环氧树脂绝缘子，SiO2": {
+      "canonical": "epoxy resin insulator, SiO2",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "epoxy resin": {
+      "canonical": "epoxy resin, liquid",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "环氧树脂，液态": {
+      "canonical": "epoxy resin, liquid",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "ethene": {
+      "canonical": "ethylene",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "乙烯": {
+      "canonical": "ethylene",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "monoethylene glycol": {
+      "canonical": "ethylene glycol",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "乙二醇": {
+      "canonical": "ethylene glycol",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "plastic sheet extrusion and thermoforming": {
+      "canonical": "extrusion of plastic sheets and thermoforming, inline",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "塑料板材挤出及热成型，在线": {
+      "canonical": "extrusion of plastic sheets and thermoforming, inline",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "plastic pipe extrusion": {
+      "canonical": "extrusion, plastic pipes",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "挤出，塑料管材": {
+      "canonical": "extrusion, plastic pipes",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "fan": {
+      "canonical": "fan, for power supply unit, desktop computer",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "风扇，用于台式计算机电源": {
+      "canonical": "fan, for power supply unit, desktop computer",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "feldspar mineral": {
+      "canonical": "feldspar",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "长石": {
+      "canonical": "feldspar",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "ferrite material": {
+      "canonical": "ferrite",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "铁氧体": {
+      "canonical": "ferrite",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "flat glass plant": {
+      "canonical": "flat glass factory",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "平板玻璃厂": {
+      "canonical": "flat glass factory",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "coated flat glass": {
+      "canonical": "flat glass, coated",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "平板玻璃，镀膜": {
+      "canonical": "flat glass, coated",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "uncoated flat glass": {
+      "canonical": "flat glass, uncoated",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "平板玻璃，未镀膜": {
+      "canonical": "flat glass, uncoated",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "polyethylene fleece": {
+      "canonical": "fleece, polyethylene",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "无纺布，聚乙烯": {
+      "canonical": "fleece, polyethylene",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "methanal": {
+      "canonical": "formaldehyde",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "甲醛": {
+      "canonical": "formaldehyde",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "funnel glass": {
+      "canonical": "funnel glass, for cathode ray tube display",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "锥形玻璃，用于阴极射线管显示器": {
+      "canonical": "funnel glass, for cathode ray tube display",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "wooden furniture": {
+      "canonical": "furniture, wooden",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "家具，木质": {
+      "canonical": "furniture, wooden",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "glass fibre reinforced plastic, polyamide": {
+      "canonical": "glass fibre reinforced plastic, polyamide, injection moulded",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "玻璃纤维增强塑料，聚酰胺，注塑": {
+      "canonical": "glass fibre reinforced plastic, polyamide, injection moulded",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "glass fibre reinforced plastic, polyester": {
+      "canonical": "glass fibre reinforced plastic, polyester resin, hand lay-up",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "玻璃纤维增强塑料，聚酯树脂，手糊成型": {
+      "canonical": "glass fibre reinforced plastic, polyester resin, hand lay-up",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "glass wool blanket": {
+      "canonical": "glass wool mat",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "玻璃棉毡": {
+      "canonical": "glass wool mat",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "glass": {
+      "canonical": "glass, for liquid crystal display",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "玻璃，用于液晶显示器": {
+      "canonical": "glass, for liquid crystal display",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "passenger car glider": {
+      "canonical": "glider, passenger car",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "车身底盘（不含动力总成），乘用车": {
+      "canonical": "glider, passenger car",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "glued laminated timber": {
+      "canonical": "glued laminated timber, average glue mix",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "胶合层积木材，平均胶粘剂配比": {
+      "canonical": "glued laminated timber, average glue mix",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "gold metal": {
+      "canonical": "gold",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "金": {
+      "canonical": "gold",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "hard disk drive": {
+      "canonical": "hard disk drive, for desktop computer",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "硬盘驱动器，用于台式计算机": {
+      "canonical": "hard disk drive, for desktop computer",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "heat, small-scale, natural gas": {
+      "canonical": "heat, central or small-scale, natural gas",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "热力，集中或小规模，天然气": {
+      "canonical": "heat, central or small-scale, natural gas",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "heat, small-scale, non-natural gas": {
+      "canonical": "heat, central or small-scale, other than natural gas",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "热力，集中或小规模，非天然气": {
+      "canonical": "heat, central or small-scale, other than natural gas",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "heat, industrial, natural gas": {
+      "canonical": "heat, district or industrial, natural gas",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "热力，区域或工业，天然气": {
+      "canonical": "heat, district or industrial, natural gas",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "heat, industrial, non-natural gas": {
+      "canonical": "heat, district or industrial, other than natural gas",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "热力，区域或工业，非天然气": {
+      "canonical": "heat, district or industrial, other than natural gas",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "heat, from steam": {
+      "canonical": "heat, from steam, in chemical industry",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "热力，来自蒸汽，化工行业": {
+      "canonical": "heat, from steam, in chemical industry",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "steel hot rolling": {
+      "canonical": "hot rolling, steel",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "热轧，钢": {
+      "canonical": "hot rolling, steel",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "hydrated lime": {
+      "canonical": "hydrated lime, packed",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "熟石灰，包装": {
+      "canonical": "hydrated lime, packed",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "hydrochloric acid": {
+      "canonical": "hydrochloric acid, without water, in 30% solution state",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "盐酸，不含水，30%溶液状态": {
+      "canonical": "hydrochloric acid, without water, in 30% solution state",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "hydrogen": {
+      "canonical": "hydrogen, gaseous, medium pressure, merchant",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "氢气，气态，中压，商品级": {
+      "canonical": "hydrogen, gaseous, medium pressure, merchant",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "aluminium impact extrusion": {
+      "canonical": "impact extrusion of aluminium, 1 stroke",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "铝冲击挤压，单冲程": {
+      "canonical": "impact extrusion of aluminium, 1 stroke",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "inductor, rf chip": {
+      "canonical": "inductor, miniature radio frequency chip",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "电感器，微型射频芯片": {
+      "canonical": "inductor, miniature radio frequency chip",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "inductor, ring core": {
+      "canonical": "inductor, ring core choke type",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "电感器，环形磁芯扼流圈型": {
+      "canonical": "inductor, ring core choke type",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "injection molding": {
+      "canonical": "injection moulding",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "注塑成型": {
+      "canonical": "injection moulding",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "inorganic nitrogen fertiliser": {
+      "canonical": "inorganic nitrogen fertiliser, as N",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "无机氮肥，以N计": {
+      "canonical": "inorganic nitrogen fertiliser, as N",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "integrated circuit, logic": {
+      "canonical": "integrated circuit, logic type",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "集成电路，逻辑型": {
+      "canonical": "integrated circuit, logic type",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "integrated circuit, memory": {
+      "canonical": "integrated circuit, memory type",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "集成电路，存储型": {
+      "canonical": "integrated circuit, memory type",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "internal combustion engine": {
+      "canonical": "internal combustion engine, passenger car",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "内燃机，乘用车": {
+      "canonical": "internal combustion engine, passenger car",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "inverter": {
+      "canonical": "inverter, 2.5kW",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "逆变器，2.5kW": {
+      "canonical": "inverter, 2.5kW",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "iron scrap": {
+      "canonical": "iron scrap, unsorted",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "废铁，未分类": {
+      "canonical": "iron scrap, unsorted",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "kaolin clay": {
+      "canonical": "kaolin",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "高岭土": {
+      "canonical": "kaolin",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "kerosene fuel": {
+      "canonical": "kerosene",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "煤油": {
+      "canonical": "kerosene",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "computer keyboard": {
+      "canonical": "keyboard",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "键盘": {
+      "canonical": "keyboard",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "kraft wrapping paper": {
+      "canonical": "kraft paper",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "牛皮纸": {
+      "canonical": "kraft paper",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "laminating service": {
+      "canonical": "laminating service, foil, with acrylic binder",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "覆膜服务，箔材，丙烯酸粘合剂": {
+      "canonical": "laminating service, foil, with acrylic binder",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "lanthanum(iii) oxide": {
+      "canonical": "lanthanum oxide",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "氧化镧": {
+      "canonical": "lanthanum oxide",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "lead metal": {
+      "canonical": "lead",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "铅": {
+      "canonical": "lead",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "led device": {
+      "canonical": "light emitting diode",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "发光二极管（LED）": {
+      "canonical": "light emitting diode",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "light heating oil": {
+      "canonical": "light fuel oil",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "轻燃油": {
+      "canonical": "light fuel oil",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "limestone": {
+      "canonical": "limestone, milled, packed",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "石灰石，研磨，包装": {
+      "canonical": "limestone, milled, packed",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "liquid crystal display, minor components and assembly": {
+      "canonical": "liquid crystal display, minor components, auxilliaries and assembly effort",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "液晶显示器，次要部件、辅料及装配工作量": {
+      "canonical": "liquid crystal display, minor components, auxilliaries and assembly effort",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "liquid crystal display": {
+      "canonical": "liquid crystal display, unmounted, mobile device",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "液晶显示器，未安装，移动设备": {
+      "canonical": "liquid crystal display, unmounted, mobile device",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "lithium carbonate powder": {
+      "canonical": "lithium carbonate",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "碳酸锂": {
+      "canonical": "lithium carbonate",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "lubricant oil": {
+      "canonical": "lubricating oil",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "润滑油": {
+      "canonical": "lubricating oil",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "magnesium metal": {
+      "canonical": "magnesium",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "镁": {
+      "canonical": "magnesium",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "manganese metal": {
+      "canonical": "manganese",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "锰": {
+      "canonical": "manganese",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "manual dismantling of used passenger car": {
+      "canonical": "manual dismantling of used passenger car with internal combustion engine",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "含内燃机废旧乘用车的人工拆解": {
+      "canonical": "manual dismantling of used passenger car with internal combustion engine",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "medium density fiberboard": {
+      "canonical": "medium density fibreboard",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "中密度纤维板（MDF）": {
+      "canonical": "medium density fibreboard",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "metalworking plant": {
+      "canonical": "metal working factory",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "金属加工厂": {
+      "canonical": "metal working factory",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "metal working, copper product": {
+      "canonical": "metal working, average for copper product manufacturing",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "金属加工，铜制品制造平均值": {
+      "canonical": "metal working, average for copper product manufacturing",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "microwave appliance": {
+      "canonical": "microwave oven",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "微波炉": {
+      "canonical": "microwave oven",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "molybdenum metal": {
+      "canonical": "molybdenum",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "钼": {
+      "canonical": "molybdenum",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "molybdenum(vi) oxide": {
+      "canonical": "molybdenum trioxide",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "三氧化钼": {
+      "canonical": "molybdenum trioxide",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "natural gas": {
+      "canonical": "natural gas, high pressure",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "天然气，高压": {
+      "canonical": "natural gas, high pressure",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "nickel": {
+      "canonical": "nickel, class 1",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "镍，1类": {
+      "canonical": "nickel, class 1",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "nitrogen, gas": {
+      "canonical": "Nitrogen",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "氮气": {
+      "canonical": "Nitrogen",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "nitrogen": {
+      "canonical": "nitrogen, liquid",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "氮，液态": {
+      "canonical": "nitrogen, liquid",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "nmc hydroxide": {
+      "canonical": "NMC111 hydroxide",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "NMC111 氢氧化物": {
+      "canonical": "NMC111 hydroxide",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "nmc oxide": {
+      "canonical": "NMC111 oxide",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "NMC111 氧化物": {
+      "canonical": "NMC111 oxide",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "nylon": {
+      "canonical": "nylon 6",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "尼龙6": {
+      "canonical": "nylon 6",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "packaging film": {
+      "canonical": "packaging film, low density polyethylene",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "包装膜，低密度聚乙烯": {
+      "canonical": "packaging film, low density polyethylene",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "palladium metal": {
+      "canonical": "palladium",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "钯": {
+      "canonical": "palladium",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "paraffin wax": {
+      "canonical": "paraffin",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "石蜡": {
+      "canonical": "paraffin",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "particleboard": {
+      "canonical": "particleboard, uncoated",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "刨花板，未涂饰": {
+      "canonical": "particleboard, uncoated",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "passenger car": {
+      "canonical": "passenger car, petrol/natural gas",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "乘用车，汽油/天然气": {
+      "canonical": "passenger car, petrol/natural gas",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "crude oil": {
+      "canonical": "petroleum",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "石油": {
+      "canonical": "petroleum",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "oil refinery": {
+      "canonical": "petroleum refinery",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "炼油厂": {
+      "canonical": "petroleum refinery",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "phosphoric acid": {
+      "canonical": "phosphoric acid, fertiliser grade, without water, in 70% solution state",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "磷酸，肥料级，不含水，70%溶液状态": {
+      "canonical": "phosphoric acid, fertiliser grade, without water, in 70% solution state",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "phosphorus": {
+      "canonical": "phosphorus, white, liquid",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "磷，白磷，液态": {
+      "canonical": "phosphorus, white, liquid",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "crude iron": {
+      "canonical": "pig iron",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "生铁": {
+      "canonical": "pig iron",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "plastics processing plant": {
+      "canonical": "plastic processing factory",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "塑料加工厂": {
+      "canonical": "plastic processing factory",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "platinum metal": {
+      "canonical": "platinum",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "铂": {
+      "canonical": "platinum",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "plug": {
+      "canonical": "plug, inlet and outlet, for computer cable",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "插头，进出线，用于计算机电缆": {
+      "canonical": "plug, inlet and outlet, for computer cable",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "polycarbonate (pc)": {
+      "canonical": "polycarbonate",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "聚碳酸酯（PC）": {
+      "canonical": "polycarbonate",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "polyether polyols": {
+      "canonical": "polyether polyols, long chain",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "聚醚多元醇，长链": {
+      "canonical": "polyether polyols, long chain",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "polyethylene terephthalate": {
+      "canonical": "polyethylene terephthalate, granulate, amorphous",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "聚对苯二甲酸乙二醇酯（PET），颗粒，无定形": {
+      "canonical": "polyethylene terephthalate, granulate, amorphous",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "high density polyethylene": {
+      "canonical": "polyethylene, high density, granulate",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "聚乙烯，高密度（HDPE），颗粒": {
+      "canonical": "polyethylene, high density, granulate",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "low density polyethylene": {
+      "canonical": "polyethylene, low density, granulate",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "聚乙烯，低密度（LDPE），颗粒": {
+      "canonical": "polyethylene, low density, granulate",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "polypropylene": {
+      "canonical": "polypropylene, granulate",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "聚丙烯（PP），颗粒": {
+      "canonical": "polypropylene, granulate",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "polystyrene foam board": {
+      "canonical": "polystyrene foam slab",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "聚苯乙烯泡沫板": {
+      "canonical": "polystyrene foam slab",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "polystyrene": {
+      "canonical": "polystyrene, general purpose",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "聚苯乙烯，通用级（GPPS）": {
+      "canonical": "polystyrene, general purpose",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "polyvinyl chloride, suspension": {
+      "canonical": "polyvinyl chloride, suspension polymerised",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "聚氯乙烯（PVC），悬浮聚合": {
+      "canonical": "polyvinyl chloride, suspension polymerised",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "polyvinyl chloride": {
+      "canonical": "polyvinyl chloride, unspecified polymerisation, weighted average",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "聚氯乙烯（PVC），未指定聚合方式，加权平均": {
+      "canonical": "polyvinyl chloride, unspecified polymerisation, weighted average",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "powder coating": {
+      "canonical": "powder coat, aluminium sheet",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "粉末涂层，铝板": {
+      "canonical": "powder coat, aluminium sheet",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "power adapter": {
+      "canonical": "power adapter, for smartphone",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "电源适配器，用于智能手机": {
+      "canonical": "power adapter, for smartphone",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "power saw": {
+      "canonical": "power saw, without catalytic converter",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "油锯，无催化转化器": {
+      "canonical": "power saw, without catalytic converter",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "printed paper sheet": {
+      "canonical": "printed paper",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "印刷纸": {
+      "canonical": "printed paper",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "pcb mounting facility": {
+      "canonical": "printed wiring board mounting facility",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "印制电路板贴装设施": {
+      "canonical": "printed wiring board mounting facility",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "printed wiring board, unmounted, through-hole, leaded": {
+      "canonical": "printed wiring board, for through-hole mounting, Pb containing surface",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "印制电路板，通孔安装用，含铅表面": {
+      "canonical": "printed wiring board, for through-hole mounting, Pb containing surface",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "printed wiring board, unmounted, through-hole, lead-free": {
+      "canonical": "printed wiring board, for through-hole mounting, Pb free surface",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "印制电路板，通孔安装用，无铅表面": {
+      "canonical": "printed wiring board, for through-hole mounting, Pb free surface",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "printed wiring board, mainboard": {
+      "canonical": "printed wiring board, mounted mainboard, mobile device, double-sided, Pb free",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "印制电路板，已贴装主板，移动设备，双面，无铅": {
+      "canonical": "printed wiring board, mounted mainboard, mobile device, double-sided, Pb free",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "printed wiring board, surface-mounted, leaded": {
+      "canonical": "printed wiring board, surface mounted, unspecified, Pb containing",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "印制电路板，表面贴装，未指定，含铅": {
+      "canonical": "printed wiring board, surface mounted, unspecified, Pb containing",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "printed wiring board, surface-mounted, lead-free": {
+      "canonical": "printed wiring board, surface mounted, unspecified, Pb free",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "印制电路板，表面贴装，未指定，无铅": {
+      "canonical": "printed wiring board, surface mounted, unspecified, Pb free",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "printed wiring board, through-hole-mounted, leaded": {
+      "canonical": "printed wiring board, through-hole mounted, unspecified, Pb containing",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "印制电路板，通孔贴装，未指定，含铅": {
+      "canonical": "printed wiring board, through-hole mounted, unspecified, Pb containing",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "printed wiring board, through-hole-mounted, lead-free": {
+      "canonical": "printed wiring board, through-hole mounted, unspecified, Pb free",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "印制电路板，通孔贴装，未指定，无铅": {
+      "canonical": "printed wiring board, through-hole mounted, unspecified, Pb free",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "propene": {
+      "canonical": "propylene",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "丙烯": {
+      "canonical": "propylene",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "quicklime": {
+      "canonical": "quicklime, milled, packed",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "生石灰，研磨，包装": {
+      "canonical": "quicklime, milled, packed",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "steel rebar": {
+      "canonical": "reinforcing steel",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "钢筋": {
+      "canonical": "reinforcing steel",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "resistor": {
+      "canonical": "resistor, metal film type, through-hole mounting",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "电阻器，金属膜型，通孔安装": {
+      "canonical": "resistor, metal film type, through-hole mounting",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "ceramic sanitary ware": {
+      "canonical": "sanitary ceramics",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "卫生陶瓷": {
+      "canonical": "sanitary ceramics",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "sawnwood, hardwood": {
+      "canonical": "sawnwood, hardwood, dried (u=10%), planed",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "锯材，硬木，干燥（含水率10%），刨光": {
+      "canonical": "sawnwood, hardwood, dried (u=10%), planed",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "seal": {
+      "canonical": "seal, natural rubber based",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "密封件，天然橡胶基": {
+      "canonical": "seal, natural rubber based",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "aluminium section bar extrusion": {
+      "canonical": "section bar extrusion, aluminium",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "型材挤压，铝": {
+      "canonical": "section bar extrusion, aluminium",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "steel section bar rolling": {
+      "canonical": "section bar rolling, steel",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "型材轧制，钢": {
+      "canonical": "section bar rolling, steel",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "aluminium sheet rolling": {
+      "canonical": "sheet rolling, aluminium",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "板材轧制，铝": {
+      "canonical": "sheet rolling, aluminium",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "chromium steel sheet rolling": {
+      "canonical": "sheet rolling, chromium steel",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "板材轧制，铬钢": {
+      "canonical": "sheet rolling, chromium steel",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "copper sheet rolling": {
+      "canonical": "sheet rolling, copper",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "板材轧制，铜": {
+      "canonical": "sheet rolling, copper",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "steel sheet rolling": {
+      "canonical": "sheet rolling, steel",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "板材轧制，钢": {
+      "canonical": "sheet rolling, steel",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "quartz sand": {
+      "canonical": "silica sand",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "石英砂": {
+      "canonical": "silica sand",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "electronic grade silicon": {
+      "canonical": "silicon, electronics grade",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "硅，电子级": {
+      "canonical": "silicon, electronics grade",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "metallurgical grade silicon": {
+      "canonical": "silicon, metallurgical grade",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "硅，冶金级": {
+      "canonical": "silicon, metallurgical grade",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "silicone-based product": {
+      "canonical": "silicone product",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "有机硅制品": {
+      "canonical": "silicone product",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "silver metal": {
+      "canonical": "silver",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "银": {
+      "canonical": "silver",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "sodium hydroxide": {
+      "canonical": "sodium hydroxide, without water, in 50% solution state",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "氢氧化钠，不含水，50%溶液状态": {
+      "canonical": "sodium hydroxide, without water, in 50% solution state",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "organic solvent": {
+      "canonical": "solvent, organic",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "溶剂，有机": {
+      "canonical": "solvent, organic",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "indium tin oxide sputtering": {
+      "canonical": "sputtering, indium tin oxide, for liquid crystal display",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "溅射，氧化铟锡（ITO），用于液晶显示器": {
+      "canonical": "sputtering, indium tin oxide, for liquid crystal display",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "steam": {
+      "canonical": "steam, in chemical industry",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "蒸汽，化工行业": {
+      "canonical": "steam, in chemical industry",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "chromium steel": {
+      "canonical": "steel, chromium steel 18/8",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "钢，铬钢18/8": {
+      "canonical": "steel, chromium steel 18/8",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "chromium steel, hot rolled": {
+      "canonical": "steel, chromium steel 18/8, hot rolled",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "钢，铬钢18/8，热轧": {
+      "canonical": "steel, chromium steel 18/8, hot rolled",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "low-alloyed steel": {
+      "canonical": "steel, low-alloyed",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "钢，低合金": {
+      "canonical": "steel, low-alloyed",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "low-alloyed steel, hot rolled": {
+      "canonical": "steel, low-alloyed, hot rolled",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "钢，低合金，热轧": {
+      "canonical": "steel, low-alloyed, hot rolled",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "unalloyed steel": {
+      "canonical": "steel, unalloyed",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "钢，非合金": {
+      "canonical": "steel, unalloyed",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "stone wool": {
+      "canonical": "stone wool, packed",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "岩棉，包装": {
+      "canonical": "stone wool, packed",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "stretch blow molding": {
+      "canonical": "stretch blow moulding",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "拉伸吹塑成型": {
+      "canonical": "stretch blow moulding",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "stucco plaster": {
+      "canonical": "stucco",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "石膏灰泥": {
+      "canonical": "stucco",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "san copolymer": {
+      "canonical": "styrene-acrylonitrile copolymer",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "苯乙烯-丙烯腈共聚物（SAN）": {
+      "canonical": "styrene-acrylonitrile copolymer",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "sulphuric acid": {
+      "canonical": "sulfuric acid",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "硫酸": {
+      "canonical": "sulfuric acid",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "synthetic elastomer": {
+      "canonical": "synthetic rubber",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "合成橡胶": {
+      "canonical": "synthetic rubber",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "potable water": {
+      "canonical": "tap water",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "自来水": {
+      "canonical": "tap water",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "tv set": {
+      "canonical": "television",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "电视机": {
+      "canonical": "television",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "cotton textile": {
+      "canonical": "textile, knit cotton",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "纺织品，针织棉": {
+      "canonical": "textile, knit cotton",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "tin metal": {
+      "canonical": "tin",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "锡": {
+      "canonical": "tin",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "titanium(iv) chloride": {
+      "canonical": "titanium tetrachloride",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "四氯化钛": {
+      "canonical": "titanium tetrachloride",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "transistor, auxiliaries": {
+      "canonical": "transistor, auxilliaries and energy use",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "晶体管，辅助材料及能耗": {
+      "canonical": "transistor, auxilliaries and energy use",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "transistor": {
+      "canonical": "transistor, surface-mounted",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "晶体管，表面贴装": {
+      "canonical": "transistor, surface-mounted",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "transistor, wired": {
+      "canonical": "transistor, wired, small size, through-hole mounting",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "晶体管，引线式，小尺寸，通孔安装": {
+      "canonical": "transistor, wired, small size, through-hole mounting",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "sodium phosphate, tribasic": {
+      "canonical": "trisodium phosphate",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "磷酸三钠": {
+      "canonical": "trisodium phosphate",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "vacuum cleaning appliance": {
+      "canonical": "vacuum cleaner",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "真空吸尘器": {
+      "canonical": "vacuum cleaner",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "ventilation parts plant": {
+      "canonical": "ventilation components factory",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "通风部件厂": {
+      "canonical": "ventilation components factory",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "vinyl acetate monomer": {
+      "canonical": "vinyl acetate",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "乙酸乙烯酯": {
+      "canonical": "vinyl acetate",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "wafer": {
+      "canonical": "wafer, fabricated, for integrated circuit",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "晶圆，已制造，用于集成电路": {
+      "canonical": "wafer, fabricated, for integrated circuit",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "laundry washer": {
+      "canonical": "washing machine",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "洗衣机": {
+      "canonical": "washing machine",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "scrap packaging paper": {
+      "canonical": "waste packaging paper",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "废包装纸": {
+      "canonical": "waste packaging paper",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "unsorted scrap paperboard": {
+      "canonical": "waste paperboard, unsorted",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "废纸板，未分类": {
+      "canonical": "waste paperboard, unsorted",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "waste wood": {
+      "canonical": "waste wood, post-consumer, measured as dry mass",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "废木材，消费后，以干重计": {
+      "canonical": "waste wood, post-consumer, measured as dry mass",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "copper wire drawing": {
+      "canonical": "wire drawing, copper",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "拉丝，铜": {
+      "canonical": "wire drawing, copper",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "wooden board factory": {
+      "canonical": "wooden board factory, organic bonded boards",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "木板厂，有机粘合板材": {
+      "canonical": "wooden board factory, organic bonded boards",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "cotton yarn": {
+      "canonical": "yarn, cotton",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "纱线，棉": {
+      "canonical": "yarn, cotton",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "zeolite": {
+      "canonical": "zeolite, powder",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "沸石，粉末": {
+      "canonical": "zeolite, powder",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "zinc metal": {
+      "canonical": "zinc",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "锌": {
+      "canonical": "zinc",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "zinc coating, coils": {
+      "canonical": "zinc coat, coils",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "镀锌，卷材": {
+      "canonical": "zinc coat, coils",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "zinc coating, pieces": {
+      "canonical": "zinc coat, pieces",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "镀锌，件材": {
+      "canonical": "zinc coat, pieces",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "zinc ore concentrate": {
+      "canonical": "zinc concentrate",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    },
+    "锌精矿": {
+      "canonical": "zinc concentrate",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "zh"
+    },
+    "ship bilge oil": {
+      "canonical": "bilge oil",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "舱底油": {
+      "canonical": "bilge oil",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "hazardous waste, incineration": {
+      "canonical": "hazardous waste, for incineration",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "危险废物，焚烧处理": {
+      "canonical": "hazardous waste, for incineration",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "hazardous waste, underground deposit": {
+      "canonical": "hazardous waste, for underground deposit",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "危险废物，地下填埋": {
+      "canonical": "hazardous waste, for underground deposit",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "inert solid waste": {
+      "canonical": "inert waste",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "惰性废物": {
+      "canonical": "inert waste",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "inert waste, final disposal": {
+      "canonical": "inert waste, for final disposal",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "惰性废物，最终处置": {
+      "canonical": "inert waste, for final disposal",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "municipal waste": {
+      "canonical": "municipal solid waste",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "城市生活垃圾": {
+      "canonical": "municipal solid waste",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "oil refinery sludge": {
+      "canonical": "refinery sludge",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "炼油污泥": {
+      "canonical": "refinery sludge",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "spent solvent": {
+      "canonical": "spent solvent mixture",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "废溶剂混合物": {
+      "canonical": "spent solvent mixture",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "scrap cable": {
+      "canonical": "used cable",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "废电缆": {
+      "canonical": "used cable",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "scrap it accessory": {
+      "canonical": "used IT accessory",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "废旧IT配件": {
+      "canonical": "used IT accessory",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "used printed wiring board": {
+      "canonical": "used printed wiring boards",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "废印制电路板": {
+      "canonical": "used printed wiring boards",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "end-of-life smartphone": {
+      "canonical": "used smartphone",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "废旧智能手机": {
+      "canonical": "used smartphone",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "end-of-life tablet": {
+      "canonical": "used tablet",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "废旧平板电脑": {
+      "canonical": "used tablet",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "aluminium scrap": {
+      "canonical": "waste aluminium",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "废铝": {
+      "canonical": "waste aluminium",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "copper scrap": {
+      "canonical": "waste copper",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "废铜": {
+      "canonical": "waste copper",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "e-waste (weee)": {
+      "canonical": "waste electric and electronic equipment",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "废弃电气电子设备（WEEE）": {
+      "canonical": "waste electric and electronic equipment",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "spent emulsion paint": {
+      "canonical": "waste emulsion paint",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "废乳胶漆": {
+      "canonical": "waste emulsion paint",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "scrap glass": {
+      "canonical": "waste glass",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "废玻璃": {
+      "canonical": "waste glass",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "scrap gypsum": {
+      "canonical": "waste gypsum",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "废石膏": {
+      "canonical": "waste gypsum",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "spent mineral oil": {
+      "canonical": "waste mineral oil",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "废矿物油": {
+      "canonical": "waste mineral oil",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "scrap mineral wool": {
+      "canonical": "waste mineral wool",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "废矿物棉": {
+      "canonical": "waste mineral wool",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "spent paint": {
+      "canonical": "waste paint",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "废油漆": {
+      "canonical": "waste paint",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "scrap paperboard": {
+      "canonical": "waste paperboard",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "废纸板": {
+      "canonical": "waste paperboard",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "waste plastic": {
+      "canonical": "waste plastic, mixture",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "废塑料，混合": {
+      "canonical": "waste plastic, mixture",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "polyethylene scrap": {
+      "canonical": "waste polyethylene",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "废聚乙烯": {
+      "canonical": "waste polyethylene",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "waste polyethylene/polypropylene": {
+      "canonical": "waste polyethylene/polypropylene product",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "废聚乙烯/聚丙烯制品": {
+      "canonical": "waste polyethylene/polypropylene product",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "polypropylene scrap": {
+      "canonical": "waste polypropylene",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "废聚丙烯": {
+      "canonical": "waste polypropylene",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "polystyrene scrap": {
+      "canonical": "waste polystyrene",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "废聚苯乙烯": {
+      "canonical": "waste polystyrene",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "waste polyvinyl chloride": {
+      "canonical": "waste polyvinylchloride",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "废聚氯乙烯": {
+      "canonical": "waste polyvinylchloride",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "waste rubber": {
+      "canonical": "waste rubber, unspecified",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "废橡胶，未指定": {
+      "canonical": "waste rubber, unspecified",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "steel scrap": {
+      "canonical": "waste steel",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "废钢": {
+      "canonical": "waste steel",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "waste textile": {
+      "canonical": "waste yarn and waste textile",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "废纱线及废纺织品": {
+      "canonical": "waste yarn and waste textile",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "wastewater, ceramic production": {
+      "canonical": "wastewater from ceramic production",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "废水，来自陶瓷生产": {
+      "canonical": "wastewater from ceramic production",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "average wastewater": {
+      "canonical": "wastewater, average",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "废水，平均": {
+      "canonical": "wastewater, average",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "unpolluted wastewater": {
+      "canonical": "wastewater, unpolluted",
+      "flow_type": "WASTE_FLOW",
+      "via": "fuzzed_en"
+    },
+    "废水，未污染": {
+      "canonical": "wastewater, unpolluted",
+      "flow_type": "WASTE_FLOW",
+      "via": "zh"
+    },
+    "aluminium ion": {
+      "canonical": "Aluminium III",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "铝离子（Al³⁺）": {
+      "canonical": "Aluminium III",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "ammonia (emission)": {
+      "canonical": "Ammonia",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "氨": {
+      "canonical": "Ammonia",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "ammonium": {
+      "canonical": "Ammonium",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "铵": {
+      "canonical": "Ammonium",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "antimony ion": {
+      "canonical": "Antimony ion",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "锑离子": {
+      "canonical": "Antimony ion",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "aox": {
+      "canonical": "AOX, Adsorbable Organic Halides",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "AOX，可吸附有机卤化物": {
+      "canonical": "AOX, Adsorbable Organic Halides",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "arsenic ion": {
+      "canonical": "Arsenic ion",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "砷离子": {
+      "canonical": "Arsenic ion",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "barium ion": {
+      "canonical": "Barium II",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "钡离子（Ba²⁺）": {
+      "canonical": "Barium II",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "benzene": {
+      "canonical": "Benzene",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "苯": {
+      "canonical": "Benzene",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "benzo(a)pyrene": {
+      "canonical": "Benzo(a)pyrene",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "苯并(a)芘": {
+      "canonical": "Benzo(a)pyrene",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "beryllium ion": {
+      "canonical": "Beryllium II",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "铍离子（Be²⁺）": {
+      "canonical": "Beryllium II",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "bod5": {
+      "canonical": "BOD5, Biological Oxygen Demand",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "BOD5，生化需氧量": {
+      "canonical": "BOD5, Biological Oxygen Demand",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "boron": {
+      "canonical": "Boron",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "硼": {
+      "canonical": "Boron",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "cadmium ion": {
+      "canonical": "Cadmium II",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "镉离子（Cd²⁺）": {
+      "canonical": "Cadmium II",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "carbon dioxide, fossil": {
+      "canonical": "Carbon dioxide, fossil",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "二氧化碳，化石源": {
+      "canonical": "Carbon dioxide, fossil",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "carbon dioxide, non-fossil": {
+      "canonical": "Carbon dioxide, non-fossil",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "二氧化碳，非化石源": {
+      "canonical": "Carbon dioxide, non-fossil",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "carbon dioxide, non-fossil, resource correction": {
+      "canonical": "Carbon dioxide, non-fossil, resource correction",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "二氧化碳，非化石源，资源修正": {
+      "canonical": "Carbon dioxide, non-fossil, resource correction",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "carbon monoxide, fossil": {
+      "canonical": "Carbon monoxide, fossil",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "一氧化碳，化石源": {
+      "canonical": "Carbon monoxide, fossil",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "carbonyl sulfide": {
+      "canonical": "Carbonyl sulfide",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "羰基硫": {
+      "canonical": "Carbonyl sulfide",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "chloride": {
+      "canonical": "Chloride",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "氯化物（氯离子）": {
+      "canonical": "Chloride",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "chromium iii": {
+      "canonical": "Chromium III",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "三价铬（Cr³⁺）": {
+      "canonical": "Chromium III",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "chromium vi": {
+      "canonical": "Chromium VI",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "六价铬（Cr⁶⁺）": {
+      "canonical": "Chromium VI",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "cobalt ion": {
+      "canonical": "Cobalt II",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "钴离子（Co²⁺）": {
+      "canonical": "Cobalt II",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "cod": {
+      "canonical": "COD, Chemical Oxygen Demand",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "COD，化学需氧量": {
+      "canonical": "COD, Chemical Oxygen Demand",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "copper ion": {
+      "canonical": "Copper ion",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "铜离子": {
+      "canonical": "Copper ion",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "cyanide": {
+      "canonical": "Cyanide",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "氰化物": {
+      "canonical": "Cyanide",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "dinitrogen monoxide": {
+      "canonical": "Dinitrogen monoxide",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "一氧化二氮（N₂O）": {
+      "canonical": "Dinitrogen monoxide",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "dioxins": {
+      "canonical": "Dioxins, measured as 2,3,7,8-tetrachlorodibenzo-p-dioxin",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "二噁英，以2,3,7,8-四氯二苯并对二噁英计": {
+      "canonical": "Dioxins, measured as 2,3,7,8-tetrachlorodibenzo-p-dioxin",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "doc": {
+      "canonical": "DOC, Dissolved Organic Carbon",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "DOC，溶解性有机碳": {
+      "canonical": "DOC, Dissolved Organic Carbon",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "ethylene (emission)": {
+      "canonical": "Ethylene",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "乙烯（排放）": {
+      "canonical": "Ethylene",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "fluoride": {
+      "canonical": "Fluoride",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "氟化物": {
+      "canonical": "Fluoride",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "formaldehyde (emission)": {
+      "canonical": "Formaldehyde",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "甲醛（排放）": {
+      "canonical": "Formaldehyde",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "waste heat": {
+      "canonical": "Heat, waste",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "废热": {
+      "canonical": "Heat, waste",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "hydrocarbons": {
+      "canonical": "Hydrocarbons, unspecified",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "碳氢化合物，未指定": {
+      "canonical": "Hydrocarbons, unspecified",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "hydrogen (emission)": {
+      "canonical": "Hydrogen",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "氢": {
+      "canonical": "Hydrogen",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "hydrogen fluoride": {
+      "canonical": "Hydrogen fluoride",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "氟化氢": {
+      "canonical": "Hydrogen fluoride",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "hydrogen sulfide": {
+      "canonical": "Hydrogen sulfide",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "硫化氢": {
+      "canonical": "Hydrogen sulfide",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "iron ion": {
+      "canonical": "Iron ion",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "铁离子": {
+      "canonical": "Iron ion",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "lead ion": {
+      "canonical": "Lead II",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "铅离子（Pb²⁺）": {
+      "canonical": "Lead II",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "manganese ion": {
+      "canonical": "Manganese II",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "锰离子（Mn²⁺）": {
+      "canonical": "Manganese II",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "mercury ion": {
+      "canonical": "Mercury II",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "汞离子（Hg²⁺）": {
+      "canonical": "Mercury II",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "methane, fossil": {
+      "canonical": "Methane, fossil",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "甲烷，化石源": {
+      "canonical": "Methane, fossil",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "molybdenum ion": {
+      "canonical": "Molybdenum VI",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "钼离子（Mo⁶⁺）": {
+      "canonical": "Molybdenum VI",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "nickel ion": {
+      "canonical": "Nickel II",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "镍离子（Ni²⁺）": {
+      "canonical": "Nickel II",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "nitrate": {
+      "canonical": "Nitrate",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "硝酸盐": {
+      "canonical": "Nitrate",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "nitrite": {
+      "canonical": "Nitrite",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "亚硝酸盐": {
+      "canonical": "Nitrite",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "nitrogen oxides": {
+      "canonical": "Nitrogen oxides",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "氮氧化物": {
+      "canonical": "Nitrogen oxides",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "nitrogen, organic bound": {
+      "canonical": "Nitrogen, organic bound",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "氮，有机结合态": {
+      "canonical": "Nitrogen, organic bound",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "nmvoc": {
+      "canonical": "NMVOC, non-methane volatile organic compounds",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "NMVOC，非甲烷挥发性有机化合物": {
+      "canonical": "NMVOC, non-methane volatile organic compounds",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "land occupation, industrial area": {
+      "canonical": "Occupation, industrial area",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "土地占用，工业用地": {
+      "canonical": "Occupation, industrial area",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "oils": {
+      "canonical": "Oils, unspecified",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "油类，未指定": {
+      "canonical": "Oils, unspecified",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "pah": {
+      "canonical": "PAH, polycyclic aromatic hydrocarbons",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "PAH，多环芳烃": {
+      "canonical": "PAH, polycyclic aromatic hydrocarbons",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "palladium ion": {
+      "canonical": "Palladium II",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "钯离子（Pd²⁺）": {
+      "canonical": "Palladium II",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "particulate matter, < 2.5 um": {
+      "canonical": "Particulate Matter, < 2.5 um",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "颗粒物，<2.5 μm": {
+      "canonical": "Particulate Matter, < 2.5 um",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "particulate matter, > 10 um": {
+      "canonical": "Particulate Matter, > 10 um",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "颗粒物，>10 μm": {
+      "canonical": "Particulate Matter, > 10 um",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "particulate matter, 2.5-10 um": {
+      "canonical": "Particulate Matter, > 2.5 um and < 10um",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "颗粒物，2.5~10 μm": {
+      "canonical": "Particulate Matter, > 2.5 um and < 10um",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "phenol": {
+      "canonical": "Phenol",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "苯酚": {
+      "canonical": "Phenol",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "phosphorus (emission)": {
+      "canonical": "Phosphorus",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "磷": {
+      "canonical": "Phosphorus",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "platinum (emission)": {
+      "canonical": "Platinum",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "铂（排放）": {
+      "canonical": "Platinum",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "propylene (emission)": {
+      "canonical": "Propylene",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "丙烯（排放）": {
+      "canonical": "Propylene",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "rhodium ion": {
+      "canonical": "Rhodium III",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "铑离子（Rh³⁺）": {
+      "canonical": "Rhodium III",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "selenium": {
+      "canonical": "Selenium IV",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "硒（Se⁴⁺）": {
+      "canonical": "Selenium IV",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "sodium ion": {
+      "canonical": "Sodium I",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "钠离子（Na⁺）": {
+      "canonical": "Sodium I",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "sulfate": {
+      "canonical": "Sulfate",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "硫酸盐": {
+      "canonical": "Sulfate",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "sulfide": {
+      "canonical": "Sulfide",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "硫化物": {
+      "canonical": "Sulfide",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "sulfur dioxide": {
+      "canonical": "Sulfur dioxide",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "二氧化硫": {
+      "canonical": "Sulfur dioxide",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "sulfur hexafluoride": {
+      "canonical": "Sulfur hexafluoride",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "六氟化硫": {
+      "canonical": "Sulfur hexafluoride",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "sulfuric acid (emission)": {
+      "canonical": "Sulfuric acid",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "硫酸（排放）": {
+      "canonical": "Sulfuric acid",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "suspended solids": {
+      "canonical": "Suspended solids, unspecified",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "悬浮固体，未指定": {
+      "canonical": "Suspended solids, unspecified",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "t-butyl methyl ether": {
+      "canonical": "t-Butyl methyl ether",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "甲基叔丁基醚（MTBE）": {
+      "canonical": "t-Butyl methyl ether",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "tellurium": {
+      "canonical": "Tellurium",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "碲": {
+      "canonical": "Tellurium",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "thallium ion": {
+      "canonical": "Thallium I",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "铊离子（Tl⁺）": {
+      "canonical": "Thallium I",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "tin ion": {
+      "canonical": "Tin ion",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "锡离子": {
+      "canonical": "Tin ion",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "toc": {
+      "canonical": "TOC, Total Organic Carbon",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "TOC，总有机碳": {
+      "canonical": "TOC, Total Organic Carbon",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "land transformation, from unspecified": {
+      "canonical": "Transformation, from unspecified",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "土地转化，来自未指定用地": {
+      "canonical": "Transformation, from unspecified",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "land transformation, to industrial area": {
+      "canonical": "Transformation, to industrial area",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "土地转化，至工业用地": {
+      "canonical": "Transformation, to industrial area",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "vanadium": {
+      "canonical": "Vanadium V",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "钒（V⁵⁺）": {
+      "canonical": "Vanadium V",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "water": {
+      "canonical": "Water",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "水": {
+      "canonical": "Water",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "water, cooling": {
+      "canonical": "Water, cooling, unspecified natural origin",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "水，冷却用，未指定自然来源": {
+      "canonical": "Water, cooling, unspecified natural origin",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "water, river": {
+      "canonical": "Water, river",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "水，河流": {
+      "canonical": "Water, river",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "water, natural origin": {
+      "canonical": "Water, unspecified natural origin",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "水，未指定自然来源": {
+      "canonical": "Water, unspecified natural origin",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "water, well": {
+      "canonical": "Water, well, in ground",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "水，地下井水": {
+      "canonical": "Water, well, in ground",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "xylenes": {
+      "canonical": "Xylenes, unspecified",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "二甲苯，未指定": {
+      "canonical": "Xylenes, unspecified",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "zinc ion": {
+      "canonical": "Zinc II",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "fuzzed_en"
+    },
+    "锌离子（Zn²⁺）": {
+      "canonical": "Zinc II",
+      "flow_type": "ELEMENTARY_FLOW",
+      "via": "zh"
+    },
+    "electric connector, bus": {
+      "canonical": "electric connector, peripheral type buss",
+      "flow_type": "PRODUCT_FLOW",
+      "via": "fuzzed_en"
+    }
+  }
+}
