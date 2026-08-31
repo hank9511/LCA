@@ -1,9 +1,5 @@
 # Agentic life cycle assessment
 
-Excel inventory → LCA agent → openLCA product system → LCIA.
-
-This public snapshot builds foreground processes from an Excel inventory, links background providers by **semantic name matching** (together with Excel-specified providers and market/geography filters), and then computes LCIA results through openLCA IPC.
-
 **Provider selecting by the pedigree-matrix method**, as used for the paper’s main results, is **not included**. After publication it will be available for academic, non-commercial use upon email request. See [CODE_AVAILABILITY.md](CODE_AVAILABILITY.md).
 
 ---
