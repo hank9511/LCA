@@ -1,10 +1,10 @@
-# LCA — Automated Life Cycle Assessment Pipeline
+# Agentic life cycle assessment
 
-Excel inventory → openLCA product system → LCIA.
+Excel inventory → LCA agent → openLCA product system → LCIA.
 
 This public snapshot builds foreground processes from an Excel inventory, links background providers by **semantic name matching** (together with Excel-specified providers and market/geography filters), and then computes LCIA results through openLCA IPC.
 
-**Provider screening by the pedigree-matrix method**, as used for the paper’s main results, is **not included**. After publication it will be available for academic, non-commercial use upon email request. See [CODE_AVAILABILITY.md](CODE_AVAILABILITY.md).
+**Provider selecting by the pedigree-matrix method**, as used for the paper’s main results, is **not included**. After publication it will be available for academic, non-commercial use upon email request. See [CODE_AVAILABILITY.md](CODE_AVAILABILITY.md).
 
 ---
 
