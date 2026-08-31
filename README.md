@@ -2,9 +2,9 @@
 
 Excel inventory → openLCA product system → LCIA.
 
-This public snapshot builds foreground processes from an Excel inventory, links background providers by **semantic (name) matching** (plus Excel-specified providers and market/geography filters), then calculates impact results via openLCA IPC.
+This public snapshot builds foreground processes from an Excel inventory, links background providers by **semantic name matching** (together with Excel-specified providers and market/geography filters), and then computes LCIA results through openLCA IPC.
 
-The **provider quality-scoring module** used for the paper’s main results is **not included**. After publication it will be available for academic, non-commercial use upon email request. See [CODE_AVAILABILITY.md](CODE_AVAILABILITY.md).
+**Provider screening by the pedigree-matrix method**, as used for the paper’s main results, is **not included**. After publication it will be available for academic, non-commercial use upon email request. See [CODE_AVAILABILITY.md](CODE_AVAILABILITY.md).
 
 ---
 
@@ -125,10 +125,10 @@ results = run_automated_lca_workflow(
 | 值 | 含义 |
 |----|------|
 | `config` | 使用 `lca_automation/config.py`（默认） |
-| `semantic_only` | 仅语义名称匹配（本公开快照的推荐模式） |
-| `full` | 完整链路（若评分模块未包含则退回语义匹配） |
-| `unconstrained_candidate` | 放宽候选过滤 |
-| `no_stage_classification` | 关闭生命周期阶段分类 |
+| `semantic_only` | Semantic name matching only (recommended for this snapshot) |
+| `full` | Pedigree-matrix provider screening (falls back to semantic matching in this snapshot) |
+| `unconstrained_candidate` | Relaxed candidate filters |
+| `no_stage_classification` | Disable life-cycle stage classification |
 
 本快照中 `PROVIDER_SELECTION_MODE = "semantic_only"`。
 
@@ -190,21 +190,21 @@ LCA/
 │   ├── main.py              # CLI: python -m lca_automation.main
 │   ├── main_workflow.py     # Excel → 产品系统 → LCIA
 │   ├── excel_parser.py
-│   ├── provider_selector.py # 本快照：语义匹配
+│   ├── provider_selector.py # this snapshot: semantic matching
 │   ├── model_builder.py
 │   ├── result_calculator.py
 │   └── server/              # headless IPC 启动脚本（macOS）
 ├── lca_website/             # Flask Web UI（端口 8087）
 ├── requirements.txt
 ├── .env.example
-└── LICENSE                  # MIT（不含未公开的评分模块）
+└── LICENSE                  # MIT (pedigree-matrix provider screening not included)
 ```
 
-| 包含 | 未包含 |
-|------|--------|
-| Excel 解析、建模、上游合并、LCIA | 论文主结果所用的 provider 质量评分实现 |
-| 语义 provider 匹配 | 评分 prompt、仲裁流程、标定常数 |
-| 地理 / market 候选过滤 | |
+| Included | Not in this snapshot |
+|----------|----------------------|
+| Excel parsing, model building, upstream merge, LCIA | Provider screening by the pedigree-matrix method (paper’s main results) |
+| Semantic provider matching | Pedigree-matrix indicators, prompts, arbitration workflow, and calibrated constants |
+| Geographic / market candidate filters | |
 
 ---
 
@@ -212,4 +212,4 @@ LCA/
 
 Public snapshot: [MIT](LICENSE).
 
-The withheld provider quality-scoring module is **not** under MIT. Academic, non-commercial access will be offered after publication upon request.
+Provider screening by the pedigree-matrix method is **not** licensed under MIT. Academic, non-commercial access will be offered after publication upon request.

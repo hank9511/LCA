@@ -122,7 +122,7 @@ class UniversalLCAModeler:
         )
         if self.provider_selection_mode == "full":
             print(
-                "ℹ️ Public snapshot: provider quality-scoring is not included; "
+                "ℹ️ Public snapshot: pedigree-matrix provider screening is not included; "
                 "using semantic matching."
             )
             self.provider_selection_mode = "semantic_only"
