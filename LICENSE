@@ -20,6 +20,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-Note: The provider quality-scoring module used in the associated paper is not
-part of this public snapshot and is not licensed under MIT. It will be offered
-separately for academic, non-commercial use upon request after publication.
+Note: Provider screening by the pedigree-matrix method, as used in the
+associated paper, is not part of this public snapshot and is not licensed
+under MIT. It will be offered separately for academic, non-commercial use
+upon request after publication.

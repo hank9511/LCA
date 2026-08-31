@@ -100,7 +100,7 @@ def build_ablation_config(
     )
     if merged["PROVIDER_SELECTION_MODE"] == "full":
         print(
-            "ℹ️ Public snapshot: provider quality-scoring is not included; "
+            "ℹ️ Public snapshot: pedigree-matrix provider screening is not included; "
             "using semantic matching."
         )
         merged["PROVIDER_SELECTION_MODE"] = "semantic_only"
