@@ -82,6 +82,8 @@ outputs/
 *.png
 *.jpg
 *.pdf
+!LCA_report/
+!LCA_report/**/*.pdf
 
 # Jupyter Notebook
 .ipynb_checkpoints
