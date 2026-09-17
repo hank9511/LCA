@@ -4,43 +4,43 @@
 
 ---
 
-## 目录 / Contents
+## Contents
 
-- [环境要求](#环境要求)
-- [安装](#安装)
-- [启动 openLCA IPC](#启动-openlca-ipc)
-- [命令行运行](#命令行运行)
-- [Web 应用](#web-应用)
-- [Excel 输入说明](#excel-输入说明)
-- [仓库结构](#仓库结构)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Starting the openLCA IPC server](#starting-the-openlca-ipc-server)
+- [Command-line usage](#command-line-usage)
+- [Web application](#web-application)
+- [Excel input format](#excel-input-format)
+- [Repository structure](#repository-structure)
 - [License](#license)
 
 ---
 
-## 环境要求
+## Requirements
 
-| 依赖 | 说明 |
-|------|------|
-| Python 3.9+ | 推荐 3.10 / 3.11 |
-| [openLCA 2.x](https://www.openlca.org/) | 需启用 IPC Server（默认端口 **8080**） |
-| ecoinvent 或兼容数据库 | 已在 openLCA 中打开 / 由 headless 脚本加载 |
-| 可选 LLM | 仅用于中文流名称翻译、地理辅助；不填也能跑语义匹配 |
+| Dependency | Notes |
+|------------|-------|
+| Python 3.9+ | 3.10 / 3.11 recommended |
+| [openLCA 2.x](https://www.openlca.org/) | IPC Server must be enabled (default port **8080**) |
+| ecoinvent or a compatible database | Opened in openLCA, or loaded by the headless scripts |
+| Optional LLM | Only used for translating Chinese flow names and for geographic hints; semantic matching works without it |
 
-**注意：** openLCA 图形界面与 headless IPC **不能同时打开同一个数据库**（Derby 单进程独占）。
+**Note:** the openLCA graphical interface and the headless IPC server **cannot open the same database at the same time** (Derby allows a single process only).
 
-默认数据库名（可在 `lca_automation/config.py` 中修改）：
+Default database name (can be changed in `lca_automation/config.py`):
 
 ```
 ecoinvent 3.12 Cutoff Unit 2025-12-19
 ```
 
-默认 LCIA 方法：`EF v3.1`
+Default LCIA method: `EF v3.1`
 
 ---
 
-## 安装
+## Installation
 
-在仓库根目录：
+From the repository root:
 
 ```bash
 git clone https://github.com/hank9511/LCA.git
@@ -50,62 +50,62 @@ python3 -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
 
 pip install -r requirements.txt
-pip install -r lca_website/requirements.txt   # 若要跑 Web
+pip install -r lca_website/requirements.txt   # only needed for the web app
 
-cp .env.example .env               # 可选：填 LLM / 网站密钥
+cp .env.example .env               # optional: LLM / website secrets
 ```
 
-`.env` 常用项：
+Common `.env` entries:
 
 ```env
-GROK_API_KEY=                      # 可选，流名称翻译等
+GROK_API_KEY=                      # optional, e.g. flow name translation
 GROK_BASE_URL=https://openrouter.ai/api/v1
-SECRET_KEY=change-me               # Web
+SECRET_KEY=change-me               # web app
 DATABASE_URL=sqlite:///lca_website.db
-LCA_IPC_PORTS=8080                 # 多个 openLCA 实例时用逗号分隔
+LCA_IPC_PORTS=8080                 # comma-separated for multiple openLCA instances
 ```
 
-不要把 `.env` 提交到 Git。
+Do not commit `.env` to Git.
 
 ---
 
-## 启动 openLCA IPC
+## Starting the openLCA IPC server
 
-分析前必须先让 Python 连上 openLCA。两种方式任选其一。
+Python must be able to reach openLCA before any analysis can run. Choose either option.
 
-### 方式 A：图形界面（跨平台）
+### Option A: graphical interface (cross-platform)
 
-1. 打开 openLCA，加载 ecoinvent（或兼容）数据库  
-2. **Window → Developer tools → IPC Server → Run**（端口 `8080`）
+1. Open openLCA and load the ecoinvent (or compatible) database
+2. **Window → Developer tools → IPC Server → Run** (port `8080`)
 
-### 方式 B：无界面脚本（macOS）
+### Option B: headless scripts (macOS)
 
 ```bash
 chmod +x lca_automation/server/*.command
 ./lca_automation/server/start_olca_ipc.command
 
-# 指定数据库名（openLCA 工作区 databases 下的文件夹名）
+# Pass a database name (the folder name under the openLCA workspace "databases" directory)
 ./lca_automation/server/start_olca_ipc.command "ecoinvent 3.12 Cutoff Unit 2025-12-19"
 
-# 停止并释放数据库
+# Stop the server and release the database
 ./lca_automation/server/stop_olca_ipc.command
 ```
 
-可选环境变量：`OLCA_APP`、`OLCA_DATA_DIR`、`OLCA_DB`、`OLCA_PORT`、`OLCA_XMX`。详见 [`lca_automation/server/README.md`](lca_automation/server/README.md)。
+Optional environment variables: `OLCA_APP`, `OLCA_DATA_DIR`, `OLCA_DB`, `OLCA_PORT`, `OLCA_XMX`. See [`lca_automation/server/README.md`](lca_automation/server/README.md) for details.
 
-Windows 用户请用方式 A。
+Windows users should use Option A.
 
 ---
 
-## 命令行运行
+## Command-line usage
 
-在**仓库根目录**执行（确保 IPC 已在 8080 监听）：
+Run from the **repository root** (make sure the IPC server is listening on port 8080):
 
 ```bash
 python -m lca_automation.main path/to/inventory.xlsx --ablation-variant semantic_only
 ```
 
-或在 Python 中：
+Or from Python:
 
 ```python
 from lca_automation import run_automated_lca_workflow
@@ -116,81 +116,81 @@ results = run_automated_lca_workflow(
 )
 ```
 
-`--ablation-variant` 可选值：
+Accepted values for `--ablation-variant`:
 
-| 值 | 含义 |
-|----|------|
-| `config` | 使用 `lca_automation/config.py`（默认） |
+| Value | Meaning |
+|-------|---------|
+| `config` | Use `lca_automation/config.py` (default) |
 | `semantic_only` | Semantic name matching only (recommended for this snapshot) |
 | `full` | Pedigree-matrix provider screening (falls back to semantic matching in this snapshot) |
 | `unconstrained_candidate` | Relaxed candidate filters |
 | `no_stage_classification` | Disable life-cycle stage classification |
 
-本快照中 `PROVIDER_SELECTION_MODE = "semantic_only"`。
+In this snapshot, `PROVIDER_SELECTION_MODE = "semantic_only"`.
 
-### 批处理（macOS）
+### Batch processing (macOS)
 
 ```bash
 export LCA_PYTHON="$(which python)"
 ./lca_automation/server/run_batch.command path/to/case1.xlsx path/to/case2.xlsx
 ```
 
-请用环境变量 `LCA_PYTHON` 指向已安装 `olca-ipc` 的解释器。
+Point the `LCA_PYTHON` environment variable at an interpreter that has `olca-ipc` installed.
 
 ---
 
-## Web 应用
+## Web application
 
 ```bash
-# 先启动 openLCA IPC（见上文），再：
+# Start the openLCA IPC server first (see above), then:
 cd lca_website
 python app.py
 ```
 
-浏览器打开：**http://127.0.0.1:8087**
+Open **http://127.0.0.1:8087** in a browser.
 
-首次访问可注册账号，或若你运行过 `python init_db.py`，默认管理员为 `admin` / `admin123`（请立刻改密，切勿用于生产）。
+You can register an account on first visit, or, if you have run `python init_db.py`, sign in with the default administrator `admin` / `admin123` (change the password immediately; never use these credentials in production).
 
-功能概览：项目创建 → 上传 Excel 清单 → 自动建模与计算 → 查看贡献 / 生成报告。
+Feature overview: create a project → upload an Excel inventory → automated modelling and calculation → inspect contributions / generate a report.
 
-多实例并行时，在仓库根 `.env` 中设置：
+To run several instances in parallel, set the following in the `.env` file at the repository root:
 
 ```env
 LCA_IPC_PORTS=8080,8081,8082
 LCA_MAX_CONCURRENT_TASKS=3
 ```
 
-每个端口对应一个独立的 openLCA 进程，且**不能共用同一数据库连接**。
+Each port corresponds to a separate openLCA process, and they **cannot share the same database connection**.
 
 ---
 
-## Excel 输入说明
+## Excel input format
 
-清单表需能被 `lca_automation/excel_parser.py` 解析，通常包含：
+The inventory workbook must be parsable by `lca_automation/excel_parser.py`, and typically contains:
 
-- 过程（process）名称与生命周期阶段（可选）
-- 输入 / 输出流、数量、单位
-- 可选：显式指定的背景过程 provider、地理位置
+- Process names and, optionally, life-cycle stages
+- Input / output flows, amounts and units
+- Optionally: explicitly specified background providers and locations
 
-`.xlsx` 文件默认被 `.gitignore` 忽略，请把案例文件放在本地，不要提交专有清单。
+`.xlsx` files are ignored by `.gitignore` by default. Keep case files locally and do not commit proprietary inventories.
 
-数据库名需与 openLCA 中实际打开的库一致。若你的库名不是默认值，请改 `lca_automation/config.py` 中的 `DATABASE_PATH`，或在调用 `run_automated_lca_workflow(..., database_path=...)` 时传入。
+The database name must match the database actually opened in openLCA. If your database name differs from the default, change `DATABASE_PATH` in `lca_automation/config.py`, or pass it via `run_automated_lca_workflow(..., database_path=...)`.
 
 ---
 
-## 仓库结构
+## Repository structure
 
 ```
 LCA/
-├── lca_automation/          # 建模与计算核心
+├── lca_automation/          # Modelling and calculation core
 │   ├── main.py              # CLI: python -m lca_automation.main
-│   ├── main_workflow.py     # Excel → 产品系统 → LCIA
+│   ├── main_workflow.py     # Excel → product system → LCIA
 │   ├── excel_parser.py
 │   ├── provider_selector.py # this snapshot: semantic matching
 │   ├── model_builder.py
 │   ├── result_calculator.py
-│   └── server/              # headless IPC 启动脚本（macOS）
-├── lca_website/             # Flask Web UI（端口 8087）
+│   └── server/              # headless IPC startup scripts (macOS)
+├── lca_website/             # Flask web UI (port 8087)
 ├── LCA_report/              # Sample LCA PDF reports generated by the pipeline
 ├── requirements.txt
 ├── .env.example
