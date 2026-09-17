@@ -1,83 +1,90 @@
-# openLCA headless IPC 服务器（方案 A）
+# openLCA headless IPC server (Option A)
 
-不打开 openLCA 图形界面，直接以「无界面服务器」方式连接指定数据库，在 **8080** 端口
-对外提供 JSON-RPC 接口，供 `lca_automation`（`olca_ipc.Client(8080)`）或任意程序调用。
+Connects to a given database as a “headless server”, without opening the openLCA graphical
+interface, and exposes a JSON-RPC interface on port **8080** for `lca_automation`
+(`olca_ipc.Client(8080)`) or any other program.
 
-替代了原本「手动打开 openLCA → 开发者工具 → IPC Server → 点 run」的全部步骤。
+This replaces the whole manual sequence of “open openLCA → Developer tools → IPC Server → click run”.
 
-## 文件
+## Files
 
-| 文件 | 作用 |
-|------|------|
-| `start_olca_ipc.command` | 一键启动 headless IPC 服务器 |
-| `stop_olca_ipc.command`  | 一键停止服务器并释放数据库 |
+| File | Purpose |
+|------|---------|
+| `start_olca_ipc.command` | Start the headless IPC server in one step |
+| `stop_olca_ipc.command`  | Stop the server and release the database in one step |
 
-> macOS 上可在「访达 Finder」中**双击**运行；也可在终端执行。
+> On macOS these can be run by **double-clicking** them in Finder, or from a terminal.
 
-## 使用
+## Usage
 
 ```bash
-# 启动（默认数据库：ecoinvent 3.12 Cutoff Unit 2025-12-19）
+# Start (default database: ecoinvent 3.12 Cutoff Unit 2025-12-19)
 ./start_olca_ipc.command
 
-# 启动并指定数据库（databases 目录下的文件夹名）
-./start_olca_ipc.command "ecoinvent 3.12-中石化"
+# Start with a specific database (the folder name under the "databases" directory)
+./start_olca_ipc.command "ecoinvent 3.12-sinopec"
 
-# 停止
+# Stop
 ./stop_olca_ipc.command
 ```
 
-启动成功后会显示地址 `http://localhost:8080`、进程 PID 和日志路径。
-随后即可直接运行你的分析，例如：
+Once started, the script prints the address `http://localhost:8080`, the process PID and the log path.
+You can then run your analysis directly, for example:
 
 ```bash
 python -m lca_automation.main your_case.xlsx
 ```
 
-## 可配置项（环境变量，可选）
+## Configuration (environment variables, optional)
 
-| 变量 | 默认值 | 说明 |
-|------|--------|------|
-| `OLCA_APP`      | `/Applications/openLCA.app` | openLCA 安装路径 |
-| `OLCA_DATA_DIR` | `~/openLCA-data-1.4`        | 工作区数据目录 |
-| `OLCA_DB`       | `ecoinvent 3.12 Cutoff Unit 2025-12-19` | 数据库名 |
-| `OLCA_PORT`     | `8080`                      | 端口 |
-| `OLCA_XMX`      | `16G`                       | JVM 最大堆内存 |
-| `OLCA_THREADS`  | `4`                         | 计算线程数 |
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `OLCA_APP`      | `/Applications/openLCA.app` | openLCA installation path |
+| `OLCA_DATA_DIR` | `~/openLCA-data-1.4`        | Workspace data directory |
+| `OLCA_DB`       | `ecoinvent 3.12 Cutoff Unit 2025-12-19` | Database name |
+| `OLCA_PORT`     | `8080`                      | Port |
+| `OLCA_XMX`      | `16G`                       | JVM maximum heap size |
+| `OLCA_THREADS`  | `4`                         | Number of computation threads |
 
-示例：`OLCA_PORT=8090 OLCA_XMX=24G ./start_olca_ipc.command`
+Example: `OLCA_PORT=8090 OLCA_XMX=24G ./start_olca_ipc.command`
 
-## 运行文件位置
+## Runtime file locations
 
-- 日志：`~/.olca-ipc/ipc-<端口>.log`
-- PID：`~/.olca-ipc/ipc-<端口>.pid`
+- Log: `~/.olca-ipc/ipc-<port>.log`
+- PID: `~/.olca-ipc/ipc-<port>.pid`
 
-## 重要注意事项
+## Important notes
 
-1. **不能与图形界面同时打开同一数据库。**
-   headless 服务器与 openLCA GUI 不能同时连接同一个数据库（Derby 单进程独占）。
-   - 启动前若 GUI 正打开该库，脚本会提示先关闭。
-   - 用脚本建好产品系统、算完后，运行 `stop_olca_ipc.command` 释放数据库，
-     再在 GUI 中打开该库即可看到全部结果（数据是同一份，完全同步）。
+1. **The same database cannot be open in the graphical interface at the same time.**
+   The headless server and the openLCA GUI cannot connect to the same database simultaneously
+   (Derby allows a single process only).
+   - If the GUI currently has the database open, the script will ask you to close it first.
+   - After building the product system and finishing the calculation with the scripts, run
+     `stop_olca_ipc.command` to release the database; opening it in the GUI then shows all
+     results (it is the same data, fully in sync).
 
-2. **数据同步是「串行交接」而非实时双向刷新。** 谁用完关掉，另一个再打开。
+2. **Data is handed over sequentially, not refreshed bidirectionally in real time.** Whoever is
+   finished closes it, then the other side can open it.
 
-3. **MKL 高性能求解器（已启用）：** 默认情况下 openLCA 的 headless 模式
-   不会加载原生计算库（加载入口仅在图形界面启动时调用）。本方案通过一个
-   极小的启动壳 `OlcaIpcServer` 在启动服务器前显式加载 MKL，使计算走原生
-   加速（实测完整 ecoinvent 关联系统单次计算约数秒）。
-   - 启动成功后会显示「⚡ 已启用 MKL 高性能求解器」。
-   - 若提示回退到纯 Java 求解器，请确认 `lib/OlcaIpcServer.class` 与 openLCA
-     安装目录下的 `Contents/Eclipse/olca-mkl-*` 目录存在。
+3. **MKL high-performance solver (enabled):** by default openLCA’s headless mode does not load
+   the native computation libraries (the loading entry point is only invoked when the graphical
+   interface starts). This setup uses a minimal launcher shell, `OlcaIpcServer`, to load MKL
+   explicitly before starting the server, so calculations use native acceleration (measured: a
+   single calculation on a fully linked ecoinvent system takes a few seconds).
+   - On successful startup it prints “⚡ MKL high-performance solver enabled”.
+   - If it reports a fallback to the pure Java solver, check that `lib/OlcaIpcServer.class` and
+     the `Contents/Eclipse/olca-mkl-*` directory inside the openLCA installation both exist.
 
-## 启动壳（MKL 加载器）说明
+## About the launcher shell (MKL loader)
 
-- 源码：`src/OlcaIpcServer.java`
-- 已编译产物：`lib/OlcaIpcServer.class`（随仓库提供，运行时仅用 openLCA 内置 JRE，无需额外 JDK）
-- 仅当 openLCA 升级且类名/接口变化导致失效时才需重新编译：
+- Source: `src/OlcaIpcServer.java`
+- Compiled artifact: `lib/OlcaIpcServer.class` (shipped with the repository; at runtime only
+  openLCA’s bundled JRE is used, no extra JDK required)
+- Recompilation is only needed if an openLCA upgrade changes class names or interfaces and
+  breaks it:
 
 ```bash
-# 需要一个 JDK 21（仅编译用），CP 指向 openLCA 的 libs
+# Requires a JDK 21 (for compilation only); CP points at openLCA's libs
 JDK=/path/to/jdk-21/Contents/Home
 CP="/Applications/openLCA.app/Contents/Eclipse/plugins/olca-app_*/libs/*"
 "$JDK/bin/javac" -classpath "$CP" -d lib src/OlcaIpcServer.java

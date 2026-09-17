@@ -1,12 +1,12 @@
 # lca_automation
 
-Excel → openLCA 产品系统 → LCIA。
+Excel → openLCA product system → LCIA.
 
-本公开版本按以下优先级选择背景过程（provider）：
+This public version selects background processes (providers) in the following order of priority:
 
-1. Excel 中显式指定的 provider  
-2. 同一 Excel 文件中的前景过程  
-3. 数据库候选：按名称语义相似度排序（可选 market / 地理过滤）
+1. Providers explicitly specified in the Excel file
+2. Foreground processes within the same Excel file
+3. Database candidates, ranked by semantic similarity of the name (optional market / geographic filters)
 
 **Provider screening by the pedigree-matrix method**, as used for the paper’s main results, is not included; see the repository root `README.md` and `CODE_AVAILABILITY.md`.
 
@@ -23,10 +23,10 @@ Excel
 
 ## Config
 
-见 `config.py`。本公开版本默认：
+See `config.py`. Defaults in this public version:
 
 - `PROVIDER_SELECTION_MODE = "semantic_only"`
-- `USE_LLM_FOR_PROVIDER_SELECTION = False`（LLM 仍可用于流名称翻译 / 地理辅助）
+- `USE_LLM_FOR_PROVIDER_SELECTION = False` (an LLM can still be used for flow name translation and geographic hints)
 
 ```python
 from lca_automation import run_automated_lca_workflow
@@ -41,4 +41,4 @@ If `full` is requested (pedigree-matrix provider screening), this public snapsho
 
 ## Upstream expansion
 
-为上游 provider 构建临时产品系统，再合并过程与链接（原系统优先），类似 openLCA 的 “Update Process Links”。
+A temporary product system is built for each upstream provider, then its processes and links are merged into the main system (the original system takes precedence), similar to openLCA’s “Update Process Links”.

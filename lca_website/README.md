@@ -1,47 +1,51 @@
-# LCA服务网站
+# LCA service website
 
-一个用于生命周期评估(LCA)的Web应用，支持Excel文件上传、AI分析和项目管理。
+A web application for life cycle assessment (LCA), supporting Excel file upload, AI-assisted analysis and project management.
 
-## 🚀 快速开始
+## 🚀 Quick start
 
-1. **安装依赖**: 双击 `安装依赖.bat`
-2. **启动网站**: 双击 `启动网站.bat`
-3. **访问网站**: 浏览器打开 `http://localhost:8080`
+Run these from the repository root, with the openLCA IPC server already running (see the root `README.md`):
 
-## ✨ 主要功能
+1. **Install dependencies**: `pip install -r lca_website/requirements.txt`
+2. **Start the site**: `cd lca_website && python app.py`
+3. **Open the site**: browse to `http://127.0.0.1:8087`
 
-- 用户注册和登录
-- 项目管理（创建、编辑、删除）
-- Excel文件上传和分析
-- AI驱动的LCA数据评估
-- 分析结果查看和下载
-- 文件管理和历史记录
+On Windows you can also use the helper scripts in this directory, e.g. `start.bat`.
 
-## 🔧 技术栈
+## ✨ Main features
 
-- **后端**: Python Flask
-- **数据库**: SQLite
-- **AI服务**: DeepSeek API
-- **前端**: HTML + CSS + JavaScript
+- User registration and login
+- Project management (create, edit, delete)
+- Excel file upload and analysis
+- AI-driven evaluation of LCA data
+- Viewing and downloading analysis results
+- File management and history
 
-## 📖 详细说明
+## 🔧 Tech stack
 
-更多详细信息请查看 `部署说明.md`
+- **Backend**: Python Flask
+- **Database**: SQLite
+- **AI service**: OpenAI-compatible API (configured via `GROK_API_KEY` / `GROK_BASE_URL`, defaults to OpenRouter)
+- **Frontend**: HTML + CSS + JavaScript
 
-## ⚙️ 多 openLCA 并行配置
+## 📖 Further documentation
 
-在项目根目录 `.env` 中配置：
+See the repository root `README.md` for installation, openLCA IPC setup and the Excel input format.
+
+## ⚙️ Configuring multiple parallel openLCA instances
+
+Configure this in the `.env` file at the repository root:
 
 ```env
 LCA_IPC_PORTS=8080,8081,8082,8083,8084,8085
-# 可选：不填时默认等于端口数量
+# Optional: defaults to the number of ports when left empty
 LCA_MAX_CONCURRENT_TASKS=6
 ```
 
-说明：
-- `LCA_IPC_PORTS` 是本服务真正用于任务调度的端口池，不会自动读取 openLCA GUI 当前设置。
-- 需要分别启动多个 openLCA 实例，并确保每个实例的 IPC 端口与上面配置一致。
-- 启动 `python lca_website/app.py` 后，日志中会打印 `ipc_ports=[...]`，用于确认是否生效。
+Notes:
+- `LCA_IPC_PORTS` is the port pool this service actually uses for task scheduling; it does not automatically read the current settings of the openLCA GUI.
+- You must start a separate openLCA instance for each port, and make sure each instance's IPC port matches the configuration above.
+- After starting `python lca_website/app.py`, the log prints `ipc_ports=[...]`, which you can use to confirm the configuration took effect.
 
 ---
-*简单易用的LCA服务网站* 🎯
+*A simple, easy-to-use LCA service website* 🎯
