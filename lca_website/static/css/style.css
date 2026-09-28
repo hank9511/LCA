@@ -1,4 +1,4 @@
-/* 全局样式 */
+/* Global styles */
 * {
     margin: 0;
     padding: 0;
@@ -18,7 +18,7 @@ body {
     padding: 0 20px;
 }
 
-/* 导航栏 */
+/* Navigation bar */
 .navbar {
     background-color: #2c3e50;
     padding: 1rem 0;
@@ -45,7 +45,7 @@ body {
     color: #ecf0f1;
 }
 
-/* 语言切换器 */
+/* Language switcher */
 .language-switcher {
     display: flex;
     gap: 0.5rem;
@@ -81,7 +81,7 @@ body {
     border-color: #3498db;
 }
 
-/* 修复导航菜单布局 */
+/* Navigation menu layout fix */
 .nav-menu {
     display: flex;
     align-items: center;
@@ -101,12 +101,12 @@ body {
     color: #3498db;
 }
 
-/* 主内容区 */
+/* Main content */
 .main-content {
     min-height: calc(100vh - 140px);
 }
 
-/* 英雄区域 */
+/* Hero section */
 .hero-section {
     background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
     color: white;
@@ -131,7 +131,7 @@ body {
     font-weight: bold;
 }
 
-/* 响应式调整标题 */
+/* Responsive title adjustment */
 @media (max-width: 1200px) {
     .hero-title {
         font-size: 2.6rem;
@@ -204,7 +204,7 @@ body {
     transform: translateY(-2px);
 }
 
-/* 按钮样式 */
+/* Button styles */
 .btn {
     display: inline-block;
     padding: 0.75rem 1.5rem;
@@ -258,7 +258,7 @@ body {
     width: 100%;
 }
 
-/* 特性区域 */
+/* Features section */
 .features-section {
     padding: 4rem 0;
     background-color: white;
@@ -322,7 +322,7 @@ body {
     line-height: 1.55;
 }
 
-/* 认证页面 */
+/* Authentication pages */
 .auth-container {
     display: flex;
     justify-content: center;
@@ -379,7 +379,7 @@ body {
     text-decoration: none;
 }
 
-/* 仪表板 */
+/* Dashboard */
 .dashboard-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -436,7 +436,7 @@ body {
     font-size: 1.1rem;
 }
 
-/* 项目网格 */
+/* Project grid */
 .projects-section h2 {
     margin-bottom: 2rem;
     color: #2c3e50;
@@ -525,7 +525,7 @@ body {
     align-items: center;
 }
 
-/* 表单样式 */
+/* Form styles */
 .form-container {
     display: flex;
     justify-content: center;
@@ -588,14 +588,14 @@ body {
     margin-top: 2rem;
 }
 
-/* 项目详情 */
+/* Project details */
 .project-detail-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
 }
 
-/* Excel上传区域 */
+/* Excel upload area */
 .excel-upload-section {
     background-color: white;
     padding: 1.5rem;
@@ -653,7 +653,7 @@ body {
     background-color: #c3e6cb;
 }
 
-/* 文件信息显示 */
+/* File information display */
 .file-info {
     margin-top: 0.5rem;
     padding: 0.5rem;
@@ -679,7 +679,7 @@ body {
     font-size: 0.9rem;
 }
 
-/* 上传状态指示器 */
+/* Upload status indicator */
 .upload-status {
     margin-top: 1.5rem;
     padding: 1.5rem;
@@ -709,7 +709,7 @@ body {
     font-weight: 500;
 }
 
-/* 按钮加载状态 */
+/* Button loading state */
 .btn-loading {
     display: none;
 }
@@ -719,7 +719,7 @@ body {
     cursor: not-allowed;
 }
 
-/* Excel文件区域 */
+/* Excel file area */
 .excel-files-section {
     background-color: white;
     padding: 1.5rem;
@@ -727,7 +727,7 @@ body {
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* 上传区域样式 */
+/* Upload area styles */
 .upload-section {
     margin-top: 2rem;
     padding: 1.5rem;
@@ -889,7 +889,7 @@ body {
     font-size: 0.9rem;
 }
 
-/* 模态框 */
+/* Modal */
 .modal {
     display: none;
     position: fixed;
@@ -939,7 +939,7 @@ body {
     color: #000;
 }
 
-/* 文件内容预览 */
+/* File content preview */
 .content-preview {
     margin-bottom: 1rem;
     border: 1px solid #e9ecef;
@@ -966,7 +966,7 @@ body {
     background-color: #e9ecef;
 }
 
-/* 通用折叠头部样式 */
+/* Shared collapsible header styles */
 .section-header {
     background-color: #f8f9fa;
     padding: 1rem;
@@ -1012,7 +1012,7 @@ body {
     color: #495057;
 }
 
-/* AI分析结果折叠样式 */
+/* AI analysis result collapse styles */
 .llm-analysis {
     margin-bottom: 1rem;
     border: 1px solid #e9ecef;
@@ -1039,7 +1039,7 @@ body {
     color: #495057;
 }
 
-/* 文件内容区域样式 */
+/* File content area styles */
 .files-content {
     border: 1px solid #e9ecef;
     border-top: none;
@@ -1066,7 +1066,7 @@ body {
     margin-top: 0.5rem;
 }
 
-/* 分析结论徽章 */
+/* Analysis conclusion badge */
 .analysis-conclusion {
     margin-bottom: 1rem;
 }
@@ -1091,7 +1091,7 @@ body {
     border: 2px solid #ffeaa7;
 }
 
-/* LLM分析区域样式 */
+/* LLM analysis area styles */
 .llm-analysis-section .analysis-content {
     flex: 1;
     display: flex;
@@ -1111,14 +1111,14 @@ body {
     min-height: 80px;
 }
 
-/* 分析操作按钮 */
+/* Analysis action buttons */
 .analysis-actions {
     display: flex;
     gap: 0.5rem;
     margin-top: 1rem;
 }
 
-/* 分析完成通知 */
+/* Analysis completion notice */
 .analysis-complete-notification {
     display: flex;
     align-items: center;
@@ -1135,7 +1135,7 @@ body {
     animation: slideInUp 0.5s ease-out;
 }
 
-/* 分析完成通知动画 */
+/* Analysis completion notice animation */
 @keyframes slideInUp {
     from {
         opacity: 0;
@@ -1147,7 +1147,7 @@ body {
     }
 }
 
-/* 分析超时通知样式 */
+/* Analysis timeout notice styles */
 .analysis-timeout-notification {
     background: linear-gradient(135deg, #ffc107, #fd7e14);
     color: white;
@@ -1165,7 +1165,7 @@ body {
 
 
 
-/* 删除通知 */
+/* Deletion notice */
 .deleted-notice {
     display: flex;
     align-items: center;
@@ -1186,7 +1186,7 @@ body {
     font-size: 0.9rem;
 }
 
-/* 模态框操作按钮 */
+/* Modal action buttons */
 .modal-actions {
     display: flex;
     gap: 1rem;
@@ -1194,7 +1194,7 @@ body {
     margin-top: 2rem;
 }
 
-/* 文件内容模态框样式 */
+/* File content modal styles */
 .file-content-table {
     margin-top: 1rem;
     overflow-x: auto;
@@ -1259,7 +1259,7 @@ body {
     color: #495057;
 }
 
-/* 紧凑的文件信息样式 */
+/* Compact file information styles */
 .file-meta-compact {
     margin-top: 0.5rem;
 }
@@ -1273,7 +1273,7 @@ body {
     border: 1px solid #e9ecef;
 }
 
-/* 宽幅AI分析结果样式 */
+/* Wide AI analysis result styles */
 .llm-analysis-wide {
     margin-top: 1.5rem;
     background-color: white;
@@ -1338,7 +1338,7 @@ body {
     transition: transform 0.3s;
 }
 
-/* 无分析状态样式 */
+/* No-analysis state styles */
 .llm-analysis-wide.no-analysis .analysis-header h5 {
     color: #6c757d;
     font-style: italic;
@@ -1357,7 +1357,7 @@ body {
     font-size: 0.9rem;
 }
 
-/* 删除警告样式 */
+/* Deletion warning styles */
 .delete-warning {
     background-color: #fff3cd;
     border: 1px solid #ffeaa7;
@@ -1390,7 +1390,7 @@ body {
     border-radius: 3px;
 }
 
-/* 成功按钮样式 */
+/* Success button styles */
 .btn-success {
     background-color: #28a745;
     color: white;
@@ -1400,7 +1400,7 @@ body {
     background-color: #218838;
 }
 
-/* 危险按钮样式 */
+/* Danger button styles */
 .btn-danger {
     background-color: #dc3545;
     color: white;
@@ -1494,7 +1494,7 @@ body {
     color: #2c3e50;
 }
 
-/* 空状态 */
+/* Empty state */
 .empty-state {
     text-align: center;
     padding: 3rem;
@@ -1505,7 +1505,7 @@ body {
     margin-bottom: 1rem;
 }
 
-/* 消息提示 */
+/* Message alerts */
 .flash-messages {
     max-width: 1200px;
     margin: 0 auto 2rem auto;
@@ -1531,7 +1531,7 @@ body {
     border: 1px solid #f5c6cb;
 }
 
-/* 页脚 */
+/* Footer */
 .footer {
     background-color: #f7f7f7;
     color: #555;
@@ -1576,7 +1576,7 @@ body {
     opacity: 1;
 }
 
-/* 响应式设计 */
+/* Responsive design */
 @media (max-width: 768px) {
     .hero-title {
         font-size: 2rem;
@@ -1618,7 +1618,7 @@ body {
     }
 }
 
-/* 文件信息块样式 */
+/* File information block styles */
 .file-sections {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1694,7 +1694,7 @@ body {
     font-size: 0.9rem;
 }
 
-/* Markdown预览样式 */
+/* Markdown preview styles */
 .markdown-content {
     background-color: white;
     padding: 1rem;
@@ -1725,7 +1725,7 @@ body {
     line-height: 1.6;
 }
 
-/* 文件内容预览表格样式 */
+/* File content preview table styles */
 .content-table-container {
     margin: 15px 0;
     overflow-x: auto;
@@ -1799,7 +1799,7 @@ body {
     font-size: 0.9em;
 }
 
-/* LCA分析相关样式 - 优化版 */
+/* LCA analysis styles - refined */
 .lca-status-container {
     text-align: center;
     padding: 30px;
@@ -1853,7 +1853,7 @@ body {
     color: #007bff;
 }
 
-/* 增强版进度条 */
+/* Enhanced progress bar */
 .lca-progress-bar {
     width: 100%;
     height: 8px;
@@ -1913,7 +1913,7 @@ body {
     font-size: 13px;
 }
 
-/* 步骤列表样式 */
+/* Step list styles */
 .lca-steps-list {
     text-align: left;
     margin: 25px 0;
@@ -2012,7 +2012,7 @@ body {
     color: #6c757d;
 }
 
-/* LCA步骤指示器样式（旧版保留兼容） */
+/* LCA step indicator styles (legacy, kept for compatibility) */
 .lca-step-indicator {
     margin: 10px 0;
     padding: 8px 12px;
@@ -2191,7 +2191,7 @@ body {
     border-color: #117a8b;
 }
 
-/* 响应式按钮文本 */
+/* Responsive button text */
 @media (max-width: 1200px) {
     .btn {
         font-size: 0.9rem;
@@ -2206,9 +2206,9 @@ body {
     }
 }
 
-/* ==================== 报告生成相关样式 ==================== */
+/* ==================== Report generation styles ==================== */
 
-/* 报告操作区域 */
+/* Report action area */
 .report-actions {
     display: flex;
     gap: 10px;
@@ -2223,7 +2223,7 @@ body {
     gap: 8px;
 }
 
-/* 报告表单 */
+/* Report form */
 .report-form {
     padding: 20px 0;
 }
@@ -2260,7 +2260,7 @@ body {
     font-size: 12px;
 }
 
-/* 报告生成状态 */
+/* Report generation status */
 .report-status {
     margin-top: 20px;
     padding: 15px;
@@ -2295,7 +2295,7 @@ body {
     color: #3498db;
 }
 
-/* 报告列表表格 */
+/* Report list table */
 .reports-table {
     margin-top: 20px;
     overflow-x: auto;
@@ -2329,7 +2329,7 @@ body {
     font-size: 13px;
 }
 
-/* 加载和空状态 */
+/* Loading and empty states */
 .loading-indicator {
     text-align: center;
     padding: 40px;
@@ -2376,12 +2376,12 @@ body {
     font-size: 14px;
 }
 
-/* 按钮图标 */
+/* Button icons */
 .btn-icon {
     font-size: 18px;
 }
 
-/* 模态框内的表格样式 */
+/* Table styles inside modals */
 .modal-content table.table {
     margin-top: 10px;
 }
@@ -2396,7 +2396,7 @@ body {
     padding: 10px;
 }
 
-/* 响应式设计 */
+/* Responsive design */
 @media (max-width: 768px) {
     .report-actions {
         flex-direction: column;

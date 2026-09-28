@@ -62,18 +62,18 @@ function createEnhancedLCAProgressUI(fileName) {
             <div class="lca-status-text">正在进行LCA分析</div>
             <div class="lca-status-details">分析文件: ${fileName}</div>
             
-            <!-- 进度信息 -->
+            <!-- Progress information -->
             <div class="lca-progress-info">
                 <span class="lca-progress-percentage" id="progressPercentage">0%</span>
                 <span class="lca-progress-eta" id="progressETA">预计剩余时间: 计算中...</span>
             </div>
             
-            <!-- 进度条 -->
+            <!-- Progress bar -->
             <div class="lca-progress-bar">
                 <div class="lca-progress" id="progressBar" style="width: 0%"></div>
             </div>
             
-            <!-- 步骤列表 -->
+            <!-- Step list -->
             <div class="lca-steps-list" id="stepsContainer">
                 ${LCA_STEPS.map(step => `
                     <div class="lca-step-item pending" id="step-${step.id}">
@@ -87,7 +87,7 @@ function createEnhancedLCAProgressUI(fileName) {
                 `).join('')}
             </div>
             
-            <!-- 计时器 -->
+            <!-- Timer -->
             <div class="lca-status-timer">
                 <small>已用时: <span id="analysisTimer">0</span> 秒</small>
                 <br>
@@ -98,7 +98,7 @@ function createEnhancedLCAProgressUI(fileName) {
                 </small>
             </div>
             
-            <!-- 调试信息面板（仅在调试模式下显示） -->
+            <!-- Debug panel (shown only in debug mode) -->
             <div id="debugInfo" style="display: none; margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px; font-size: 12px; text-align: left;">
                 <strong>🔍 调试信息：</strong>
                 <pre id="debugContent" style="margin: 5px 0; white-space: pre-wrap; font-family: monospace; font-size: 11px;"></pre>

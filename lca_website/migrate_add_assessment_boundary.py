@@ -31,58 +31,58 @@ def migrate():
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     project_id VARCHAR(8) NOT NULL,
 
-                    -- 生命周期模型类型
+                    -- Lifecycle model type
                     lifecycle_model VARCHAR(50) DEFAULT 'cradle_to_gate',
-                    -- cradle_to_gate: 摇篮到大门
-                    -- cradle_to_grave: 摇篮到坟墓
-                    -- gate_to_gate: 大门到大门
-                    -- cradle_to_cradle: 摇篮到摇篮
+                    -- cradle_to_gate: cradle-to-gate
+                    -- cradle_to_grave: cradle-to-grave
+                    -- gate_to_gate: gate-to-gate
+                    -- cradle_to_cradle: cradle-to-cradle
 
-                    -- 生命周期环节（JSON数组）
+                    -- Lifecycle stages (JSON array)
                     lifecycle_stages TEXT,
-                    -- 示例: ["raw_material", "production", "transport", "use", "disposal"]
+                    -- Example: ["raw_material", "production", "transport", "use", "disposal"]
 
-                    -- 各环节详细配置（JSON对象）
+                    -- Per-stage configuration (JSON object)
                     stages_config TEXT,
-                    -- 示例: {"raw_material": {"enabled": true, "description": "原材料获取"}, ...}
+                    -- Example: {"raw_material": {"enabled": true, "description": "raw material acquisition"}, ...}
 
-                    -- 系统边界描述
+                    -- System boundary description
                     boundary_description TEXT,
 
-                    -- 功能单位
+                    -- Functional unit
                     functional_unit VARCHAR(100),
 
-                    -- 参考流
+                    -- Reference flow
                     reference_flow VARCHAR(100),
 
-                    -- 截断规则
+                    -- Cut-off criteria
                     cutoff_criteria TEXT,
                     cutoff_threshold FLOAT DEFAULT 1.0,
-                    -- 默认1% 截断阈值
+                    -- Default 1% cut-off threshold
 
-                    -- 工艺流程图
+                    -- Process flow diagram
                     process_flow_diagram VARCHAR(500),
-                    -- 存储工艺流程图文件路径
+                    -- Stores the process flow diagram file path
 
-                    -- 地理边界
+                    -- Geographical boundary
                     geographical_boundary VARCHAR(200),
 
-                    -- 时间边界
+                    -- Temporal boundary
                     temporal_boundary VARCHAR(200),
 
-                    -- 技术边界
+                    -- Technological boundary
                     technological_boundary TEXT,
 
-                    -- 分配方法
+                    -- Allocation method
                     allocation_method VARCHAR(50) DEFAULT 'mass',
-                    -- mass: 质量分配
-                    -- economic: 经济价值分配
-                    -- physical: 物理因果关系分配
+                    -- mass: mass allocation
+                    -- economic: economic allocation
+                    -- physical: physical causal allocation
 
-                    -- 分配说明
+                    -- Allocation description
                     allocation_description TEXT,
 
-                    -- 元数据
+                    -- Metadata
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 

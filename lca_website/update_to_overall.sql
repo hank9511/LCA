@@ -1,10 +1,10 @@
--- 将所有包含"life cycle"或相关关键词的过程更新为"总体环节"
+-- Set processes whose names contain "life cycle" or related keywords to the overall stage
 -- 
--- 使用方法：
+-- Usage:
 -- cd /Users/haizhou/Downloads/OpenLCA_1017_1113/lca_website
 -- sqlite3 lca_website.db < update_to_overall.sql
 
--- 显示更新前的状态
+-- Show the state before the update
 .mode column
 .headers on
 .width 50 20 20
@@ -31,7 +31,7 @@ WHERE
 SELECT '' as info;
 SELECT '===== 开始更新 =====' as info;
 
--- 执行更新
+-- Apply the update
 UPDATE process_lifecycle_stage
 SET 
     lifecycle_stage = 'overall',
@@ -47,12 +47,12 @@ WHERE
     OR process_name LIKE '%整体%'
     OR process_name LIKE '%系统%';
 
--- 显示更新结果
+-- Show the update result
 SELECT '' as info;
 SELECT '===== 更新完成 =====' as info;
 SELECT '更新了 ' || changes() || ' 条记录' as result;
 
--- 显示当前的环节分布
+-- Show the current stage distribution
 SELECT '' as info;
 SELECT '===== 当前环节分布 =====' as info;
 SELECT '' as info;

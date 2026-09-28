@@ -1,36 +1,37 @@
 #!/usr/bin/env bash
 #
-# run_batch.command —— 串行批处理多个 LCA 案例（方案 A：串行，最省内存）
+# run_batch.command — run LCA cases one after another (option A: serial, lowest memory)
 #
-# 作用：
-#   1) 启动 openLCA headless IPC 服务器（默认端口 8080，复用 start_olca_ipc.command）
-#   2) 依次（串行）运行多个 Excel 案例 —— 单个失败不中断，继续下一个
-#   3) 全部跑完后停止服务器（仅当服务器是本脚本启动的）
-#   4) 打印成功/失败汇总表，每个案例独立日志存到 batch_results/<时间戳>/
+# Purpose:
+#   1) Start the openLCA headless IPC server (port 8080 by default, via start_olca_ipc.command)
+#   2) Run Excel cases serially — one failure does not stop the rest
+#   3) Stop the server when finished (only if this script started it)
+#   4) Print a pass/fail summary; each case log goes to batch_results/<timestamp>/
 #
-# 用法：
-#   1) 在「访达 Finder」中双击本文件 —— 跑 LCA_case/ 下全部 *.xlsx
-#   2) 终端指定若干案例（绝对或相对路径均可）：
+# Usage:
+#   1) Double-click this file in Finder — runs every *.xlsx under LCA_case/
+#   2) Or pass case paths (absolute or relative):
 #        ./run_batch.command "../../LCA_case/smartphone.xlsx" "../../LCA_case/battery production.xlsx"
 #
-# 可选环境变量（覆盖默认值）：
-#   LCA_PYTHON   含 olca_ipc 的 Python 解释器
-#                默认 /Users/haizhou/opt/anaconda3/envs/olca_py311/bin/python
-#   OLCA_DB      headless 服务器加载的数据库名（databases 目录下文件夹名）
-#                默认 "ecoinvent 3.12 Cutoff Unit 2025-12-19"
-#   OLCA_PORT    IPC 端口（默认 8080）。注意：lca_automation.main 端口写死 8080，
-#                若改端口则 main.py 连不上，仅在你自定义入口时才改。
-#   OLCA_XMX     单服务器 JVM 最大堆内存（默认沿用 start 脚本的 16G）。
-#                ⚠️ 本机物理内存有限时，完整 ecoinvent + 蒙特卡洛可能吃满内存导致变慢/OOM。
-#   CASES_DIR    无参数时扫描的案例目录（默认 仓库根/LCA_case）
+# Optional environment variables (override the defaults):
+#   LCA_PYTHON   Python interpreter that has olca_ipc
+#                default /Users/haizhou/opt/anaconda3/envs/olca_py311/bin/python
+#   OLCA_DB      database folder name loaded by the headless server
+#                default "ecoinvent 3.12 Cutoff Unit 2025-12-19"
+#   OLCA_PORT    IPC port (default 8080). lca_automation.main hard-codes 8080,
+#                so changing the port breaks main.py unless you use a custom entry point.
+#   OLCA_XMX     JVM max heap for the single server (default 16G from the start script).
+#                With limited RAM, full ecoinvent plus Monte Carlo can exhaust memory and slow down or OOM.
+#   CASES_DIR    case directory scanned when no arguments are given (default <repo>/LCA_case)
 #
-# 注意：headless 服务器与 openLCA 图形界面【不能同时打开同一个数据库】。
+# Note: the headless server and the openLCA GUI cannot open the same database
+#       at the same time.
 
-# 不使用 -e：单个案例失败时要继续后续案例
+# Do not use -e: a failed case must not abort the remaining cases
 set -uo pipefail
 
 # ---------------------------------------------------------------------------
-# 路径与配置
+# Paths and configuration
 # ---------------------------------------------------------------------------
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"          # .../lca_automation/server
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"                         # .../OpenLCA_1017_0610
@@ -53,19 +54,19 @@ warn() { printf '\033[0;33m%s\033[0m\n' "$*"; }
 err()  { printf '\033[0;31m%s\033[0m\n' "$*"; }
 
 # ---------------------------------------------------------------------------
-# 前置检查
+# Preconditions
 # ---------------------------------------------------------------------------
 [ -x "$PY" ] || { err "❌ 找不到 Python 解释器：$PY"; echo "   用 LCA_PYTHON 环境变量指定含 olca_ipc 的解释器。"; exit 1; }
 "$PY" -c "import olca_ipc" 2>/dev/null || { err "❌ 该 Python 缺少 olca_ipc 模块：$PY"; exit 1; }
 [ -f "$START_SH" ] || { err "❌ 找不到启动脚本：$START_SH"; exit 1; }
 
 # ---------------------------------------------------------------------------
-# 收集案例列表（参数优先；否则扫描 CASES_DIR）
+# Collect cases (arguments first; otherwise scan CASES_DIR)
 # ---------------------------------------------------------------------------
 CASES=()
 if [ "$#" -gt 0 ]; then
   for f in "$@"; do
-    [[ "$f" = /* ]] || f="$(cd "$(pwd)" && pwd)/$f"   # 相对路径转绝对
+    [[ "$f" = /* ]] || f="$(cd "$(pwd)" && pwd)/$f"   # relative path to absolute
     CASES+=("$f")
   done
 else
@@ -86,7 +87,7 @@ echo "  结果目录 : $RESULTS_DIR"
 echo "--------------------------------------------------------------"
 
 # ---------------------------------------------------------------------------
-# 启动服务器（若端口已被占用则认为已在运行，复用且结束时不关闭）
+# Start the server (if the port is already listening, reuse it and do not stop it at the end)
 # ---------------------------------------------------------------------------
 STARTED_BY_US=0
 if lsof -nP -iTCP:"$PORT" -sTCP:LISTEN >/dev/null 2>&1; then
@@ -100,7 +101,7 @@ else
   STARTED_BY_US=1
 fi
 
-# 结束时清理（仅关闭本脚本启动的服务器）
+# Cleanup on exit (stop the server only if this script started it)
 cleanup() {
   if [ "$STARTED_BY_US" -eq 1 ]; then
     echo
@@ -113,12 +114,12 @@ cleanup() {
 trap cleanup EXIT INT TERM
 
 # ---------------------------------------------------------------------------
-# 串行运行案例
+# Run cases serially
 # ---------------------------------------------------------------------------
 PASS=0; FAIL=0
 printf '%-4s %-9s %-9s %s\n' "#" "状态" "耗时(s)" "案例" > "$SUMMARY"
 
-cd "$REPO_ROOT"   # 必须在仓库根执行 python -m lca_automation.main
+cd "$REPO_ROOT"   # python -m lca_automation.main must run from the repository root
 idx=0
 for case in "${CASES[@]}"; do
   idx=$((idx+1))
@@ -139,7 +140,7 @@ for case in "${CASES[@]}"; do
   fi
 
   t0=$(date +%s)
-  # PYTHONUNBUFFERED 实时输出；同时写入日志和终端
+  # PYTHONUNBUFFERED streams output live to both the log and the terminal
   PYTHONUNBUFFERED=1 "$PY" -m lca_automation.main "$case" 2>&1 | tee "$logf"
   rc=${PIPESTATUS[0]}
   t1=$(date +%s); dt=$((t1-t0))
@@ -156,7 +157,7 @@ for case in "${CASES[@]}"; do
 done
 
 # ---------------------------------------------------------------------------
-# 汇总
+# Summary
 # ---------------------------------------------------------------------------
 echo
 echo "=============================================================="

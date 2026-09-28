@@ -1,12 +1,12 @@
-# 获取脚本所在目录
+# Resolve the directory that contains this script
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 Write-Host "Script directory: $scriptDir" -ForegroundColor Green
 
-# 切换到脚本目录
+# Change to the script directory
 Set-Location $scriptDir
 Write-Host "Current working directory: $PWD" -ForegroundColor Green
 
-# 检查app.py是否存在
+# Check that app.py exists
 if (Test-Path "app.py") {
     Write-Host "✓ Found app.py" -ForegroundColor Green
 } else {

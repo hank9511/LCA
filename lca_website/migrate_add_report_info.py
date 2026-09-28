@@ -29,7 +29,7 @@ def migrate_database(db_path):
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 project_id TEXT NOT NULL UNIQUE,
 
-                -- 基本信息 [1-9]
+                -- Basic information [1-9]
                 product_name TEXT,
                 product_model TEXT,
                 producer_name TEXT,
@@ -40,11 +40,11 @@ def migrate_database(db_path):
                 contact_phone TEXT,
                 contact_email TEXT,
 
-                -- 产品功能与标准 [10-11]
+                -- Product function and standard [10-11]
                 product_function TEXT,
                 standard_used TEXT DEFAULT 'IPCC 2013 GWP 100a',
 
-                -- 量化目的与范围 [12-16]
+                -- Quantification purpose and scope [12-16]
                 quantitative_purpose TEXT,
                 functional_unit TEXT,
                 system_boundary_description TEXT,
@@ -52,30 +52,30 @@ def migrate_database(db_path):
                 cutoff_criteria TEXT,
                 time_scale TEXT,
 
-                -- 数据来源 [17-18]
+                -- Data sources [17-18]
                 primary_data_source TEXT,
                 secondary_data_source TEXT,
 
-                -- 分配方法 [19-21]
+                -- Allocation method [19-21]
                 allocation_basis TEXT,
                 allocation_procedure TEXT,
                 specific_allocations TEXT,
 
-                -- 数据质量评价 [22]
+                -- Data quality assessment [22]
                 data_quality_notes TEXT,
 
-                -- 影响评估 [23]
+                -- Impact assessment [23]
                 impact_type_description TEXT DEFAULT '100-year global warming potential (GWP) given by IPCC',
 
-                -- 结果解释 [27-28]
+                -- Interpretation of results [27-28]
                 assumptions_limitations TEXT,
                 improvement_suggestions TEXT,
 
-                -- 其他设置
+                -- Other settings
                 enable_ai_suggestions BOOLEAN DEFAULT 1,
                 report_language TEXT DEFAULT 'en',  -- en, zh
 
-                -- 元数据
+                -- Metadata
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
