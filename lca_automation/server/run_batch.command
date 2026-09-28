@@ -56,9 +56,9 @@ err()  { printf '\033[0;31m%s\033[0m\n' "$*"; }
 # ---------------------------------------------------------------------------
 # Preconditions
 # ---------------------------------------------------------------------------
-[ -x "$PY" ] || { err "❌ 找不到 Python 解释器：$PY"; echo "   用 LCA_PYTHON 环境变量指定含 olca_ipc 的解释器。"; exit 1; }
-"$PY" -c "import olca_ipc" 2>/dev/null || { err "❌ 该 Python 缺少 olca_ipc 模块：$PY"; exit 1; }
-[ -f "$START_SH" ] || { err "❌ 找不到启动脚本：$START_SH"; exit 1; }
+[ -x "$PY" ] || { err "❌ Python interpreter not found: $PY"; echo "   Set LCA_PYTHON to an interpreter that has olca_ipc."; exit 1; }
+"$PY" -c "import olca_ipc" 2>/dev/null || { err "❌ This Python is missing the olca_ipc module: $PY"; exit 1; }
+[ -f "$START_SH" ] || { err "❌ Start script not found: $START_SH"; exit 1; }
 
 # ---------------------------------------------------------------------------
 # Collect cases (arguments first; otherwise scan CASES_DIR)
@@ -74,16 +74,16 @@ else
     < <(find "$CASES_DIR" -maxdepth 1 -type f -iname "*.xlsx" 2>/dev/null | sort)
 fi
 
-[ "${#CASES[@]}" -gt 0 ] || { err "❌ 没有可运行的案例。检查目录：$CASES_DIR"; exit 1; }
+[ "${#CASES[@]}" -gt 0 ] || { err "❌ No runnable cases found. Check directory: $CASES_DIR"; exit 1; }
 
 echo "=============================================================="
-note "LCA 串行批处理（方案 A）"
+note "LCA serial batch processing (option A)"
 echo "=============================================================="
 echo "  Python   : $PY"
-echo "  数据库   : $OLCA_DB"
-echo "  端口     : $PORT"
-echo "  案例数   : ${#CASES[@]}"
-echo "  结果目录 : $RESULTS_DIR"
+echo "  Database   : $OLCA_DB"
+echo "  Port       : $PORT"
+echo "  Case count : ${#CASES[@]}"
+echo "  Results dir: $RESULTS_DIR"
 echo "--------------------------------------------------------------"
 
 # ---------------------------------------------------------------------------
@@ -91,11 +91,11 @@ echo "--------------------------------------------------------------"
 # ---------------------------------------------------------------------------
 STARTED_BY_US=0
 if lsof -nP -iTCP:"$PORT" -sTCP:LISTEN >/dev/null 2>&1; then
-  warn "⚠️  端口 $PORT 已在监听，复用现有服务器（结束时不会关闭它）。"
+  warn "⚠️  Port $PORT is already listening; reusing the existing server (will not stop it at the end)."
 else
-  note "🚀 启动 IPC 服务器…"
+  note "🚀 Starting IPC server…"
   if ! OLCA_PORT="$PORT" OLCA_DB="$OLCA_DB" ${OLCA_XMX:+OLCA_XMX="$OLCA_XMX"} "$START_SH" "$OLCA_DB"; then
-    err "❌ 服务器启动失败，终止批处理。"
+    err "❌ Server failed to start; aborting batch."
     exit 1
   fi
   STARTED_BY_US=1
@@ -105,10 +105,10 @@ fi
 cleanup() {
   if [ "$STARTED_BY_US" -eq 1 ]; then
     echo
-    note "🧹 停止本脚本启动的 IPC 服务器…"
+    note "🧹 Stopping the IPC server started by this script…"
     OLCA_PORT="$PORT" "$STOP_SH" || true
   else
-    note "ℹ️  复用的现有服务器保持运行，未关闭。"
+    note "ℹ️  Reused existing server left running; not stopped."
   fi
 }
 trap cleanup EXIT INT TERM
@@ -117,7 +117,7 @@ trap cleanup EXIT INT TERM
 # Run cases serially
 # ---------------------------------------------------------------------------
 PASS=0; FAIL=0
-printf '%-4s %-9s %-9s %s\n' "#" "状态" "耗时(s)" "案例" > "$SUMMARY"
+printf '%-4s %-9s %-9s %s\n' "#" "Status" "Time(s)" "Case" > "$SUMMARY"
 
 cd "$REPO_ROOT"   # python -m lca_automation.main must run from the repository root
 idx=0
@@ -133,7 +133,7 @@ for case in "${CASES[@]}"; do
   echo "=============================================================="
 
   if [ ! -f "$case" ]; then
-    err "  跳过：文件不存在 -> $case"
+    err "  Skipping: file does not exist -> $case"
     printf '%-4s %-9s %-9s %s\n' "$idx" "MISSING" "-" "$base" >> "$SUMMARY"
     FAIL=$((FAIL+1))
     continue
@@ -145,12 +145,12 @@ for case in "${CASES[@]}"; do
   rc=${PIPESTATUS[0]}
   t1=$(date +%s); dt=$((t1-t0))
 
-  if [ "$rc" -eq 0 ] && grep -q "LCA分析成功完成" "$logf" 2>/dev/null; then
-    ok "  ✅ 完成（${dt}s）日志：$logf"
+  if [ "$rc" -eq 0 ] && grep -q "completed successfully" "$logf" 2>/dev/null; then
+    ok "  ✅ Completed (${dt}s) log: $logf"
     printf '%-4s %-9s %-9s %s\n' "$idx" "OK" "$dt" "$base" >> "$SUMMARY"
     PASS=$((PASS+1))
   else
-    err "  ❌ 失败（退出码 ${rc}，${dt}s）日志：$logf"
+    err "  ❌ Failed (exit code ${rc}, ${dt}s) log: $logf"
     printf '%-4s %-9s %-9s %s\n' "$idx" "FAIL($rc)" "$dt" "$base" >> "$SUMMARY"
     FAIL=$((FAIL+1))
   fi
@@ -161,10 +161,10 @@ done
 # ---------------------------------------------------------------------------
 echo
 echo "=============================================================="
-note "批处理完成：成功 $PASS / 失败 $FAIL / 共 ${#CASES[@]}"
+note "Batch finished: passed $PASS / failed $FAIL / total ${#CASES[@]}"
 echo "=============================================================="
 cat "$SUMMARY"
 echo "--------------------------------------------------------------"
-echo "汇总文件：$SUMMARY"
+echo "Summary file: $SUMMARY"
 
 exit 0

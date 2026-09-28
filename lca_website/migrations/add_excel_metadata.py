@@ -16,10 +16,10 @@ def migrate():
             break
 
     if not db_path:
-        print("❌ 未找到数据库文件")
+        print("❌ Database file not found")
         return False
 
-    print(f"📊 使用数据库: {db_path}")
+    print(f"📊 Using database: {db_path}")
 
     try:
         conn = sqlite3.connect(db_path)
@@ -29,11 +29,11 @@ def migrate():
         columns = [row[1] for row in cursor.fetchall()]
 
         if "metadata_json" in columns:
-            print("✅ metadata_json字段已存在，跳过迁移")
+            print("✅ metadata_json field already exists, skipping migration")
             conn.close()
             return True
 
-        print("📝 添加metadata_json字段到excel_file表...")
+        print("📝 Adding metadata_json field to excel_file table...")
         cursor.execute(
             """
             ALTER TABLE excel_file
@@ -42,17 +42,17 @@ def migrate():
         )
 
         conn.commit()
-        print("✅ 迁移成功完成！")
+        print("✅ Migration completed successfully!")
 
         cursor.execute("PRAGMA table_info(excel_file)")
         columns = [row[1] for row in cursor.fetchall()]
-        print(f"📋 当前excel_file表字段: {', '.join(columns)}")
+        print(f"📋 Current excel_file table columns: {', '.join(columns)}")
 
         conn.close()
         return True
 
     except Exception as e:
-        print(f"❌ 迁移失败: {e}")
+        print(f"❌ Migration failed: {e}")
         if conn:
             conn.rollback()
             conn.close()
@@ -61,20 +61,20 @@ def migrate():
 
 def rollback():
 
-    print("⚠️ SQLite不支持直接删除列，如需回滚请手动处理")
+    print("⚠️ SQLite does not support dropping columns directly; handle rollback manually if needed")
     return False
 
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("开始执行Excel元数据字段迁移")
+    print("Starting Excel metadata field migration")
     print("=" * 60)
 
     success = migrate()
 
     if success:
-        print("\n✅ 迁移成功！")
+        print("\n✅ Migration succeeded!")
     else:
-        print("\n❌ 迁移失败！")
+        print("\n❌ Migration failed!")
 
     print("=" * 60)

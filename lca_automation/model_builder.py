@@ -46,7 +46,7 @@ class ModelBuilder:
         provider_results: Dict = None,
     ) -> Dict[str, o.Ref]:
 
-        print(f"\n🏗️ 开始创建 {len(lca_case.processes)} 个Processes...")
+        print(f"\n🏗️ Creating {len(lca_case.processes)} processes...")
 
         process_refs = {}
 
@@ -65,7 +65,7 @@ class ModelBuilder:
                         flow_ref = flow_refs.get(flow_name)
 
                         if not flow_ref:
-                            print(f"    ⚠️ Flow未找到: {flow_name}")
+                            print(f"    ⚠️ Flow not found: {flow_name}")
                             continue
 
                         exchange = o.Exchange()
@@ -126,19 +126,19 @@ class ModelBuilder:
                 )
 
             except Exception as e:
-                print(f"  [{i}/{len(lca_case.processes)}] ✗ {process_name} - 错误: {e}")
+                print(f"  [{i}/{len(lca_case.processes)}] ✗ {process_name} - error: {e}")
                 import traceback
 
                 traceback.print_exc()
 
-        print(f"✅ 完成Process创建: {len(process_refs)}/{len(lca_case.processes)}")
+        print(f"✅ Process creation finished: {len(process_refs)}/{len(lca_case.processes)}")
         return process_refs
 
     def build_product_systems(
         self, lca_case: LCACase, process_refs: Dict[str, o.Ref]
     ) -> Dict[str, str]:
 
-        print(f"\n🏗️ 开始创建 {len(lca_case.product_systems)} 个Product Systems...")
+        print(f"\n🏗️ Creating {len(lca_case.product_systems)} product systems...")
 
         system_results = {}
 
@@ -159,7 +159,7 @@ class ModelBuilder:
 
                 if not ref_process_ref:
                     print(
-                        f"  [{i}/{len(lca_case.product_systems)}] ✗ {system_name} - 参考过程未找到"
+                        f"  [{i}/{len(lca_case.product_systems)}] ✗ {system_name} - reference process not found"
                     )
                     continue
 
@@ -171,7 +171,7 @@ class ModelBuilder:
                 if CUTOFF_THRESHOLD is not None:
                     linking_config.cutoff = CUTOFF_THRESHOLD
                     print(
-                        f"  ✓ 应用截断阈值: {CUTOFF_THRESHOLD * 100}%（贡献度低于此值的上游链将被截断）"
+                        f"  ✓ Applying cutoff threshold: {CUTOFF_THRESHOLD * 100}% (upstream chains below this contribution will be truncated)"
                     )
 
                 system_ref = self.client.create_product_system(
@@ -193,18 +193,18 @@ class ModelBuilder:
 
             except Exception as e:
                 print(
-                    f"  [{i}/{len(lca_case.product_systems)}] ✗ {system_name} - 错误: {e}"
+                    f"  [{i}/{len(lca_case.product_systems)}] ✗ {system_name} - error: {e}"
                 )
                 import traceback
 
                 traceback.print_exc()
 
         print(
-            f"✅ 完成Product System创建: {len(system_results)}/{len(lca_case.product_systems)}"
+            f"✅ Product system creation finished: {len(system_results)}/{len(lca_case.product_systems)}"
         )
         return system_results
 
 
 if __name__ == "__main__":
 
-    print("ModelBuilder模块 - 用于创建Flow、Process和ProductSystem")
+    print("ModelBuilder module - create Flow, Process, and ProductSystem")

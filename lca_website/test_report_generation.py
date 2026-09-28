@@ -10,29 +10,29 @@ from datetime import datetime
 def test_basic_report_generation():
 
     print("=" * 60)
-    print("测试1：基本报告生成功能")
+    print("Test 1: Basic report generation")
     print("=" * 60)
 
     project_info = {
-        "name": "PET塑料瓶生产",
-        "description": "PET塑料瓶全生命周期评估项目",
+        "name": "PET plastic bottle production",
+        "description": "PET plastic bottle full life cycle assessment project",
     }
 
     report_info = {
-        "product_name": "PET塑料瓶",
+        "product_name": "PET plastic bottle",
         "product_model": "PET-500ml-2024",
-        "producer_name": "绿色包装科技有限公司",
+        "producer_name": "Green Packaging Technology Co., Ltd.",
         "report_no": "LCA-2024-001",
-        "address": "北京市海淀区中关村大街1号",
-        "legal_representative": "张伟",
-        "contact_person": "李明",
-        "product_function": "用于饮料包装，容量500ml，可回收利用",
+        "address": "No. 1 Zhongguancun Street, Haidian District, Beijing",
+        "legal_representative": "Zhang Wei",
+        "contact_person": "Li Ming",
+        "product_function": "Used for beverage packaging, 500ml capacity, recyclable",
         "standard_used": "IPCC 2013 GWP 100a",
-        "quantitative_purpose": "评估PET塑料瓶全生命周期的碳足迹，识别减排机会",
-        "functional_unit": "1个500ml PET塑料瓶",
+        "quantitative_purpose": "Assess the carbon footprint of PET plastic bottles across the full life cycle and identify reduction opportunities",
+        "functional_unit": "1 unit of 500ml PET plastic bottle",
         "time_scale": "Year 2024",
-        "primary_data_source": "企业实际生产数据",
-        "secondary_data_source": "Ecoinvent 3.8数据库",
+        "primary_data_source": "Company actual production data",
+        "secondary_data_source": "Ecoinvent 3.8 database",
     }
 
     lca_results = {
@@ -57,16 +57,16 @@ def test_basic_report_generation():
 
         content, filepath = generator.generate_report()
 
-        print(f"✅ 报告生成成功！")
-        print(f"文件路径: {filepath}")
-        print(f"文件大小: {len(content)} 字符")
-        print(f"\n前100字符预览：")
+        print(f"✅ Report generated successfully!")
+        print(f"File path: {filepath}")
+        print(f"File size: {len(content)} characters")
+        print(f"\nFirst 100 characters preview:")
         print(content[:100])
 
         return True
 
     except Exception as e:
-        print(f"❌ 报告生成失败: {e}")
+        print(f"❌ Report generation failed: {e}")
         import traceback
 
         traceback.print_exc()
@@ -76,12 +76,12 @@ def test_basic_report_generation():
 def test_missing_fields():
 
     print("\n" + "=" * 60)
-    print("测试2：缺失字段占位符功能")
+    print("Test 2: Missing field placeholder behavior")
     print("=" * 60)
 
-    project_info = {"name": "最小测试项目"}
+    project_info = {"name": "Minimal test project"}
 
-    report_info = {"product_name": "测试产品"}
+    report_info = {"product_name": "Test product"}
 
     lca_results = {
         "total_carbon_footprint": 100.0,
@@ -106,15 +106,15 @@ def test_missing_fields():
 
         placeholder_count = content.count("[Information provided by the user]")
 
-        print(f"✅ 最小信息报告生成成功！")
-        print(f"文件路径: {filepath}")
-        print(f"占位符数量: {placeholder_count}")
-        print(f"说明: 未填写的字段已自动填充占位符")
+        print(f"✅ Minimal-info report generated successfully!")
+        print(f"File path: {filepath}")
+        print(f"Placeholder count: {placeholder_count}")
+        print(f"Note: Unfilled fields were automatically filled with placeholders")
 
         return True
 
     except Exception as e:
-        print(f"❌ 测试失败: {e}")
+        print(f"❌ Test failed: {e}")
         import traceback
 
         traceback.print_exc()
@@ -124,12 +124,12 @@ def test_missing_fields():
 def test_chart_generation():
 
     print("\n" + "=" * 60)
-    print("测试3：图表生成功能")
+    print("Test 3: Chart generation")
     print("=" * 60)
 
-    project_info = {"name": "图表测试项目"}
+    project_info = {"name": "Chart test project"}
 
-    report_info = {"product_name": "测试产品", "producer_name": "测试公司"}
+    report_info = {"product_name": "Test product", "producer_name": "Test company"}
 
     lca_results = {
         "total_carbon_footprint": 30223.8,
@@ -154,18 +154,18 @@ def test_chart_generation():
 
         has_charts = "data:image/png;base64," in content
 
-        print(f"✅ 图表测试完成！")
-        print(f"文件路径: {filepath}")
-        print(f"包含图表: {'是' if has_charts else '否'}")
+        print(f"✅ Chart test complete!")
+        print(f"File path: {filepath}")
+        print(f"Contains charts: {'Yes' if has_charts else 'No'}")
 
         if has_charts:
             chart_count = content.count("data:image/png;base64,")
-            print(f"图表数量: {chart_count}")
+            print(f"Chart count: {chart_count}")
 
         return True
 
     except Exception as e:
-        print(f"❌ 测试失败: {e}")
+        print(f"❌ Test failed: {e}")
         import traceback
 
         traceback.print_exc()
@@ -175,33 +175,33 @@ def test_chart_generation():
 def main():
 
     print(f"\n{'='*60}")
-    print(f"LCA报告生成功能测试套件")
-    print(f"时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"LCA report generation test suite")
+    print(f"Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"{'='*60}\n")
 
     results = []
 
-    results.append(("基本报告生成", test_basic_report_generation()))
-    results.append(("缺失字段处理", test_missing_fields()))
-    results.append(("图表生成", test_chart_generation()))
+    results.append(("Basic report generation", test_basic_report_generation()))
+    results.append(("Missing field handling", test_missing_fields()))
+    results.append(("Chart generation", test_chart_generation()))
 
     print(f"\n{'='*60}")
-    print("测试结果总结")
+    print("Test results summary")
     print(f"{'='*60}")
 
     passed = sum(1 for _, result in results if result)
     total = len(results)
 
     for test_name, result in results:
-        status = "✅ 通过" if result else "❌ 失败"
+        status = "✅ Passed" if result else "❌ Failed"
         print(f"{test_name}: {status}")
 
-    print(f"\n总计: {passed}/{total} 测试通过")
+    print(f"\nTotal: {passed}/{total} tests passed")
 
     if passed == total:
-        print("🎉 所有测试通过！系统运行正常。")
+        print("🎉 All tests passed! System is working normally.")
     else:
-        print("⚠️ 部分测试失败，请检查错误信息。")
+        print("⚠️ Some tests failed; please check the error messages.")
 
     return passed == total
 

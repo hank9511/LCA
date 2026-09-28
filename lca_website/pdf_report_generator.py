@@ -39,138 +39,191 @@ import openai
 
 REPORT_TRANSLATIONS = {
     "title": {
-        "zh": "产品碳足迹研究报告",
+        "zh": "Product Carbon Footprint Study Report",
         "en": "Product Carbon Footprint Study Report",
     },
-    "basic_info": {"zh": "基本信息", "en": "Basic Information"},
-    "product_name": {"zh": "产品名称", "en": "Product Name"},
-    "product_model": {"zh": "产品规格型号", "en": "Product Specification Model"},
-    "producer_name": {"zh": "生产商名称", "en": "Producer Name"},
-    "report_no": {"zh": "报告编号", "en": "Report No"},
-    "date": {"zh": "日期", "en": "Date"},
-    "reporting_org": {"zh": "报告机构", "en": "Reporting Organization"},
-    "section_1_title": {"zh": "一、一般信息", "en": "I. General Information"},
-    "address": {"zh": "地址", "en": "Address"},
-    "legal_rep": {"zh": "法定代表人", "en": "Legal Representative"},
-    "product_function": {"zh": "产品功能", "en": "Product Function"},
-    "standard_used": {"zh": "所依据标准", "en": "Based on the Standard"},
-    "section_2_title": {"zh": "二、量化目的", "en": "II. Quantitative Purpose"},
-    "section_3_title": {"zh": "三、量化范围", "en": "III. Scope of Quantification"},
+    "basic_info": {"zh": "Basic Information",
+        "en": "Basic Information"},
+    "product_name": {"zh": "Product Name",
+        "en": "Product Name"},
+    "product_model": {"zh": "Product Specification Model",
+        "en": "Product Specification Model"},
+    "producer_name": {"zh": "Producer Name",
+        "en": "Producer Name"},
+    "report_no": {"zh": "Report No",
+        "en": "Report No"},
+    "date": {"zh": "Date",
+        "en": "Date"},
+    "reporting_org": {"zh": "Reporting Organization",
+        "en": "Reporting Organization"},
+    "section_1_title": {"zh": "I. General Information",
+        "en": "I. General Information"},
+    "address": {"zh": "Address",
+        "en": "Address"},
+    "legal_rep": {"zh": "Legal Representative",
+        "en": "Legal Representative"},
+    "product_function": {"zh": "Product Function",
+        "en": "Product Function"},
+    "standard_used": {"zh": "Based on the Standard",
+        "en": "Based on the Standard"},
+    "section_2_title": {"zh": "II. Quantitative Purpose",
+        "en": "II. Quantitative Purpose"},
+    "section_3_title": {"zh": "III. Scope of Quantification",
+        "en": "III. Scope of Quantification"},
     "functional_unit_title": {
-        "zh": "1. 功能单位或声明单位",
+        "zh": "1. Functional or Declaratory Units",
         "en": "1. Functional or Declaratory Units",
     },
     "functional_unit_desc": {
-        "zh": "功能单位或声明单位为",
+        "zh": "Functional or declarative units in",
         "en": "Functional or declarative units in",
     },
-    "system_boundary_title": {"zh": "2. 系统边界", "en": "2. System Boundary"},
-    "cutoff_title": {"zh": "3. 截断准则", "en": "3. Cut-off Criteria"},
+    "system_boundary_title": {"zh": "2. System Boundary",
+        "en": "2. System Boundary"},
+    "cutoff_title": {"zh": "3. Cut-off Criteria",
+        "en": "3. Cut-off Criteria"},
     "cutoff_desc": {
-        "zh": "所采用的截断准则基于",
+        "zh": "The cut-off criteria used are based on",
         "en": "The cut-off criteria used are based on",
     },
-    "time_scale_title": {"zh": "4. 时间尺度", "en": "4. Time Scale"},
-    "section_4_title": {"zh": "四、清单分析", "en": "IV. Inventory Analysis"},
+    "time_scale_title": {"zh": "4. Time Scale",
+        "en": "4. Time Scale"},
+    "section_4_title": {"zh": "IV. Inventory Analysis",
+        "en": "IV. Inventory Analysis"},
     "data_source_title": {
-        "zh": "1. 数据来源描述",
+        "zh": "1. Description of Data Sources",
         "en": "1. Description of Data Sources",
     },
-    "primary_data": {"zh": "一次数据", "en": "Primary Data"},
-    "secondary_data": {"zh": "二次数据", "en": "Secondary Data"},
+    "primary_data": {"zh": "Primary Data",
+        "en": "Primary Data"},
+    "secondary_data": {"zh": "Secondary Data",
+        "en": "Secondary Data"},
     "allocation_title": {
-        "zh": "2. 分配原则与程序",
+        "zh": "2. Principles and Procedures for Allocation",
         "en": "2. Principles and Procedures for Allocation",
     },
-    "allocation_basis": {"zh": "分配基础", "en": "Basis of Allocation"},
-    "allocation_procedure": {"zh": "分配程序", "en": "Allocation Procedure"},
-    "specific_allocation": {"zh": "具体分配", "en": "Specific Allocations"},
+    "allocation_basis": {"zh": "Basis of Allocation",
+        "en": "Basis of Allocation"},
+    "allocation_procedure": {"zh": "Allocation Procedure",
+        "en": "Allocation Procedure"},
+    "specific_allocation": {"zh": "Specific Allocations",
+        "en": "Specific Allocations"},
     "data_quality_title": {
-        "zh": "3. 数据质量评估（可选）",
+        "zh": "3. Data Quality Evaluation (Optional)",
         "en": "3. Data Quality Evaluation (Optional)",
     },
-    "section_5_title": {"zh": "五、影响评估", "en": "V. Impact Assessment"},
+    "section_5_title": {"zh": "V. Impact Assessment",
+        "en": "V. Impact Assessment"},
     "impact_type_title": {
-        "zh": "1. 影响类型与特征因子选择",
+        "zh": "1. Impact Type and Characterization Factor Selection",
         "en": "1. Impact Type and Characterization Factor Selection",
     },
     "results_title": {
-        "zh": "2. 产品碳足迹结果计算",
+        "zh": "2. Product Carbon Footprint Results Calculation",
         "en": "2. Product Carbon Footprint Results Calculation",
     },
     "results_desc": {
-        "zh": "由{producer}生产的{product}，每功能单位产品从原材料获取到生命末期的生命周期碳足迹为",
+        "zh": "The life cycle carbon footprint of {product} produced by {producer}, per functional unit of product, from raw material acquisition to end of life is",
         "en": "The life cycle carbon footprint of {product} produced by {producer}, per functional unit of product, from raw material acquisition to end of life is",
     },
     "figure_1_title": {
-        "zh": "图1：生命周期阶段碳排放分布",
+        "zh": "Figure 1: Carbon Emissions Distribution by Life Cycle Stage",
         "en": "Figure 1: Carbon Emissions Distribution by Life Cycle Stage",
     },
     "table_1_title": {
-        "zh": "表1：生命周期阶段碳排放",
+        "zh": "Table 1: Carbon Emissions by Life Cycle Stage",
         "en": "Table 1: Carbon Emissions by Life Cycle Stage",
     },
-    "table_header_stage": {"zh": "生命周期阶段", "en": "Life Cycle Stage"},
+    "table_header_stage": {"zh": "Life Cycle Stage",
+        "en": "Life Cycle Stage"},
     "table_header_cf": {
-        "zh": "碳足迹 (kg CO2-Eq)",
+        "zh": "Carbon Footprint (kg CO2-Eq)",
         "en": "Carbon Footprint (kg CO2-Eq)",
     },
-    "table_header_percent": {"zh": "百分比 (%)", "en": "Percentage (%)"},
-    "stage_raw_material": {"zh": "原材料获取", "en": "Raw Material Acquisition"},
-    "stage_production": {"zh": "生产制造", "en": "Production"},
-    "stage_distribution": {"zh": "运输配送", "en": "Distribution"},
-    "stage_use": {"zh": "使用阶段", "en": "Use"},
-    "stage_end_of_life": {"zh": "废弃处理", "en": "End of Life"},
-    "stage_total": {"zh": "合计", "en": "Total"},
+    "table_header_percent": {"zh": "Percentage (%)",
+        "en": "Percentage (%)"},
+    "stage_raw_material": {"zh": "Raw Material Acquisition",
+        "en": "Raw Material Acquisition"},
+    "stage_production": {"zh": "Production",
+        "en": "Production"},
+    "stage_distribution": {"zh": "Distribution",
+        "en": "Distribution"},
+    "stage_use": {"zh": "Use",
+        "en": "Use"},
+    "stage_end_of_life": {"zh": "End of Life",
+        "en": "End of Life"},
+    "stage_total": {"zh": "Total",
+        "en": "Total"},
     "uncertainty_title": {
-        "zh": "3. 不确定性分析结果",
+        "zh": "3. Uncertainty Analysis Results",
         "en": "3. Uncertainty Analysis Results",
     },
     "uncertainty_none": {
-        "zh": "本次评估未进行不确定性分析。",
+        "zh": "Uncertainty analysis was not performed for this assessment.",
         "en": "Uncertainty analysis was not performed for this assessment.",
     },
-    "uncertainty_impact_category": {"zh": "影响类别", "en": "Impact Category"},
-    "uncertainty_unit": {"zh": "单位", "en": "Unit"},
-    "uncertainty_method": {"zh": "影响方法", "en": "Impact Method"},
+    "uncertainty_impact_category": {"zh": "Impact Category",
+        "en": "Impact Category"},
+    "uncertainty_unit": {"zh": "Unit",
+        "en": "Unit"},
+    "uncertainty_method": {"zh": "Impact Method",
+        "en": "Impact Method"},
     "uncertainty_iterations": {
-        "zh": "蒙特卡洛迭代次数",
+        "zh": "Monte Carlo Iterations",
         "en": "Monte Carlo Iterations",
     },
     "figure_2_title": {
-        "zh": "图2：不确定性分析分布",
+        "zh": "Figure 2: Uncertainty Analysis Distribution",
         "en": "Figure 2: Uncertainty Analysis Distribution",
     },
-    "stat_metric": {"zh": "统计指标", "en": "Statistical Metric"},
-    "stat_value": {"zh": "数值", "en": "Value"},
-    "stat_mean": {"zh": "平均值", "en": "Mean"},
-    "stat_std": {"zh": "标准差", "en": "Standard Deviation"},
-    "stat_cv": {"zh": "变异系数 (CV)", "en": "Coefficient of Variation (CV)"},
-    "stat_median": {"zh": "中位数", "en": "Median"},
-    "stat_p5": {"zh": "第5百分位", "en": "5th Percentile"},
-    "stat_p95": {"zh": "第95百分位", "en": "95th Percentile"},
-    "section_6_title": {"zh": "六、结果解释", "en": "VI. Interpretation of Results"},
-    "description_title": {"zh": "1. 结果描述", "en": "1. Description of Results"},
+    "stat_metric": {"zh": "Statistical Metric",
+        "en": "Statistical Metric"},
+    "stat_value": {"zh": "Value",
+        "en": "Value"},
+    "stat_mean": {"zh": "Mean",
+        "en": "Mean"},
+    "stat_std": {"zh": "Standard Deviation",
+        "en": "Standard Deviation"},
+    "stat_cv": {"zh": "Coefficient of Variation (CV)",
+        "en": "Coefficient of Variation (CV)"},
+    "stat_median": {"zh": "Median",
+        "en": "Median"},
+    "stat_p5": {"zh": "5th Percentile",
+        "en": "5th Percentile"},
+    "stat_p95": {"zh": "95th Percentile",
+        "en": "95th Percentile"},
+    "section_6_title": {"zh": "VI. Interpretation of Results",
+        "en": "VI. Interpretation of Results"},
+    "description_title": {"zh": "1. Description of Results",
+        "en": "1. Description of Results"},
     "assumptions_title": {
-        "zh": "2. 假设与局限性说明",
+        "zh": "2. Statement of Assumptions and Limitations",
         "en": "2. Statement of Assumptions and Limitations",
     },
-    "improvements_title": {"zh": "3. 改进建议", "en": "3. Suggestions for Improvement"},
-    "report_generated": {"zh": "报告生成时间", "en": "Report Generated"},
-    "generator": {"zh": "生成器", "en": "Generator"},
+    "improvements_title": {"zh": "3. Suggestions for Improvement",
+        "en": "3. Suggestions for Improvement"},
+    "report_generated": {"zh": "Report Generated",
+        "en": "Report Generated"},
+    "generator": {"zh": "Generator",
+        "en": "Generator"},
     "generator_name": {
-        "zh": "LCA网站自动报告系统",
+        "zh": "LCA Website Automated Report System",
         "en": "LCA Website Automated Report System",
     },
     "default_placeholder": {
-        "zh": "[由用户提供的信息]",
+        "zh": "[Information provided by the user]",
         "en": "[Information provided by the user]",
     },
-    "chart_cf_unit": {"zh": "碳足迹 (kg CO2-Eq)", "en": "Carbon Footprint (kg CO2-Eq)"},
-    "chart_frequency": {"zh": "频率", "en": "Frequency"},
-    "chart_percentile_5": {"zh": "第5百分位", "en": "5th Percentile"},
-    "chart_median": {"zh": "中位数", "en": "Median"},
-    "chart_percentile_95": {"zh": "第95百分位", "en": "95th Percentile"},
+    "chart_cf_unit": {"zh": "Carbon Footprint (kg CO2-Eq)",
+        "en": "Carbon Footprint (kg CO2-Eq)"},
+    "chart_frequency": {"zh": "Frequency",
+        "en": "Frequency"},
+    "chart_percentile_5": {"zh": "5th Percentile",
+        "en": "5th Percentile"},
+    "chart_median": {"zh": "Median",
+        "en": "Median"},
+    "chart_percentile_95": {"zh": "95th Percentile",
+        "en": "95th Percentile"},
 }
 
 
@@ -404,7 +457,7 @@ class ProfessionalPDFReportGenerator:
         """Format current date based on language."""
         now = datetime.now()
         if lang == "zh":
-            return now.strftime("%Y年%m月%d日")
+            return now.strftime("%Y-%m-%d")
         return now.strftime("%B %d, %Y")
 
     def _get_styles(self, lang: str) -> Dict[str, ParagraphStyle]:
@@ -582,7 +635,7 @@ class ProfessionalPDFReportGenerator:
             title = (
                 self._t("figure_1_title", lang)
                 .replace("Figure 1: ", "")
-                .replace("图1：", "")
+                .replace("Figure 1: ", "")
             )
             plt.title(title, fontsize=14, fontweight="bold", pad=20)
 
@@ -669,7 +722,7 @@ class ProfessionalPDFReportGenerator:
             title = (
                 self._t("figure_2_title", lang)
                 .replace("Figure 2: ", "")
-                .replace("图2：", "")
+                .replace("Figure 2: ", "")
             )
             ax.set_title(
                 f"{title}\n(Mean: {mean:.3f}, Std Dev: {std_dev:.3f} {unit})",
@@ -925,7 +978,7 @@ Use the markers [SECTION1], [SECTION2], [SECTION3] to clearly separate each sect
                     "GROK_API_KEY environment variable not set, cannot call LLM for report interpretation"
                 )
 
-            print(f"🤖 AI解读: 使用模型 {model_name}, base_url={base_url}")
+            print(f"🤖 AI interpretation: using model {model_name}, base_url={base_url}")
 
             client = openai.OpenAI(api_key=api_key, base_url=base_url)
 
@@ -970,11 +1023,11 @@ Use the markers [SECTION1], [SECTION2], [SECTION3] to clearly separate each sect
                 improvements = self._clean_ai_text(raw_improvements, is_list=True)
             else:
 
-                print(f"⚠️ AI返回格式不符合预期，使用默认内容")
-                print(f"   AI返回内容预览: {ai_content[:300]}...")
+                print(f"⚠️ AI response format unexpected, using default content")
+                print(f"   AI response preview: {ai_content[:300]}...")
                 largest_stage = self._get_largest_stage(lang)
                 if lang == "zh":
-                    description = f"{product_name}的生命周期碳足迹为{total_cf:.3f} {unit}。{largest_stage}贡献了最大的碳排放份额。"
+                    description = f"The life cycle carbon footprint of {product_name} is {total_cf:.3f} {unit}. {largest_stage} contributes the largest share of carbon emissions."
                 else:
                     description = f"The life cycle carbon footprint of {product_name} is {total_cf:.3f} {unit}. The {largest_stage} stage contributes the largest share of carbon emissions."
                 assumptions = self._t("default_placeholder", lang)
@@ -995,7 +1048,7 @@ Use the markers [SECTION1], [SECTION2], [SECTION3] to clearly separate each sect
 
             if lang == "zh":
                 return {
-                    "description": f"{product_name}的生命周期碳足迹为{total_cf:.3f} {unit}。{largest_stage}贡献了最大的碳排放份额。",
+                    "description": f"The life cycle carbon footprint of {product_name} is {total_cf:.3f} {unit}. {largest_stage} contributes the largest share of carbon emissions.",
                     "assumptions": self._t("default_placeholder", lang),
                     "improvements": self._t("default_placeholder", lang),
                 }
@@ -1033,7 +1086,7 @@ Use the markers [SECTION1], [SECTION2], [SECTION3] to clearly separate each sect
             has_list_markers = any(
                 line.startswith(("-", "•", "*"))
                 or re.match(r"^\d+\.\s+", line)
-                or re.match(r"^[一二三四五六七八九十]+[、.]\s+", line)
+                or re.match(r"^[IVX]+\.\s+", line)
                 for line in non_empty_lines
             )
 
@@ -1052,7 +1105,7 @@ Use the markers [SECTION1], [SECTION2], [SECTION3] to clearly separate each sect
 
                     line = re.sub(r"^\d+\.\s*", "", line)
 
-                    line = re.sub(r"^[一二三四五六七八九十]+[、.]\s*", "", line)
+                    line = re.sub(r"^[IVX]+\.\s*", "", line)
 
                     if line:
                         list_items.append(line)
@@ -1356,7 +1409,7 @@ Use the markers [SECTION1], [SECTION2], [SECTION3] to clearly separate each sect
         if impact_desc == self._t("default_placeholder", lang):
             if lang == "zh":
                 impact_desc = (
-                    "政府间气候变化专门委员会(IPCC)给出的100年全球变暖潜能值(GWP)"
+                    "100-year Global Warming Potential (GWP) provided by the Intergovernmental Panel on Climate Change (IPCC)"
                 )
             else:
                 impact_desc = "100-year global warming potential (GWP) given by the Intergovernmental Panel on Climate Change (IPCC)"

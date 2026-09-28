@@ -34,7 +34,7 @@ function initFormValidation() {
         
         const formId = form.getAttribute('id');
         if (formId === 'deleteForm' || formId === 'deleteProjectForm') {
-            console.log('⏭️ 跳过删除表单的验证:', formId);
+            console.log('⏭️ Skipping validation for delete form:', formId);
             return;
         }
         
@@ -48,7 +48,7 @@ function initFormValidation() {
                     field.classList.add('error');
                     
                     
-                    showFieldError(field, '此字段为必填项');
+                    showFieldError(field, 'This field is required');
                 } else {
                     field.classList.remove('error');
                     clearFieldError(field);
@@ -57,7 +57,7 @@ function initFormValidation() {
             
             if (!isValid) {
                 e.preventDefault();
-                showNotification('请填写所有必填字段', 'error');
+                showNotification('Please fill in all required fields', 'error');
             }
         });
     });
@@ -95,7 +95,7 @@ function initProjectActions() {
             e.preventDefault();
             
             const projectName = this.getAttribute('data-project-name');
-            if (confirm(`确定要删除项目 "${projectName}" 吗？此操作不可撤销。`)) {
+            if (confirm(`Are you sure you want to delete project "${projectName}"? This action cannot be undone.`)) {
                 
                 const form = document.createElement('form');
                 form.method = 'POST';

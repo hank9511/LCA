@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ 'Excel解析结果' if get_lang() == 'zh' else 'Excel Parsing Results' }} - {{ project.name }}{% endblock %}
+{% block title %}{{ 'Excel Parsing Results' if get_lang() == 'zh' else 'Excel Parsing Results' }} - {{ project.name }}{% endblock %}
 
 {% block content %}
 <div class="parsed-excel-container">
@@ -9,17 +9,17 @@
             <a href="{{ url_for('project_detail', project_id=project.id) }}" class="btn btn-outline">
                 ← {{ t('project_detail', 'back_to_project') }}
             </a>
-            <h1>📊 {{ 'Excel解析结果' if get_lang() == 'zh' else 'Excel Parsing Results' }}</h1>
-            <p class="file-name">{{ t('project_detail', 'filename') if get_lang() == 'en' else '文件' }}：{{ excel_file.original_filename }}</p>
+            <h1>📊 {{ 'Excel Parsing Results' if get_lang() == 'zh' else 'Excel Parsing Results' }}</h1>
+            <p class="file-name">{{ t('project_detail', 'filename') if get_lang() == 'en' else t('project_detail', 'filename') }}：{{ excel_file.original_filename }}</p>
         </div>
     </div>
 
     <div class="content-sections">
 
         <div class="section">
-            <h2>🏭 过程与生命周期环节匹配</h2>
+            <h2>🏭 Process and Lifecycle Stage Matching</h2>
             <p class="section-description">
-                系统已自动为每个过程匹配了生命周期环节。您可以点击下拉框手动修改。
+                The system has automatically matched a lifecycle stage for each process. You can change it via the dropdown.
             </p>
 
             {% if stage_mappings %}
@@ -27,13 +27,13 @@
                 <table class="mappings-table">
                     <thead>
                         <tr>
-                            <th>序号</th>
-                            <th>过程名称</th>
-                            <th>生命周期环节</th>
-                            <th>匹配方式</th>
-                            <th>置信度</th>
-                            <th>匹配理由</th>
-                            <th>操作</th>
+                            <th>No.</th>
+                            <th>Process Name</th>
+                            <th>Lifecycle Stage</th>
+                            <th>Match Method</th>
+                            <th>Confidence</th>
+                            <th>Match Reason</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -52,9 +52,9 @@
                             </td>
                             <td class="match-type">
                                 {% if mapping.is_auto_matched %}
-                                <span class="badge badge-auto">自动匹配</span>
+                                <span class="badge badge-auto">Auto Match</span>
                                 {% else %}
-                                <span class="badge badge-manual">人工修改</span>
+                                <span class="badge badge-manual">Manual Edit</span>
                                 {% endif %}
                             </td>
                             <td class="confidence">
@@ -74,7 +74,7 @@
                                 <button class="btn btn-sm btn-save" 
                                         data-process="{{ mapping.process_name }}"
                                         style="display: none;">
-                                    💾 保存
+                                    💾 Save
                                 </button>
                             </td>
                         </tr>
@@ -84,7 +84,7 @@
             </div>
             {% else %}
             <div class="no-data">
-                <p>暂无过程数据</p>
+                <p>No process data</p>
             </div>
             {% endif %}
         </div>
@@ -92,10 +92,10 @@
         <div class="section actions-section">
             <div class="btn-group">
                 <a href="{{ url_for('project_detail', project_id=project.id) }}" class="btn btn-secondary">
-                    返回项目
+                    Back to Project
                 </a>
                 <button class="btn btn-primary" onclick="proceedToLCA()">
-                    ✓ 确认并进行LCA分析
+                    ✓ Confirm and Run LCA Analysis
                 </button>
             </div>
         </div>
@@ -347,14 +347,14 @@ document.querySelectorAll('.btn-save').forEach(btn => {
                 
                 const row = this.closest('tr');
                 const matchTypeCell = row.querySelector('.match-type');
-                matchTypeCell.innerHTML = '<span class="badge badge-manual">人工修改</span>';
+                matchTypeCell.innerHTML = '<span class="badge badge-manual">Manual Edit</span>';
 
-                alert('✓ 保存成功');
+                alert('✓ Saved successfully');
             } else {
-                alert('保存失败: ' + result.error);
+                alert('Save failed: ' + result.error);
             }
         } catch (error) {
-            alert('保存失败: ' + error.message);
+            alert('Save failed: ' + error.message);
         }
     });
 });
@@ -363,7 +363,7 @@ function proceedToLCA() {
     
     const changedSelects = document.querySelectorAll('.stage-select.changed');
     if (changedSelects.length > 0) {
-        if (!confirm(`还有 ${changedSelects.length} 个未保存的更改。是否继续？`)) {
+        if (!confirm(`There are still ${changedSelects.length} unsaved change(s). Continue?`)) {
             return;
         }
     }

@@ -1,19 +1,19 @@
 {% extends "base.html" %}
 
-{% block title %}编辑报告信息 - {{ project.name }}{% endblock %}
+{% block title %}Edit Report Information - {{ project.name }}{% endblock %}
 
 {% block content %}
 <div class="edit-report-container" style="max-width: 900px; margin: 20px auto; padding: 20px;">
     <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-        <h1>📋 编辑LCA报告信息</h1>
-        <a href="{{ url_for('project_detail', project_id=project.id) }}" class="btn btn-outline">返回项目</a>
+        <h1>📋 Edit LCA Report Information</h1>
+        <a href="{{ url_for('project_detail', project_id=project.id) }}" class="btn btn-outline">Back to Project</a>
     </div>
 
     <div class="project-info-card" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 25px;">
-        <p><strong>项目名称:</strong> {{ project.name }}</p>
-        <p style="margin: 5px 0;"><strong>项目描述:</strong> {{ project.description or '无' }}</p>
+        <p><strong>Project Name:</strong> {{ project.name }}</p>
+        <p style="margin: 5px 0;"><strong>Project Description:</strong> {{ project.description or 'None' }}</p>
         <p style="margin: 0; color: #666; font-size: 14px;">
-            💡 提示：填写以下信息将用于生成符合标准的LCA报告。如果某些信息暂时无法提供，系统将自动填充占位符。
+            💡 Tip: The information below will be used to generate a standards-compliant LCA report. If some fields are unavailable, the system will fill in placeholders automatically.
         </p>
     </div>
 
@@ -21,51 +21,51 @@
 
         <div class="form-section">
             <h3 class="section-title" style="color: #2563eb; border-bottom: 2px solid #2563eb; padding-bottom: 8px; margin-bottom: 20px;">
-                📌 一、基本信息
+                📌 I. Basic Information
             </h3>
 
             <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
                 <div class="form-group">
-                    <label for="product_name">产品名称 *</label>
+                    <label for="product_name">Product Name *</label>
                     <input type="text" id="product_name" name="product_name" class="form-control" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="product_model">产品规格型号</label>
+                    <label for="product_model">Product Model/Specification</label>
                     <input type="text" id="product_model" name="product_model" class="form-control">
                 </div>
             </div>
 
             <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
                 <div class="form-group">
-                    <label for="producer_name">生产者名称</label>
+                    <label for="producer_name">Producer Name</label>
                     <input type="text" id="producer_name" name="producer_name" class="form-control">
                 </div>
 
                 <div class="form-group">
-                    <label for="report_no">报告编号</label>
+                    <label for="report_no">Report Number</label>
                     <input type="text" id="report_no" name="report_no" class="form-control">
                 </div>
             </div>
 
             <div class="form-group" style="margin-bottom: 15px;">
-                <label for="address">地址</label>
+                <label for="address">Address</label>
                 <input type="text" id="address" name="address" class="form-control">
             </div>
 
             <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 15px;">
                 <div class="form-group">
-                    <label for="legal_representative">法定代表人</label>
+                    <label for="legal_representative">Legal Representative</label>
                     <input type="text" id="legal_representative" name="legal_representative" class="form-control">
                 </div>
 
                 <div class="form-group">
-                    <label for="contact_person">联系人</label>
+                    <label for="contact_person">Contact Person</label>
                     <input type="text" id="contact_person" name="contact_person" class="form-control">
                 </div>
 
                 <div class="form-group">
-                    <label for="contact_phone">联系电话</label>
+                    <label for="contact_phone">Contact Phone</label>
                     <input type="text" id="contact_phone" name="contact_phone" class="form-control">
                 </div>
             </div>
@@ -73,17 +73,17 @@
 
         <div class="form-section" style="margin-top: 30px;">
             <h3 class="section-title" style="color: #16a34a; border-bottom: 2px solid #16a34a; padding-bottom: 8px; margin-bottom: 20px;">
-                🎯 二、产品功能与评估标准
+                🎯 II. Product Function and Assessment Standards
             </h3>
 
             <div class="form-group" style="margin-bottom: 15px;">
-                <label for="product_function">产品功能描述</label>
+                <label for="product_function">Product Function Description</label>
                 <textarea id="product_function" name="product_function" class="form-control" rows="3" 
-                    placeholder="例如：高能量密度储能装置，用于电动汽车和便携式电子设备"></textarea>
+                    placeholder="e.g.: High energy-density storage device for EVs and portable electronics"></textarea>
             </div>
 
             <div class="form-group" style="margin-bottom: 15px;">
-                <label for="standard_used">依据标准</label>
+                <label for="standard_used">Standard Used</label>
                 <input type="text" id="standard_used" name="standard_used" class="form-control" 
                     value="ecoinvent - EF v3.1">
             </div>
@@ -91,102 +91,102 @@
 
         <div class="form-section" style="margin-top: 30px;">
             <h3 class="section-title" style="color: #dc2626; border-bottom: 2px solid #dc2626; padding-bottom: 8px; margin-bottom: 20px;">
-                📊 三、量化目的与范围
+                📊 III. Quantification Purpose and Scope
             </h3>
 
             <div class="form-group" style="margin-bottom: 15px;">
-                <label for="quantitative_purpose">量化目的</label>
+                <label for="quantitative_purpose">Quantification Purpose</label>
                 <textarea id="quantitative_purpose" name="quantitative_purpose" class="form-control" rows="2"
-                    placeholder="例如：评估产品全生命周期的温室气体排放，识别减排机会"></textarea>
+                    placeholder="e.g.: Assess GHG emissions over the product life cycle and identify reduction opportunities"></textarea>
             </div>
 
             <div class="form-group" style="margin-bottom: 15px;">
-                <label for="functional_unit">功能单位或声明单位</label>
+                <label for="functional_unit">Functional Unit or Declared Unit</label>
                 <input type="text" id="functional_unit" name="functional_unit" class="form-control"
-                    placeholder="例如：1 kWh 储能容量">
+                    placeholder="e.g.: 1 kWh storage capacity">
             </div>
 
             <div class="form-group" style="margin-bottom: 15px;">
-                <label for="system_boundary_description">系统边界描述</label>
+                <label for="system_boundary_description">System Boundary Description</label>
                 <textarea id="system_boundary_description" name="system_boundary_description" class="form-control" rows="3"
-                    placeholder="描述研究涵盖的生命周期阶段"></textarea>
+                    placeholder="Describe the life cycle stages covered by the study"></textarea>
             </div>
 
             <div class="form-group" style="margin-bottom: 15px;">
-                <label for="cutoff_criteria">取舍准则</label>
+                <label for="cutoff_criteria">Cut-off Criteria</label>
                 <textarea id="cutoff_criteria" name="cutoff_criteria" class="form-control" rows="2"
-                    placeholder="例如：所有能源输入均列出；质量小于原料总消耗0.3%的项目可忽略"></textarea>
+                    placeholder="e.g.: All energy inputs listed; items <0.3% of total raw material mass may be omitted"></textarea>
             </div>
 
             <div class="form-group" style="margin-bottom: 15px;">
-                <label for="time_scale">时间范围</label>
+                <label for="time_scale">Time Scale</label>
                 <input type="text" id="time_scale" name="time_scale" class="form-control"
-                    placeholder="例如：Year 2024">
+                    placeholder="e.g.: Year 2024">
             </div>
         </div>
 
         <div class="form-section" style="margin-top: 30px;">
             <h3 class="section-title" style="color: #7c3aed; border-bottom: 2px solid #7c3aed; padding-bottom: 8px; margin-bottom: 20px;">
-                📋 四、清单分析
+                📋 IV. Inventory Analysis
             </h3>
 
             <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
                 <div class="form-group">
-                    <label for="primary_data_source">初级数据来源</label>
+                    <label for="primary_data_source">Primary Data Source</label>
                     <input type="text" id="primary_data_source" name="primary_data_source" class="form-control"
-                        placeholder="例如：企业实际生产数据">
+                        placeholder="e.g.: Actual company production data">
                 </div>
 
                 <div class="form-group">
-                    <label for="secondary_data_source">次级数据来源</label>
+                    <label for="secondary_data_source">Secondary Data Source</label>
                     <input type="text" id="secondary_data_source" name="secondary_data_source" class="form-control"
-                        placeholder="例如：Ecoinvent 3.8数据库">
+                        placeholder="e.g.: Ecoinvent 3.8 database">
                 </div>
             </div>
 
             <div class="form-group" style="margin-bottom: 15px;">
-                <label for="allocation_basis">分配依据</label>
+                <label for="allocation_basis">Allocation Basis</label>
                 <input type="text" id="allocation_basis" name="allocation_basis" class="form-control"
-                    placeholder="例如：基于产品生命周期的不同阶段">
+                    placeholder="e.g.: Based on different stages of the product life cycle">
             </div>
 
             <div class="form-group" style="margin-bottom: 15px;">
-                <label for="allocation_procedure">分配程序</label>
+                <label for="allocation_procedure">Allocation Procedure</label>
                 <textarea id="allocation_procedure" name="allocation_procedure" class="form-control" rows="2"
-                    placeholder="描述如何进行分配"></textarea>
+                    placeholder="Describe how allocation is performed"></textarea>
             </div>
 
             <div class="form-group" style="margin-bottom: 15px;">
-                <label for="data_quality_notes">数据质量评价（可选）</label>
+                <label for="data_quality_notes">Data Quality Assessment (Optional)</label>
                 <textarea id="data_quality_notes" name="data_quality_notes" class="form-control" rows="3"
-                    placeholder="评估数据的完整性、代表性和准确性"></textarea>
+                    placeholder="Assess data completeness, representativeness, and accuracy"></textarea>
             </div>
         </div>
 
         <div class="form-section" style="margin-top: 30px;">
             <h3 class="section-title" style="color: #ea580c; border-bottom: 2px solid #ea580c; padding-bottom: 8px; margin-bottom: 20px;">
-                💡 五、结果解释
+                💡 V. Interpretation of Results
             </h3>
 
             <div class="form-group" style="margin-bottom: 15px;">
-                <label for="assumptions_limitations">假设与局限性说明（可选）</label>
+                <label for="assumptions_limitations">Assumptions and Limitations (Optional)</label>
                 <textarea id="assumptions_limitations" name="assumptions_limitations" class="form-control" rows="3"
-                    placeholder="说明研究中的假设条件和局限性"></textarea>
+                    placeholder="Describe assumptions and limitations of the study"></textarea>
             </div>
 
             <div class="form-group" style="margin-bottom: 15px;">
-                <label for="improvement_suggestions">改进建议（可选）</label>
+                <label for="improvement_suggestions">Improvement Suggestions (Optional)</label>
                 <textarea id="improvement_suggestions" name="improvement_suggestions" class="form-control" rows="3"
-                    placeholder="基于分析结果提出改进建议"></textarea>
+                    placeholder="Propose improvements based on analysis results"></textarea>
             </div>
         </div>
 
         <div class="form-actions" style="margin-top: 30px; display: flex; gap: 10px; justify-content: flex-end;">
             <button type="button" class="btn btn-outline" onclick="window.location.href='{{ url_for('project_detail', project_id=project.id) }}'">
-                取消
+                Cancel
             </button>
             <button type="submit" class="btn btn-primary" style="background-color: #2563eb;">
-                💾 保存报告信息
+                💾 Save Report Information
             </button>
         </div>
     </form>
@@ -275,7 +275,7 @@ function loadReportInfo() {
             }
         })
         .catch(error => {
-            console.error('加载报告信息失败:', error);
+            console.error('Failed to load report information:', error);
         });
 }
 
@@ -292,7 +292,7 @@ document.getElementById('reportInfoForm').addEventListener('submit', function(e)
     
     const submitBtn = this.querySelector('button[type="submit"]');
     const originalText = submitBtn.innerHTML;
-    submitBtn.innerHTML = '💾 保存中...';
+    submitBtn.innerHTML = '💾 Saving...';
     submitBtn.disabled = true;
 
     
@@ -306,17 +306,17 @@ document.getElementById('reportInfoForm').addEventListener('submit', function(e)
     .then(response => response.json())
     .then(result => {
         if (result.success) {
-            alert('✅ 报告信息已保存！');
+            alert('✅ Report information saved!');
             window.location.href = '{{ url_for("project_detail", project_id=project.id) }}';
         } else {
-            alert('❌ 保存失败: ' + result.error);
+            alert('❌ Save failed: ' + result.error);
             submitBtn.innerHTML = originalText;
             submitBtn.disabled = false;
         }
     })
     .catch(error => {
-        console.error('保存失败:', error);
-        alert('❌ 保存失败: ' + error.message);
+        console.error('Save failed:', error);
+        alert('❌ Save failed: ' + error.message);
         submitBtn.innerHTML = originalText;
         submitBtn.disabled = false;
     });

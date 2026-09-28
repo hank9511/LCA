@@ -47,96 +47,79 @@ _EMISSION_PATTERNS = [
 _EMISSION_REGEX = re.compile("|".join(_EMISSION_PATTERNS), re.IGNORECASE)
 
 _CHINESE_EMISSION_NAMES = {
-    "二氧化碳",
-    "甲烷",
-    "氧化亚氮",
-    "一氧化碳",
-    "氮氧化物",
-    "一氧化氮",
-    "二氧化氮",
-    "二氧化硫",
-    "三氧化硫",
-    "硫氧化物",
-    "颗粒物",
-    "可吸入颗粒物",
-    "粉尘",
-    "烟尘",
-    "挥发性有机物",
-    "氨",
-    "氨气",
-    "硫化氢",
-    "氟化氢",
-    "氯化氢",
+    "carbon dioxide",
+    "methane",
+    "nitrous oxide",
+    "carbon monoxide",
+    "nitrogen oxides",
+    "nitric oxide",
+    "nitrogen dioxide",
+    "sulfur dioxide",
+    "sulfur trioxide",
+    "sulfur oxides",
+    "particulates",
+    "inhalable particulates",
+    "dust",
+    "soot",
+    "volatile organic compounds",
+    "ammonia",
+    "ammonia gas",
+    "hydrogen sulfide",
+    "hydrogen fluoride",
+    "hydrogen chloride",
 }
 
 _FLOW_TYPE_TOKEN_MAP = {
     "product flow": "PRODUCT_FLOW",
     "product": "PRODUCT_FLOW",
     "product_flow": "PRODUCT_FLOW",
-    "产品流": "PRODUCT_FLOW",
-    "产品": "PRODUCT_FLOW",
     "waste flow": "WASTE_FLOW",
     "waste": "WASTE_FLOW",
     "waste_flow": "WASTE_FLOW",
-    "废物流": "WASTE_FLOW",
-    "废物": "WASTE_FLOW",
     "elementary flow": "ELEMENTARY_FLOW",
     "elementary": "ELEMENTARY_FLOW",
     "elementary_flow": "ELEMENTARY_FLOW",
     "emission": "ELEMENTARY_FLOW",
-    "基本流": "ELEMENTARY_FLOW",
-    "排放流": "ELEMENTARY_FLOW",
-    "排放": "ELEMENTARY_FLOW",
 }
 
 _FLOW_TYPE_SNIFF_TOKENS = set(_FLOW_TYPE_TOKEN_MAP.keys())
 
 _PROCESS_HEADER_REGEX = re.compile(
-    r"(?:Processes?|过程|工序|工艺|生命周期阶段)\s*\d*\s*[:：]",
+    r"(?:Processes?|Process|lifecycle\s*stage|life\s*cycle\s*stage)\s*\d*\s*[:：]",
     re.IGNORECASE,
 )
 
 _HEADER_ROW_REGEX = re.compile(
-    r"(?:input\s*/?\s*output|输入\s*/?\s*输出)",
+    r"(?:input\s*/?\s*output)",
     re.IGNORECASE,
 )
 
 _COLUMN_ALIAS_MAP = {
-    "输入/输出": "input/output",
-    "输入 / 输出": "input/output",
-    "输入输出": "input/output",
-    "方向": "input/output",
-    "流": "flow",
-    "流名称": "flow",
-    "流名": "flow",
-    "流的种类": "flow type",
-    "流类型": "flow type",
-    "流的类型": "flow type",
-    "类别": "category",
-    "分类": "category",
-    "数量": "amount",
-    "数值": "amount",
-    "单位": "unit",
-    "排放因子": "emission factor",
-    "排放系数": "emission factor",
-    "排放因子单位": "ef unit",
-    "排放系数单位": "ef unit",
-    "避免废物": "avoided waste",
-    "避免产品": "avoided product",
-    "提供者": "provider",
-    "供应商": "provider",
-    "地区": "location",
-    "地理位置": "location",
-    "区域": "location",
-    "分配": "allocation",
-    "分配因子": "allocation factor",
-    "成本": "cost",
-    "价格": "price",
-    "收入": "revenue",
+    "i/o": "input/output",
+    "io": "input/output",
+    "direction": "input/output",
+    "flow name": "flow",
+    "flowname": "flow",
+    "type of flow": "flow type",
+    "flowtype": "flow type",
+    "class": "category",
+    "classification": "category",
+    "quantity": "amount",
+    "value": "amount",
+    "emission coefficient": "emission factor",
+    "emission factor unit": "ef unit",
+    "emission coefficient unit": "ef unit",
+    "avoided wastes": "avoided waste",
+    "avoided products": "avoided product",
+    "supplier": "provider",
+    "region": "location",
+    "geographic location": "location",
+    "area": "location",
+    "allocation factors": "allocation factor",
 }
 
-_INPUT_TOKENS = {"input", "in", "输入", "投入"}
-_OUTPUT_TOKENS = {"output", "out", "输出", "产出"}
+_INPUT_TOKENS = {"input", "in"}
+_OUTPUT_TOKENS = {"output", "out"}
 
 
 def _normalize_io_token(io_type_raw: str) -> str:
@@ -149,10 +132,10 @@ def _normalize_io_token(io_type_raw: str) -> str:
     if token in _OUTPUT_TOKENS:
         return "output"
 
-    for safe_token in ("input", "输入", "投入"):
+    for safe_token in ("input",):
         if safe_token in token:
             return "input"
-    for safe_token in ("output", "输出", "产出"):
+    for safe_token in ("output",):
         if safe_token in token:
             return "output"
     return ""
@@ -192,14 +175,14 @@ class ExcelLCAParser:
             import re
 
             product_match = re.search(
-                r"[\d.]+?\s*(?:kg|g|mg|t|ton|件|个|m3|m³|kwh|mj|j|wh)?\s*(.+)",
+                r"[\d.]+?\s*(?:kg|g|mg|t|ton|pcs|piece|m3|m³|kwh|mj|j|wh)?\s*(.+)",
                 functional_unit,
                 re.IGNORECASE,
             )
             if product_match:
                 product_name = product_match.group(1).strip()
                 self.functional_unit_product_name = product_name
-                print(f"📌 从功能单位提取产品名称用于目标产品识别: {product_name}")
+                print(f"📌 Extracted product name from functional unit for target identification: {product_name}")
 
         self._read_excel_data()
 
@@ -350,8 +333,8 @@ class ExcelLCAParser:
                     lower_mapping["flow type"] = inferred_idx
                     col_mapping.setdefault("Flow type", inferred_idx)
                     print(
-                        f"📋 表头缺失 'Flow type'，按位置兜底将列 {inferred_idx} "
-                        f"识别为 Flow type（数据行内容包含显式声明）"
+                        f"📋 Header missing 'Flow type'; falling back by position to treat column {inferred_idx} "
+                        f"as Flow type (data rows contain explicit declarations)"
                     )
 
             exchanges = []
@@ -464,17 +447,17 @@ class ExcelLCAParser:
                             if not provider_name:
                                 provider_name = provider_from_ef
                                 print(
-                                    f"🌫️ 使用 Emission Factor 自动提供者: "
+                                    f"🌫️ Using Emission Factor auto-provider: "
                                     f"{flow_name} -> {provider_name}"
                                 )
                             else:
                                 print(
-                                    f"ℹ️ 流 '{flow_name}' 同时存在 Provider 与 Emission Factor；"
-                                    f"保留显式 Provider='{provider_name}'，仅创建排放因子过程供复用。"
+                                    f"ℹ️ Flow '{flow_name}' has both Provider and Emission Factor; "
+                                    f"keeping explicit Provider='{provider_name}', only creating emission-factor process for reuse."
                                 )
 
                     exchange_location = ""
-                    for loc_key in ("location", "loc", "region", "地区", "地理位置"):
+                    for loc_key in ("location", "loc", "region"):
                         if loc_key in lower_mapping:
                             loc_col_idx = lower_mapping.get(loc_key)
                             loc_cell_value = row.iloc[loc_col_idx]
@@ -555,9 +538,9 @@ class ExcelLCAParser:
                         pd.isna(amount)
                         or flow_name == "nan"
                         or flow_name == ""
-                        or str(amount).lower() in ["amount", "nan", "数量", "数值"]
+                        or str(amount).lower() in ["amount", "nan", "quantity", "value"]
                         or str(flow_name).lower()
-                        in ["flow", "nan", "流", "流名称", "流名"]
+                        in ["flow", "nan", "flow name", "flowname"]
                         or len(flow_name.strip()) == 0
                     ):
                         print(
@@ -602,19 +585,19 @@ class ExcelLCAParser:
                         if flow_type and flow_type != existing_type:
                             if existing_explicit and not has_explicit_flow_type:
                                 print(
-                                    f"🔒 流 '{flow_name}' 在 '{existing_flow.get('source_process', '?')}' 已被 Excel 显式声明为 {existing_type}，"
-                                    f"忽略 '{process_name}' 的推断值 {flow_type}"
+                                    f"🔒 Flow '{flow_name}' was explicitly declared as {existing_type} in '{existing_flow.get('source_process', '?')}', "
+                                    f"ignoring inferred value {flow_type} from '{process_name}'"
                                 )
                             elif (not existing_explicit) and has_explicit_flow_type:
                                 print(
-                                    f"✅ 流 '{flow_name}' 由推断值 {existing_type} 升级为 Excel 显式声明 {flow_type}"
+                                    f"✅ Flow '{flow_name}' upgraded from inferred {existing_type} to Excel-declared {flow_type}"
                                 )
                                 existing_flow["flow_type"] = flow_type
                             elif existing_explicit and has_explicit_flow_type:
                                 print(
-                                    f"⚠️ 流 '{flow_name}' 在多个过程中显式声明的 Flow type 不一致："
-                                    f"{existing_type} (来自 '{existing_flow.get('source_process', '?')}') vs "
-                                    f"{flow_type} (来自 '{process_name}')。保留先到的 {existing_type}，请检查 Excel。"
+                                    f"⚠️ Flow '{flow_name}' has inconsistent explicit Flow type across processes: "
+                                    f"{existing_type} (from '{existing_flow.get('source_process', '?')}') vs "
+                                    f"{flow_type} (from '{process_name}'). Keeping first {existing_type}; please check Excel."
                                 )
                             else:
 
@@ -622,7 +605,7 @@ class ExcelLCAParser:
                                     flow_type
                                 ) > self._flow_type_priority(existing_type):
                                     print(
-                                        f"ℹ️ 推断更新流 '{flow_name}' 类型：{existing_type} → {flow_type}"
+                                        f"ℹ️ Inferred update for flow '{flow_name}' type: {existing_type} → {flow_type}"
                                     )
                                     existing_flow["flow_type"] = flow_type
 
@@ -926,9 +909,8 @@ class ExcelLCAParser:
             "co2e": "Carbon dioxide, fossil",
             "carbondioxide": "Carbon dioxide, fossil",
             "carbondioxidefossil": "Carbon dioxide, fossil",
-            "二氧化碳": "Carbon dioxide, fossil",
-            "二氧化碳当量": "Carbon dioxide, fossil",
-            "温室气体当量": "Carbon dioxide, fossil",
+            "carbon dioxide equivalent": "Carbon dioxide, fossil",
+            "greenhouse gas equivalent": "Carbon dioxide, fossil",
             "ghg": "Carbon dioxide, fossil",
             "ghgco2e": "Carbon dioxide, fossil",
         }
@@ -985,7 +967,7 @@ class ExcelLCAParser:
 
         parsed_ef = self._parse_ef_unit(ef_unit_raw)
         if not parsed_ef:
-            print(f"⚠️ 无法解析 EF Unit='{ef_unit_raw}'，跳过自动排放因子过程创建")
+            print(f"⚠️ Unable to parse EF Unit='{ef_unit_raw}'; skipping auto emission-factor process creation")
             return ""
 
         denominator_unit = parsed_ef["denominator_unit"]
@@ -1069,8 +1051,8 @@ class ExcelLCAParser:
         self.processes_data.append(ef_process)
         self._ef_provider_process_registry[ef_key] = ef_process_name
         print(
-            f"✅ 创建排放因子过程: {ef_process_name} "
-            f"(产品={base_flow_name} 1 {denominator_unit}, 排放={emission_factor} {emission_unit})"
+            f"✅ Created emission-factor process: {ef_process_name} "
+            f"(product={base_flow_name} 1 {denominator_unit}, emission={emission_factor} {emission_unit})"
         )
         return ef_process_name
 
@@ -1109,19 +1091,19 @@ class ExcelLCAParser:
                     return upper
 
                 print(
-                    f"⚠️ 无法识别 Flow type 单元格内容 '{raw}' (流: '{flow_name}')，"
-                    f"将转用排放白名单兜底"
+                    f"⚠️ Unrecognized Flow type cell content '{raw}' (flow: '{flow_name}'); "
+                    f"falling back to emission whitelist"
                 )
 
         if self._is_elementary_flow(flow_name):
             print(
-                f"ℹ️ '{flow_name}' Excel 未填 Flow type，根据排放白名单推断为 ELEMENTARY_FLOW"
+                f"ℹ️ '{flow_name}' Excel has no Flow type; inferred as ELEMENTARY_FLOW from emission whitelist"
             )
             return "ELEMENTARY_FLOW"
 
         print(
-            f"⚠️ '{flow_name}' Excel 未填 Flow type 且不在排放白名单中，默认设为 PRODUCT_FLOW。"
-            f"如有误请在 Excel 'Flow type' 列显式声明。"
+            f"⚠️ '{flow_name}' Excel has no Flow type and is not on the emission whitelist; defaulting to PRODUCT_FLOW. "
+            f"If wrong, declare explicitly in the Excel 'Flow type' column."
         )
         return "PRODUCT_FLOW"
 
@@ -1201,7 +1183,7 @@ class ExcelLCAParser:
             print(f"🔍 Extracting flow: '{flow_name}'")
 
             flow_unit = flow_data.get("unit", "kg")
-            print(f"   单位: {flow_unit}")
+            print(f"   Unit: {flow_unit}")
 
             flow_spec = Flow(
                 name=flow_name,
@@ -1254,7 +1236,7 @@ class ExcelLCAParser:
 
     def parse_excel_metadata(self) -> Dict:
 
-        print(f"📋 开始解析Excel元数据: {self.excel_file_path}")
+        print(f"📋 Starting Excel metadata parse: {self.excel_file_path}")
 
         metadata = {
             "product_info": {},
@@ -1290,11 +1272,11 @@ class ExcelLCAParser:
 
             metadata["lifecycle_stages"] = self._extract_lifecycle_stages(data)
 
-            print(f"✅ Excel元数据解析完成")
+            print(f"✅ Excel metadata parsing completed")
             return metadata
 
         except Exception as e:
-            print(f"⚠️ 解析Excel元数据时出错: {e}")
+            print(f"⚠️ Error parsing Excel metadata: {e}")
             return metadata
 
     def _find_value_after_label(
@@ -1336,7 +1318,7 @@ class ExcelLCAParser:
             return False
 
         invalid_patterns = [
-            "百分比",
+            "percentage",
             "%",
             "percentage",
             "unit:",
@@ -1401,13 +1383,11 @@ class ExcelLCAParser:
                             if any(
                                 stop_word in line.lower()
                                 for stop_word in [
-                                    "四、",
-                                    "五、",
+                                    "section 4",
+                                    "section 5",
                                     "iv.",
                                     "v.",
-                                    "清单",
                                     "inventory",
-                                    "影响",
                                     "impact",
                                 ]
                             ):
@@ -1425,45 +1405,35 @@ class ExcelLCAParser:
 
         product_info = {}
 
-        product_name = self._find_value_after_label(data, "产品名称")
-        if not product_name:
-            product_name = self._find_value_after_label(data, "Product name")
+        product_name = self._find_value_after_label(data, "Product name")
         if not product_name:
             product_name = self._find_value_after_label(data, "Product")
         if product_name:
             product_info["product_name"] = product_name
-            print(f"  - 找到产品名称: {product_name[:100]}")
+            print(f"  - Found product name: {product_name[:100]}")
 
-        product_model = self._find_value_after_label(data, "产品规格型号")
-        if not product_model:
-            product_model = self._find_value_after_label(data, "Product model")
+        product_model = self._find_value_after_label(data, "Product model")
         if not product_model:
             product_model = self._find_value_after_label(data, "Model")
         if not product_model:
             product_model = self._find_value_after_label(data, "Specification")
         if product_model:
             product_info["product_model"] = product_model
-            print(f"  - 找到产品规格型号: {product_model[:100]}")
+            print(f"  - Found product model: {product_model[:100]}")
 
-        product_function = self._find_value_after_label(data, "产品功能")
-        if not product_function:
-            product_function = self._find_value_after_label(data, "Product function")
+        product_function = self._find_value_after_label(data, "Product function")
         if not product_function:
             product_function = self._find_value_after_label(data, "Function")
         if product_function:
             product_info["product_function"] = product_function
-            print(f"  - 找到产品功能: {product_function[:100]}")
+            print(f"  - Found product function: {product_function[:100]}")
 
-        product_description = self._find_value_after_label(data, "产品介绍")
-        if not product_description:
-            product_description = self._find_value_after_label(
-                data, "Product description"
-            )
+        product_description = self._find_value_after_label(data, "Product description")
         if not product_description:
             product_description = self._find_value_after_label(data, "Description")
         if product_description:
             product_info["product_description"] = product_description
-            print(f"  - 找到产品介绍: {product_description[:100]}")
+            print(f"  - Found product description: {product_description[:100]}")
 
         return product_info
 
@@ -1471,70 +1441,54 @@ class ExcelLCAParser:
 
         producer_info = {}
 
-        producer_name = self._find_value_after_label(data, "生产者名称")
-        if not producer_name:
-            producer_name = self._find_value_after_label(data, "Producer name")
+        producer_name = self._find_value_after_label(data, "Producer name")
         if not producer_name:
             producer_name = self._find_value_after_label(data, "Producer")
         if not producer_name:
             producer_name = self._find_value_after_label(data, "Manufacturer")
         if producer_name:
             producer_info["producer_name"] = producer_name
-            print(f"  - 找到生产者名称: {producer_name[:100]}")
+            print(f"  - Found producer name: {producer_name[:100]}")
 
-        address = self._find_value_after_label(data, "地址")
-        if not address:
-            address = self._find_value_after_label(data, "Address")
+        address = self._find_value_after_label(data, "Address")
         if address:
             producer_info["address"] = address
-            print(f"  - 找到地址: {address[:100]}")
+            print(f"  - Found address: {address[:100]}")
 
-        legal_representative = self._find_value_after_label(data, "法定代表人")
-        if not legal_representative:
-            legal_representative = self._find_value_after_label(
-                data, "Legal representative"
-            )
+        legal_representative = self._find_value_after_label(data, "Legal representative")
         if legal_representative:
             producer_info["legal_representative"] = legal_representative
-            print(f"  - 找到法定代表人: {legal_representative[:100]}")
+            print(f"  - Found legal representative: {legal_representative[:100]}")
 
-        contact_person = self._find_value_after_label(data, "授权人(联系人)")
-        if not contact_person:
-            contact_person = self._find_value_after_label(data, "联系人")
+        contact_person = self._find_value_after_label(data, "Authorized contact")
         if not contact_person:
             contact_person = self._find_value_after_label(data, "Contact person")
         if not contact_person:
             contact_person = self._find_value_after_label(data, "Contact")
         if contact_person:
             producer_info["contact_person"] = contact_person
-            print(f"  - 找到联系人: {contact_person[:100]}")
+            print(f"  - Found contact person: {contact_person[:100]}")
 
-        contact_phone = self._find_value_after_label(data, "联系电话")
-        if not contact_phone:
-            contact_phone = self._find_value_after_label(data, "Contact phone")
+        contact_phone = self._find_value_after_label(data, "Contact phone")
         if not contact_phone:
             contact_phone = self._find_value_after_label(data, "Phone")
         if not contact_phone:
             contact_phone = self._find_value_after_label(data, "Telephone")
         if contact_phone:
             producer_info["contact_phone"] = contact_phone
-            print(f"  - 找到联系电话: {contact_phone[:100]}")
+            print(f"  - Found contact phone: {contact_phone[:100]}")
 
-        company_overview = self._find_value_after_label(data, "企业概况")
-        if not company_overview:
-            company_overview = self._find_value_after_label(data, "Company overview")
+        company_overview = self._find_value_after_label(data, "Company overview")
         if company_overview:
             producer_info["company_overview"] = company_overview
-            print(f"  - 找到企业概况: {company_overview[:100]}")
+            print(f"  - Found company overview: {company_overview[:100]}")
 
-        report_no = self._find_value_after_label(data, "报告编号")
-        if not report_no:
-            report_no = self._find_value_after_label(data, "Report number")
+        report_no = self._find_value_after_label(data, "Report number")
         if not report_no:
             report_no = self._find_value_after_label(data, "Report no")
         if report_no:
             producer_info["report_number"] = report_no
-            print(f"  - 找到报告编号: {report_no[:100]}")
+            print(f"  - Found report number: {report_no[:100]}")
 
         return producer_info
 
@@ -1546,10 +1500,7 @@ class ExcelLCAParser:
         if not based_on_standard:
             based_on_standard = self._find_value_after_label(data, "Based on standard:")
         if not based_on_standard:
-            based_on_standard = self._find_value_after_label(data, "基于标准:")
-
-        if not based_on_standard:
-            based_on_standard = self._find_value_after_label(data, "依据标准")
+            based_on_standard = self._find_value_after_label(data, "Assessment standard")
         if not based_on_standard:
             based_on_standard = self._find_value_after_label(data, "Standard")
         if not based_on_standard:
@@ -1562,34 +1513,27 @@ class ExcelLCAParser:
         if based_on_standard:
             method["standard"] = based_on_standard
             method["quantitative_method"] = based_on_standard
-            print(f"  - 找到依据标准: {based_on_standard[:100]}")
+            print(f"  - Found assessment standard: {based_on_standard[:100]}")
 
         quantitative_method = self._find_value_after_label(data, "Quantitative method")
         if not quantitative_method:
-            quantitative_method = self._find_value_after_label(data, "量化方法")
-        if not quantitative_method:
             quantitative_method = self._find_value_after_label(data, "LCIA method")
         if not quantitative_method:
-            quantitative_method = self._find_value_after_label(
-                data, "Impact assessment method"
-            )
-        if not quantitative_method:
-            quantitative_method = self._find_value_after_label(data, "评价方法")
-
+            quantitative_method = self._find_value_after_label(data, "Impact assessment method")
         if quantitative_method:
             method["quantitative_method"] = quantitative_method
             method["standard"] = quantitative_method
-            print(f"  - 找到量化方法: {quantitative_method[:100]}")
+            print(f"  - Found quantitative method: {quantitative_method[:100]}")
 
         if method.get("quantitative_method") or method.get("standard"):
             final_method = method.get("quantitative_method") or method.get("standard")
-            print(f"  ℹ️  将使用此方法进行LCIA计算: {final_method[:100]}")
+            print(f"  ℹ️  Will use this method for LCIA calculation: {final_method[:100]}")
 
         return method
 
     def _extract_quantification_purpose(self, data: pd.DataFrame) -> str:
 
-        keywords = ["量化目的", "二、量化目的", "goal", "purpose", "aim", "objective"]
+        keywords = ["goal", "purpose", "aim", "objective"]
 
         for i in range(len(data)):
             for j in range(len(data.columns)):
@@ -1606,7 +1550,7 @@ class ExcelLCAParser:
                                 and line.lower() not in ["nan", "none", ""]
                                 and not any(
                                     x in line
-                                    for x in ["三、", "scope", "system boundary"]
+                                    for x in ["scope", "system boundary"]
                                 )
                             ):
                                 purpose_lines.append(line)
@@ -1615,7 +1559,7 @@ class ExcelLCAParser:
 
                     if purpose_lines:
                         result = " ".join(purpose_lines)
-                        print(f"  - 找到量化目的: {result[:100]}")
+                        print(f"  - Found quantification purpose: {result[:100]}")
                         return result
 
         return ""
@@ -1627,14 +1571,14 @@ class ExcelLCAParser:
         functional_unit = None
 
         functional_unit = self._find_value_after_label(
-            data, "功能单位", row_offset=0, col_offset=1
+            data, "functional unit", row_offset=0, col_offset=1
         )
         if functional_unit and self._is_valid_functional_unit(functional_unit):
             pass
         else:
 
             functional_unit = self._find_value_after_label(
-                data, "功能单位", row_offset=1, col_offset=0
+                data, "functional unit", row_offset=1, col_offset=0
             )
             if functional_unit and not self._is_valid_functional_unit(functional_unit):
                 functional_unit = None
@@ -1676,13 +1620,13 @@ class ExcelLCAParser:
         if not functional_unit:
 
             functional_unit = self._find_value_after_label(
-                data, "声明单位", row_offset=0, col_offset=1
+                data, "declared unit", row_offset=0, col_offset=1
             )
             if functional_unit and not self._is_valid_functional_unit(functional_unit):
                 functional_unit = None
             if not functional_unit:
                 functional_unit = self._find_value_after_label(
-                    data, "声明单位", row_offset=1, col_offset=0
+                    data, "declared unit", row_offset=1, col_offset=0
                 )
                 if functional_unit and not self._is_valid_functional_unit(
                     functional_unit
@@ -1732,7 +1676,7 @@ class ExcelLCAParser:
         if not functional_unit:
             temp_value = self._find_multiline_value(
                 data,
-                ["functional unit", "declared unit", "功能单位", "声明单位"],
+                ["functional unit", "declared unit"],
                 min_length=10,
             )
             if temp_value and self._is_valid_functional_unit(temp_value):
@@ -1745,7 +1689,7 @@ class ExcelLCAParser:
 
                     if any(
                         keyword in cell_value.lower()
-                        for keyword in ["三、", "scope", "量化", "quantif"]
+                        for keyword in ["scope", "quantif"]
                     ):
 
                         for offset in range(1, 20):
@@ -1758,7 +1702,7 @@ class ExcelLCAParser:
                                     )
                                     if any(
                                         kw in search_cell
-                                        for kw in ["functional", "declared", "功能单位"]
+                                        for kw in ["functional", "declared", "functional unit"]
                                     ):
 
                                         if search_col + 1 < len(data.columns):
@@ -1787,15 +1731,15 @@ class ExcelLCAParser:
 
         if functional_unit:
             scope["functional_unit"] = functional_unit
-            print(f"  ✅ 找到功能单位: {functional_unit[:100]}")
+            print(f"  ✅ Found functional unit: {functional_unit[:100]}")
         else:
             print(
-                f"  ⚠️ 未能找到功能单位，请检查Excel文件中是否包含'Functional Unit'或'功能单位'标签"
+                f"  ⚠️ Functional unit not found; please check that the Excel file contains a 'Functional Unit' label"
             )
 
         system_boundary = None
 
-        system_boundary = self._find_value_after_label(data, "系统边界")
+        system_boundary = self._find_value_after_label(data, "system boundary")
 
         if not system_boundary:
             system_boundary = self._find_value_after_label(data, "System boundary")
@@ -1812,7 +1756,7 @@ class ExcelLCAParser:
         if not system_boundary:
             system_boundary = self._find_multiline_value(
                 data,
-                ["system boundary", "system boundaries", "系统边界"],
+                ["system boundary", "system boundaries"],
                 min_length=15,
             )
 
@@ -1823,7 +1767,7 @@ class ExcelLCAParser:
 
                     if any(
                         keyword in cell_value.lower()
-                        for keyword in ["三、", "scope", "量化", "quantif"]
+                        for keyword in ["scope", "quantif"]
                     ):
 
                         for offset in range(1, 30):
@@ -1836,7 +1780,7 @@ class ExcelLCAParser:
                                     )
                                     if any(
                                         kw in search_cell
-                                        for kw in ["system", "boundary", "系统边界"]
+                                        for kw in ["system", "boundary", "system boundary"]
                                     ):
 
                                         if search_col + 1 < len(data.columns):
@@ -1885,27 +1829,23 @@ class ExcelLCAParser:
 
         if system_boundary:
             scope["system_boundary"] = system_boundary
-            print(f"  - 找到系统边界: {system_boundary[:100]}")
+            print(f"  - Found system boundary: {system_boundary[:100]}")
 
-        cutoff_criteria = self._find_value_after_label(data, "取舍准则")
-        if not cutoff_criteria:
-            cutoff_criteria = self._find_value_after_label(data, "Cut-off criteria")
+        cutoff_criteria = self._find_value_after_label(data, "Cut-off criteria")
         if not cutoff_criteria:
             cutoff_criteria = self._find_value_after_label(data, "Cutoff criteria")
         if cutoff_criteria:
             scope["cutoff_criteria"] = cutoff_criteria
-            print(f"  - 找到取舍准则: {cutoff_criteria[:100]}")
+            print(f"  - Found cut-off criteria: {cutoff_criteria[:100]}")
 
-        time_scope = self._find_value_after_label(data, "时间范围")
-        if not time_scope:
-            time_scope = self._find_value_after_label(data, "Time scope")
+        time_scope = self._find_value_after_label(data, "Time scope")
         if not time_scope:
             time_scope = self._find_value_after_label(data, "Time period")
         if not time_scope:
             time_scope = self._find_value_after_label(data, "Temporal scope")
         if time_scope:
             scope["time_scope"] = time_scope
-            print(f"  - 找到时间范围: {time_scope[:100]}")
+            print(f"  - Found time scope: {time_scope[:100]}")
 
         return scope
 
@@ -1913,49 +1853,39 @@ class ExcelLCAParser:
 
         inventory = {}
 
-        primary_data = self._find_value_after_label(data, "初级数据")
-        if not primary_data:
-            primary_data = self._find_value_after_label(data, "初级数据来源")
+        primary_data = self._find_value_after_label(data, "Primary data")
         if not primary_data:
             primary_data = self._find_value_after_label(data, "Primary data source")
         if not primary_data:
             primary_data = self._find_value_after_label(data, "Primary data")
         if primary_data:
             inventory["primary_data_source"] = primary_data
-            print(f"  - 找到初级数据来源: {primary_data[:100]}")
+            print(f"  - Found primary data source: {primary_data[:100]}")
 
-        secondary_data = self._find_value_after_label(data, "次级数据")
-        if not secondary_data:
-            secondary_data = self._find_value_after_label(data, "次级数据来源")
+        secondary_data = self._find_value_after_label(data, "Secondary data")
         if not secondary_data:
             secondary_data = self._find_value_after_label(data, "Secondary data source")
         if not secondary_data:
             secondary_data = self._find_value_after_label(data, "Secondary data")
         if secondary_data:
             inventory["secondary_data_source"] = secondary_data
-            print(f"  - 找到次级数据来源: {secondary_data[:100]}")
+            print(f"  - Found secondary data source: {secondary_data[:100]}")
 
-        allocation_basis = self._find_value_after_label(data, "分配依据")
-        if not allocation_basis:
-            allocation_basis = self._find_value_after_label(data, "Allocation basis")
+        allocation_basis = self._find_value_after_label(data, "Allocation basis")
         if not allocation_basis:
             allocation_basis = self._find_value_after_label(data, "Allocation method")
         if allocation_basis:
             inventory["allocation_basis"] = allocation_basis
-            print(f"  - 找到分配依据: {allocation_basis[:100]}")
+            print(f"  - Found allocation basis: {allocation_basis[:100]}")
 
-        allocation_procedure = self._find_value_after_label(data, "分配程序")
-        if not allocation_procedure:
-            allocation_procedure = self._find_value_after_label(
-                data, "Allocation procedure"
-            )
+        allocation_procedure = self._find_value_after_label(data, "Allocation procedure")
         if not allocation_procedure:
             allocation_procedure = self._find_value_after_label(
                 data, "Allocation process"
             )
         if allocation_procedure:
             inventory["allocation_procedure"] = allocation_procedure
-            print(f"  - 找到分配程序: {allocation_procedure[:100]}")
+            print(f"  - Found allocation procedure: {allocation_procedure[:100]}")
 
         return inventory
 
@@ -1965,7 +1895,7 @@ class ExcelLCAParser:
 
         for i in range(len(data)):
             cell_value = str(data.iloc[i, 0]).strip()
-            if cell_value == "生命周期阶段":
+            if cell_value == "Life cycle stage":
 
                 for offset in range(1, 10):
                     if i + offset < len(data):
@@ -1974,7 +1904,7 @@ class ExcelLCAParser:
                             stage
                             and stage.lower() not in ["nan", "none", ""]
                             and not any(
-                                x in stage for x in ["表", "图", "五、", "六、"]
+                                x in stage for x in ["table", "figure", "section 5", "section 6"]
                             )
                         ):
                             stages.append(stage)

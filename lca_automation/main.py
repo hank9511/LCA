@@ -7,6 +7,7 @@ parent_dir = os.path.dirname(current_dir)
 if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
 
+
 from .excel_parser import ExcelLCAParser
 from .llm_utils import initialize_llm_clients
 from .project_context import ProjectContext
@@ -29,24 +30,24 @@ def run_lca_analysis(
 
         if project_context is None:
             project_context = ProjectContext.default()
-            print("⚠️  使用默认项目上下文（未提供项目信息）")
+            print("⚠️  Using default project context (no project info provided)")
         else:
             project_context.print_summary()
 
         print("=" * 80)
-        print(f"🌍 LCA分析 - {os.path.basename(excel_file_path)}")
+        print(f"🌍 LCA analysis - {os.path.basename(excel_file_path)}")
         print("=" * 80)
 
-        print("🔌 步骤1：连接到openLCA...")
+        print("🔌 Step 1: Connecting to openLCA...")
         try:
             client = ipc.Client(ipc_port)
-            print("✅ openLCA连接成功")
+            print("✅ openLCA connection successful")
         except ConnectionRefusedError:
-            print("❌ openLCA连接失败")
-            print("请确保：")
-            print("  - openLCA正在运行")
-            print("  - 在开发者工具中启用了IPC服务器")
-            print(f"  - IPC服务器端口为{ipc_port}")
+            print("❌ openLCA connection failed")
+            print("Please ensure:")
+            print("  - openLCA is running")
+            print("  - The IPC server is enabled in developer tools")
+            print(f"  - The IPC server port is {ipc_port}")
             return {
                 "success": False,
                 "error": "openLCA connection failed",
@@ -54,22 +55,22 @@ def run_lca_analysis(
                 "system_name": None,
             }
 
-        print("\n🤖 步骤2：初始化LLM客户端...")
+        print("\n🤖 Step 2: Initializing LLM clients...")
         llm_clients = initialize_llm_clients()
         working_llms = [
             name for name, client in llm_clients.items() if client is not None
         ]
 
         if working_llms:
-            print(f"✅ 可用的LLM: {working_llms}")
+            print(f"✅ Available LLMs: {working_llms}")
         else:
-            print("⚠️  没有可用的LLM，将使用基础模式")
+            print("⚠️  No available LLMs; falling back to basic mode")
 
-        print(f"\n📋 步骤3：从Excel文件创建LCA案例...")
+        print(f"\n📋 Step 3: Creating LCA case from Excel file...")
         lca_case = create_lca_case_from_excel(excel_file_path, project_context)
 
         if lifecycle_stage_mapping:
-            print(f"\n🔗 步骤3.5：应用生命周期阶段映射...")
+            print(f"\n🔗 Step 3.5: Applying life-cycle stage mapping...")
             for process in lca_case.processes:
                 if process.name in lifecycle_stage_mapping:
 
@@ -78,10 +79,10 @@ def run_lca_analysis(
                         f"  ✓ {process.name} -> {lifecycle_stage_mapping[process.name]}"
                     )
             print(
-                f"✅ 已应用 {len([p for p in lca_case.processes if hasattr(p, 'lifecycle_stage')])} 个生命周期阶段映射"
+                f"✅ Applied {len([p for p in lca_case.processes if hasattr(p, 'lifecycle_stage')])} life-cycle stage mappings"
             )
 
-        print("\n🏗️ 步骤4：运行自动化LCA工作流...")
+        print("\n🏗️ Step 4: Running automated LCA workflow...")
 
         config = {
             "USE_LLM_FOR_PROVIDER_SELECTION": len(working_llms) > 0,
@@ -106,12 +107,12 @@ def run_lca_analysis(
         if not workflow_result.get("success"):
             return {
                 "success": False,
-                "error": workflow_result.get("error", "工作流执行失败"),
+                "error": workflow_result.get("error", "Workflow execution failed"),
                 "comprehensive_results": None,
                 "system_name": None,
             }
 
-        print("\n📊 步骤5：获取综合LCA结果...")
+        print("\n📊 Step 5: Retrieving comprehensive LCA results...")
 
         system_uuid = workflow_result.get("system_uuid")
         lca_results = workflow_result.get("lca_results")
@@ -143,12 +144,12 @@ def run_lca_analysis(
         }
 
         print("\n" + "=" * 80)
-        print("🎉 LCA分析完成！")
+        print("🎉 LCA analysis completed!")
         print("=" * 80)
-        print(f"📊 分析统计:")
-        print(f"  - 处理的流: {len(basic_results['flows'])}")
-        print(f"  - 创建的过程: {len(basic_results['processes'])}")
-        print(f"  - 构建的系统: {len(basic_results['product_systems'])}")
+        print(f"📊 Analysis statistics:")
+        print(f"  - Flows processed: {len(basic_results['flows'])}")
+        print(f"  - Processes created: {len(basic_results['processes'])}")
+        print(f"  - Systems built: {len(basic_results['product_systems'])}")
 
         return {
             "success": True,
@@ -159,7 +160,7 @@ def run_lca_analysis(
         }
 
     except Exception as e:
-        print(f"\n❌ 分析过程中发生错误: {e}")
+        print(f"\n❌ Error during analysis: {e}")
         import traceback
 
         traceback.print_exc()
@@ -178,7 +179,7 @@ def create_lca_case_from_excel(
     import os
 
     if not os.path.exists(excel_file_path):
-        raise FileNotFoundError(f"Excel文件不存在: {excel_file_path}")
+        raise FileNotFoundError(f"Excel file not found: {excel_file_path}")
 
     if project_context is None:
         project_context = ProjectContext.default()
@@ -186,19 +187,19 @@ def create_lca_case_from_excel(
     filename = os.path.splitext(os.path.basename(excel_file_path))[0]
 
     if project_context.product_name:
-        case_name = f"{project_context.product_name} LCA案例"
-        case_description = f"{project_context.product_name}的LCA案例"
+        case_name = f"{project_context.product_name} LCA case"
+        case_description = f"LCA case for {project_context.product_name}"
         if project_context.producer_name:
-            case_description += f"，由{project_context.producer_name}生产"
+            case_description += f", produced by {project_context.producer_name}"
     else:
-        case_name = f"{filename.upper()} LCA案例"
-        case_description = f"从Excel文件{filename}.xlsx自动生成的LCA案例"
+        case_name = f"{filename.upper()} LCA case"
+        case_description = f"LCA case auto-generated from Excel file {filename}.xlsx"
 
-    print(f"📊 从Excel文件创建LCA案例: {filename}.xlsx")
+    print(f"📊 Creating LCA case from Excel file: {filename}.xlsx")
 
     excel_parser = ExcelLCAParser(excel_file_path, project_context)
     lca_case = excel_parser.parse_excel_to_lca_case(
-        case_name=case_name, case_description=case_description, category="Excel导入"
+        case_name=case_name, case_description=case_description, category="Excel import"
     )
 
     lca_case.flow_metadata = {
@@ -210,8 +211,8 @@ def create_lca_case_from_excel(
     }
     lca_case.process_provider_metadata = excel_parser.process_provider_metadata
 
-    print(f"✅ 成功创建LCA案例: {case_name}")
-    print(f"📝 包含: {len(lca_case.flows)} 个流, {len(lca_case.processes)} 个过程")
+    print(f"✅ Successfully created LCA case: {case_name}")
+    print(f"📝 Contains: {len(lca_case.flows)} flows, {len(lca_case.processes)} processes")
 
     return lca_case
 
@@ -226,8 +227,8 @@ def main():
     current_dir = os.getcwd()
     default_path = os.path.join(current_dir, DEFAULT_EXCEL_FILE)
 
-    parser = argparse.ArgumentParser(description="运行LCA自动化分析")
-    parser.add_argument("excel_file", nargs="?", default="", help="Excel文件路径")
+    parser = argparse.ArgumentParser(description="Run automated LCA analysis")
+    parser.add_argument("excel_file", nargs="?", default="", help="Path to Excel file")
     parser.add_argument(
         "--ablation-variant",
         default="config",
@@ -238,7 +239,7 @@ def main():
             "unconstrained_candidate",
             "no_stage_classification",
         ],
-        help="消融实验变体（config=使用config.py设定）",
+        help="Ablation experiment variant (config=use settings from config.py)",
     )
     args = parser.parse_args()
 
@@ -249,21 +250,21 @@ def main():
             excel_file = os.path.join(current_dir, excel_file)
 
         if not os.path.exists(excel_file):
-            print(f"❌ 文件不存在: {excel_file}")
-            print("💡 请确保Excel文件存在于指定路径")
+            print(f"❌ File not found: {excel_file}")
+            print("💡 Please ensure the Excel file exists at the specified path")
             return False
 
-        print(f"🎯 指定的Excel文件: {os.path.basename(excel_file)}")
+        print(f"🎯 Specified Excel file: {os.path.basename(excel_file)}")
     else:
 
         excel_file = default_path
 
         if not os.path.exists(excel_file):
-            print(f"❌ 默认文件不存在: {DEFAULT_EXCEL_FILE}")
-            print("💡 请将Excel文件放在项目目录中，或指定文件路径")
+            print(f"❌ Default file not found: {DEFAULT_EXCEL_FILE}")
+            print("💡 Place the Excel file in the project directory, or specify a file path")
             return False
 
-        print(f"🎯 使用默认Excel文件: {DEFAULT_EXCEL_FILE}")
+        print(f"🎯 Using default Excel file: {DEFAULT_EXCEL_FILE}")
 
     selected_variant = (
         None if args.ablation_variant == "config" else args.ablation_variant
@@ -271,10 +272,10 @@ def main():
     result = run_lca_analysis(excel_file, ablation_variant=selected_variant)
 
     if result.get("success"):
-        print(f"\n🎉 {os.path.basename(excel_file)}的LCA分析成功完成！")
+        print(f"\n🎉 LCA analysis for {os.path.basename(excel_file)} completed successfully!")
     else:
-        print(f"\n❌ {os.path.basename(excel_file)}的LCA分析失败")
-        print(f"错误: {result.get('error', '未知错误')}")
+        print(f"\n❌ LCA analysis for {os.path.basename(excel_file)} failed")
+        print(f"Error: {result.get('error', 'Unknown error')}")
 
     return result.get("success", False)
 

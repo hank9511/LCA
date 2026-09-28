@@ -383,52 +383,52 @@ def format_excel_for_llm(df):
         total_cols = len(df.columns)
 
         headers = list(df.columns)
-        header_str = " | ".join([f"列{i+1}: {col}" for i, col in enumerate(headers)])
+        header_str = " | ".join([f"Column {i+1}: {col}" for i, col in enumerate(headers)])
 
         data_rows = []
         for i in range(min(10, total_rows)):
             row_data = []
             for j, col in enumerate(headers):
-                value = str(df.iloc[i, j]) if pd.notna(df.iloc[i, j]) else "空值"
+                value = str(df.iloc[i, j]) if pd.notna(df.iloc[i, j]) else "null"
 
                 if len(value) > 50:
                     value = value[:47] + "..."
                 row_data.append(f"{value}")
-            data_rows.append(f"行{i+1}: {' | '.join(row_data)}")
+            data_rows.append(f"Row {i+1}: {' | '.join(row_data)}")
 
         formatted_data = f"""
-Excel文件结构分析:
-总行数: {total_rows}
-总列数: {total_cols}
+Excel file structure analysis:
+Total rows: {total_rows}
+Total columns: {total_cols}
 
-列名信息:
+Column names:
 {header_str}
 
-数据样本 (前{min(10, total_rows)}行):
+Data sample (first {min(10, total_rows)} rows):
 {chr(10).join(data_rows)}
 
-数据类型信息:
+Data type information:
 """
 
         for i, col in enumerate(headers):
             dtype = str(df[col].dtype)
             non_null_count = df[col].count()
             null_count = total_rows - non_null_count
-            formatted_data += f"列{i+1} ({col}): {dtype}, 非空值: {non_null_count}, 空值: {null_count}\n"
+            formatted_data += f"Column {i+1} ({col}): {dtype}, non-null: {non_null_count}, null: {null_count}\n"
 
-        formatted_data += f"\n数据质量评估:\n"
+        formatted_data += f"\nData quality assessment:\n"
         formatted_data += (
-            f"- 数据完整性: {non_null_count}/{total_rows * total_cols} 单元格有数据\n"
+            f"- Data completeness: {non_null_count}/{total_rows * total_cols} cells have data\n"
         )
         formatted_data += (
-            f"- 空值比例: {null_count/(total_rows * total_cols)*100:.1f}%\n"
+            f"- Null ratio: {null_count/(total_rows * total_cols)*100:.1f}%\n"
         )
 
         return formatted_data
 
     except Exception as e:
 
-        return f"Excel数据格式化失败: {str(e)}\n\n原始数据:\n{df.to_string()}"
+        return f"Excel data formatting failed: {str(e)}\n\nRaw data:\n{df.to_string()}"
 
 
 def call_grok_llm(excel_data, project_name):
@@ -440,41 +440,41 @@ def call_grok_llm(excel_data, project_name):
         )
 
         prompt = f"""
-        你是一个专业的LCA（生命周期评估）专家。请分析以下Excel数据，评估其是否适合进行LCA分析。
+        You are a professional LCA (Life Cycle Assessment) expert. Please analyze the following Excel data and assess whether it is suitable for LCA analysis.
 
-        项目名称: {project_name}
+        Project name: {project_name}
 
-        Excel数据内容:
+        Excel data content:
         {excel_data}
 
-        请从以下几个方面进行专业分析：
+        Please provide a professional analysis covering the following aspects:
 
-        1. **数据完整性评估**
-           - 数据是否完整覆盖LCA所需的所有阶段
-           - 是否包含必要的环境影响因子
-           - 数据缺失情况分析
+        1. **Data Completeness Assessment**
+           - Whether the data fully covers all stages required for LCA
+           - Whether necessary environmental impact factors are included
+           - Analysis of missing data
 
-        2. **数据质量检查**
-           - 数据类型是否合适
-           - 数值范围是否合理
-           - 单位是否统一和标准
+        2. **Data Quality Check**
+           - Whether data types are appropriate
+           - Whether value ranges are reasonable
+           - Whether units are consistent and standardized
 
-        3. **LCA标准符合性**
-           - 是否符合ISO 14040/14044标准
-           - 数据分类是否清晰
-           - 边界设定是否合理
+        3. **LCA Standards Compliance**
+           - Whether it complies with ISO 14040/14044 standards
+           - Whether data classification is clear
+           - Whether boundary setting is reasonable
 
-        4. **具体改进建议**
-           - 数据结构优化建议
-           - 缺失数据补充建议
-           - 标准化建议
+        4. **Specific Improvement Suggestions**
+           - Suggestions for optimizing data structure
+           - Suggestions for supplementing missing data
+           - Standardization suggestions
 
-        5. **Excel文件结构建议**
-           - 列名是否清晰明确
-           - 是否需要添加新的列
-           - 数据组织方式是否合理
+        5. **Excel File Structure Suggestions**
+           - Whether column names are clear and explicit
+           - Whether new columns need to be added
+           - Whether the data organization approach is reasonable
 
-        请用中文回答，提供专业、具体的分析和建议。如果发现问题，请明确指出并给出解决方案。
+        Please answer in English and provide professional, specific analysis and recommendations. If issues are found, clearly identify them and propose solutions.
         """
 
         response = client.chat.completions.create(
@@ -482,7 +482,7 @@ def call_grok_llm(excel_data, project_name):
             messages=[
                 {
                     "role": "system",
-                    "content": "你是专业的LCA专家，请提供专业、准确的分析和建议。",
+                    "content": "You are a professional LCA expert. Please provide professional and accurate analysis and recommendations.",
                 },
                 {"role": "user", "content": prompt},
             ],
@@ -494,7 +494,7 @@ def call_grok_llm(excel_data, project_name):
         return response.choices[0].message.content.strip()
 
     except Exception as e:
-        return f"LLM分析失败: {str(e)}"
+        return f"LLM analysis failed: {str(e)}"
 
 
 @app.route("/")
@@ -513,10 +513,10 @@ def login():
 
         if user and check_password_hash(user.password_hash, password):
             login_user(user)
-            flash("登录成功！", "success")
+            flash("Login successful!", "success")
             return redirect(url_for("dashboard"))
         else:
-            flash("用户名或密码错误！", "error")
+            flash("Incorrect username or password!", "error")
 
     return render_template("login.html")
 
@@ -530,11 +530,11 @@ def register():
         password = request.form["password"]
 
         if User.query.filter_by(username=username).first():
-            flash("用户名已存在！", "error")
+            flash("Username already exists!", "error")
             return render_template("register.html")
 
         if User.query.filter_by(email=email).first():
-            flash("邮箱已被注册！", "error")
+            flash("Email is already registered!", "error")
             return render_template("register.html")
 
         user = User(
@@ -545,7 +545,7 @@ def register():
         db.session.add(user)
         db.session.commit()
 
-        flash("注册成功！请登录", "success")
+        flash("Registration successful! Please log in", "success")
         return redirect(url_for("login"))
 
     return render_template("register.html")
@@ -556,7 +556,7 @@ def register():
 def logout():
 
     logout_user()
-    flash("已成功登出！", "success")
+    flash("Logged out successfully!", "success")
     return redirect(url_for("index"))
 
 
@@ -580,7 +580,7 @@ def new_project():
         db.session.add(project)
         db.session.commit()
 
-        flash("项目创建成功！", "success")
+        flash("Project created successfully!", "success")
         return redirect(url_for("dashboard"))
 
     return render_template("new_project.html")
@@ -592,7 +592,7 @@ def project_detail(project_id):
 
     project = Project.query.get_or_404(project_id)
     if project.user_id != current_user.id:
-        flash("您没有权限访问此项目！", "error")
+        flash("You do not have permission to access this project!", "error")
         return redirect(url_for("dashboard"))
 
     return render_template("project_detail.html", project=project)
@@ -604,7 +604,7 @@ def edit_project(project_id):
 
     project = Project.query.get_or_404(project_id)
     if project.user_id != current_user.id:
-        flash("您没有权限编辑此项目！", "error")
+        flash("You do not have permission to edit this project!", "error")
         return redirect(url_for("dashboard"))
 
     if request.method == "POST":
@@ -613,7 +613,7 @@ def edit_project(project_id):
         project.status = request.form["status"]
         db.session.commit()
 
-        flash("项目更新成功！", "success")
+        flash("Project updated successfully!", "success")
         return redirect(url_for("project_detail", project_id=project.id))
 
     return render_template("edit_project.html", project=project)
@@ -625,7 +625,7 @@ def lca_wizard(project_id):
 
     project = Project.query.get_or_404(project_id)
     if project.user_id != current_user.id:
-        flash("您没有权限访问此项目！", "error")
+        flash("You do not have permission to access this project!", "error")
         return redirect(url_for("dashboard"))
 
     return render_template("lca_wizard.html", project=project)
@@ -635,7 +635,7 @@ def sync_metadata_to_report_info(excel_file, project_id):
 
     try:
         if not excel_file.metadata_json:
-            print("⚠️ Excel文件没有元数据，跳过报告信息同步")
+            print("⚠️ Excel file has no metadata, skipping report info sync")
             return False
 
         metadata = excel_file.metadata_json
@@ -644,116 +644,116 @@ def sync_metadata_to_report_info(excel_file, project_id):
         if not report_info:
             report_info = ProjectReportInfo(project_id=project_id)
             db.session.add(report_info)
-            print(f"📝 创建新的报告信息记录")
+            print(f"📝 Creating new report info record")
         else:
-            print(f"📝 更新已有的报告信息记录")
+            print(f"📝 Updating existing report info record")
 
         if metadata.get("product_info", {}).get("product_name"):
             report_info.product_name = metadata["product_info"]["product_name"]
-            print(f"  - 产品名称: {report_info.product_name}")
+            print(f"  - Product name: {report_info.product_name}")
 
         if metadata.get("product_info", {}).get("product_model"):
             report_info.product_model = metadata["product_info"]["product_model"]
-            print(f"  - 产品规格型号: {report_info.product_model}")
+            print(f"  - Product model: {report_info.product_model}")
 
         if metadata.get("product_info", {}).get("product_function"):
             report_info.product_function = metadata["product_info"]["product_function"]
-            print(f"  - 产品功能已设置")
+            print(f"  - Product function set")
 
         if metadata.get("producer_info", {}).get("producer_name"):
             report_info.producer_name = metadata["producer_info"]["producer_name"]
-            print(f"  - 生产者名称: {report_info.producer_name}")
+            print(f"  - Producer name: {report_info.producer_name}")
 
         if metadata.get("producer_info", {}).get("address"):
             report_info.address = metadata["producer_info"]["address"]
-            print(f"  - 地址已设置")
+            print(f"  - Address set")
 
         if metadata.get("producer_info", {}).get("legal_representative"):
             report_info.legal_representative = metadata["producer_info"][
                 "legal_representative"
             ]
-            print(f"  - 法定代表人: {report_info.legal_representative}")
+            print(f"  - Legal representative: {report_info.legal_representative}")
 
         if metadata.get("producer_info", {}).get("contact_person"):
             report_info.contact_person = metadata["producer_info"]["contact_person"]
-            print(f"  - 联系人: {report_info.contact_person}")
+            print(f"  - Contact person: {report_info.contact_person}")
 
         if metadata.get("producer_info", {}).get("contact_phone"):
             report_info.contact_phone = metadata["producer_info"]["contact_phone"]
-            print(f"  - 联系电话: {report_info.contact_phone}")
+            print(f"  - Contact phone: {report_info.contact_phone}")
 
         if metadata.get("producer_info", {}).get("report_number"):
             report_info.report_no = metadata["producer_info"]["report_number"]
-            print(f"  - 报告编号: {report_info.report_no}")
+            print(f"  - Report No.: {report_info.report_no}")
 
         quantification_method_data = metadata.get("quantification_method", {})
         if quantification_method_data.get("quantitative_method"):
             report_info.standard_used = quantification_method_data[
                 "quantitative_method"
             ]
-            print(f"  - 量化方法(LCIA): {report_info.standard_used}")
+            print(f"  - Quantification method (LCIA): {report_info.standard_used}")
         elif quantification_method_data.get("standard"):
             report_info.standard_used = quantification_method_data["standard"]
-            print(f"  - 依据标准: {report_info.standard_used}")
+            print(f"  - Based on standard: {report_info.standard_used}")
 
         if metadata.get("quantification_purpose"):
             report_info.quantitative_purpose = metadata["quantification_purpose"]
-            print(f"  - 量化目的已设置")
+            print(f"  - Quantitative purpose set")
 
         if metadata.get("quantification_scope", {}).get("functional_unit"):
             report_info.functional_unit = metadata["quantification_scope"][
                 "functional_unit"
             ]
-            print(f"  - 功能单位: {report_info.functional_unit}")
+            print(f"  - Functional unit: {report_info.functional_unit}")
 
         if metadata.get("quantification_scope", {}).get("system_boundary"):
             report_info.system_boundary_description = metadata["quantification_scope"][
                 "system_boundary"
             ]
-            print(f"  - 系统边界描述已设置")
+            print(f"  - System boundary description set")
 
         if metadata.get("quantification_scope", {}).get("cutoff_criteria"):
             report_info.cutoff_criteria = metadata["quantification_scope"][
                 "cutoff_criteria"
             ]
-            print(f"  - 取舍准则已设置")
+            print(f"  - Cut-off criteria set")
 
         if metadata.get("quantification_scope", {}).get("time_scope"):
             report_info.time_scale = metadata["quantification_scope"]["time_scope"]
-            print(f"  - 时间范围: {report_info.time_scale}")
+            print(f"  - Time scale: {report_info.time_scale}")
 
         if metadata.get("inventory_analysis", {}).get("primary_data_source"):
             report_info.primary_data_source = metadata["inventory_analysis"][
                 "primary_data_source"
             ]
-            print(f"  - 初级数据来源已设置")
+            print(f"  - Primary data source set")
 
         if metadata.get("inventory_analysis", {}).get("secondary_data_source"):
             report_info.secondary_data_source = metadata["inventory_analysis"][
                 "secondary_data_source"
             ]
-            print(f"  - 次级数据来源已设置")
+            print(f"  - Secondary data source set")
 
         if metadata.get("inventory_analysis", {}).get("allocation_basis"):
             report_info.allocation_basis = metadata["inventory_analysis"][
                 "allocation_basis"
             ]
-            print(f"  - 分配依据: {report_info.allocation_basis}")
+            print(f"  - Allocation basis: {report_info.allocation_basis}")
 
         if metadata.get("inventory_analysis", {}).get("allocation_procedure"):
             report_info.allocation_procedure = metadata["inventory_analysis"][
                 "allocation_procedure"
             ]
-            print(f"  - 分配程序已设置")
+            print(f"  - Allocation procedure set")
 
         report_info.updated_at = datetime.now()
         db.session.commit()
 
-        print(f"✅ 成功将Excel元数据同步到LCA报告信息")
+        print(f"✅ Successfully synced Excel metadata to LCA report info")
         return True
 
     except Exception as e:
-        print(f"❌ 同步元数据到报告信息失败: {e}")
+        print(f"❌ Failed to sync metadata to report info: {e}")
         import traceback
 
         traceback.print_exc()
@@ -764,7 +764,7 @@ def sync_metadata_to_assessment_boundary(excel_file, project_id):
 
     try:
         if not excel_file.metadata_json:
-            print("⚠️ Excel文件没有元数据，跳过同步")
+            print("⚠️ Excel file has no metadata, skipping sync")
             return False
 
         metadata = excel_file.metadata_json
@@ -773,58 +773,54 @@ def sync_metadata_to_assessment_boundary(excel_file, project_id):
         if not boundary:
             boundary = AssessmentBoundary(project_id=project_id)
             db.session.add(boundary)
-            print(f"📝 创建新的评价边界设置")
+            print(f"📝 Creating new assessment boundary settings")
         else:
-            print(f"📝 更新已有的评价边界设置")
+            print(f"📝 Updating existing assessment boundary settings")
 
         if metadata.get("quantification_scope", {}).get("functional_unit"):
             boundary.functional_unit = metadata["quantification_scope"][
                 "functional_unit"
             ]
-            print(f"  - 功能单位: {boundary.functional_unit}")
+            print(f"  - Functional unit: {boundary.functional_unit}")
 
         if metadata.get("quantification_scope", {}).get("system_boundary"):
             boundary.boundary_description = metadata["quantification_scope"][
                 "system_boundary"
             ]
-            print(f"  - 系统边界描述已设置")
+            print(f"  - System boundary description set")
 
         if metadata.get("quantification_scope", {}).get("time_scope"):
             boundary.temporal_boundary = metadata["quantification_scope"]["time_scope"]
-            print(f"  - 时间边界: {boundary.temporal_boundary}")
+            print(f"  - Temporal boundary: {boundary.temporal_boundary}")
 
         if metadata.get("quantification_scope", {}).get("cutoff_criteria"):
             boundary.cutoff_criteria = metadata["quantification_scope"][
                 "cutoff_criteria"
             ]
-            print(f"  - 截断规则已设置")
+            print(f"  - Cut-off rules set")
 
         allocation_basis = (
             metadata.get("inventory_analysis", {}).get("allocation_basis", "").lower()
         )
         if allocation_basis:
 
-            if "质量" in allocation_basis or "mass" in allocation_basis:
+            if "mass" in allocation_basis:
                 boundary.allocation_method = "mass"
-            elif (
-                "经济" in allocation_basis
-                or "价值" in allocation_basis
-                or "economic" in allocation_basis
-            ):
+            elif "economic" in allocation_basis:
                 boundary.allocation_method = "economic"
-            elif "能量" in allocation_basis or "energy" in allocation_basis:
+            elif "energy" in allocation_basis:
                 boundary.allocation_method = "energy"
-            elif "物理" in allocation_basis or "physical" in allocation_basis:
+            elif "physical" in allocation_basis:
                 boundary.allocation_method = "physical"
-            elif "无" in allocation_basis or "none" in allocation_basis:
+            elif "none" in allocation_basis:
                 boundary.allocation_method = "none"
-            print(f"  - 分配方法: {boundary.allocation_method}")
+            print(f"  - Allocation method: {boundary.allocation_method}")
 
         if metadata.get("inventory_analysis", {}).get("allocation_procedure"):
             boundary.allocation_description = metadata["inventory_analysis"][
                 "allocation_procedure"
             ]
-            print(f"  - 分配说明已设置")
+            print(f"  - Allocation description set")
 
         standard = metadata.get("quantification_method", {}).get("standard", "").lower()
         system_boundary = (
@@ -836,49 +832,42 @@ def sync_metadata_to_assessment_boundary(excel_file, project_id):
             for keyword in [
                 "cradle-to-grave",
                 "cradle to grave",
-                "摇篮到坟墓",
-                "完整生命周期",
-                "使用",
-                "废弃",
                 "disposal",
                 "end-of-life",
             ]
         ):
             boundary.lifecycle_model = "cradle_to_grave"
-            print(f"  - 生命周期模型: 摇篮到坟墓")
+            print(f"  - Lifecycle model: cradle-to-grave")
         elif any(
             keyword in system_boundary
-            for keyword in ["cradle-to-gate", "cradle to gate", "摇篮到大门", "出厂门"]
+            for keyword in ["cradle-to-gate", "cradle to gate"]
         ):
             boundary.lifecycle_model = "cradle_to_gate"
-            print(f"  - 生命周期模型: 摇篮到大门")
+            print(f"  - Lifecycle model: cradle-to-gate")
         elif any(
             keyword in system_boundary
-            for keyword in ["gate-to-gate", "gate to gate", "大门到大门", "生产制造"]
+            for keyword in ["gate-to-gate", "gate to gate"]
         ):
             boundary.lifecycle_model = "gate_to_gate"
-            print(f"  - 生命周期模型: 大门到大门")
+            print(f"  - Lifecycle model: gate-to-gate")
         elif any(
             keyword in system_boundary
             for keyword in [
                 "cradle-to-cradle",
                 "cradle to cradle",
-                "摇篮到摇篮",
-                "循环",
-                "回收",
             ]
         ):
             boundary.lifecycle_model = "cradle_to_cradle"
-            print(f"  - 生命周期模型: 摇篮到摇篮")
+            print(f"  - Lifecycle model: cradle-to-cradle")
 
         boundary.updated_at = datetime.now()
         db.session.commit()
 
-        print(f"✅ 成功将Excel元数据同步到评价边界设置")
+        print(f"✅ Successfully synced Excel metadata to assessment boundary settings")
         return True
 
     except Exception as e:
-        print(f"❌ 同步元数据到评价边界失败: {e}")
+        print(f"❌ Failed to sync metadata to assessment boundary: {e}")
         import traceback
 
         traceback.print_exc()
@@ -891,7 +880,7 @@ def assessment_boundary(project_id):
 
     project = Project.query.get_or_404(project_id)
     if project.user_id != current_user.id:
-        flash("您没有权限访问此项目！", "error")
+        flash("You do not have permission to access this project!", "error")
         return redirect(url_for("dashboard"))
 
     boundary = AssessmentBoundary.query.filter_by(project_id=project_id).first()
@@ -937,7 +926,7 @@ def assessment_boundary(project_id):
         boundary.updated_at = datetime.now()
         db.session.commit()
 
-        flash("评价边界设置已保存！", "success")
+        flash("Assessment boundary settings saved!", "success")
         return redirect(url_for("project_detail", project_id=project_id))
 
     return render_template(
@@ -951,17 +940,17 @@ def upload_excel(project_id):
 
     project = Project.query.get_or_404(project_id)
     if project.user_id != current_user.id:
-        flash("您没有权限访问此项目！", "error")
+        flash("You do not have permission to access this project!", "error")
         return redirect(url_for("dashboard"))
 
     if request.method == "POST":
         if "excel_file" not in request.files:
-            flash("没有选择文件！", "error")
+            flash("No file selected!", "error")
             return redirect(request.url)
 
         file = request.files["excel_file"]
         if file.filename == "":
-            flash("没有选择文件！", "error")
+            flash("No file selected!", "error")
             return redirect(request.url)
 
         if file and file.filename.endswith((".xlsx", ".xls")):
@@ -992,9 +981,9 @@ def upload_excel(project_id):
                     parser = ExcelLCAParser(file_path)
                     metadata = parser.parse_excel_metadata()
                     excel_file.metadata_json = metadata
-                    print(f"✅ 成功解析Excel元数据，包含 {len(metadata)} 个部分")
+                    print(f"✅ Successfully parsed Excel metadata with {len(metadata)} sections")
                 except Exception as metadata_error:
-                    print(f"⚠️ 解析Excel元数据失败: {str(metadata_error)}")
+                    print(f"⚠️ Failed to parse Excel metadata: {str(metadata_error)}")
 
                     pass
 
@@ -1009,25 +998,25 @@ def upload_excel(project_id):
                             excel_file, project_id
                         )
                         if boundary_success:
-                            sync_messages.append("评价边界设置")
+                            sync_messages.append("assessment boundary settings")
 
                         report_success = sync_metadata_to_report_info(
                             excel_file, project_id
                         )
                         if report_success:
-                            sync_messages.append("LCA报告信息")
+                            sync_messages.append("LCA report info")
 
                         if sync_messages:
                             flash(
-                                f'✅ Excel元数据已自动同步到: {", ".join(sync_messages)}',
+                                f'✅ Excel metadata auto-synced to: {", ".join(sync_messages)}',
                                 "success",
                             )
                 except Exception as sync_error:
-                    print(f"⚠️ 同步元数据失败: {str(sync_error)}")
+                    print(f"⚠️ Failed to sync metadata: {str(sync_error)}")
 
                     pass
 
-                flash("Excel文件上传成功！正在进行分析...", "success")
+                flash("Excel file uploaded successfully! Analyzing...", "success")
                 db.session.commit()
 
                 try:
@@ -1037,9 +1026,9 @@ def upload_excel(project_id):
                     excel_file.analysis_time = datetime.now()
                     db.session.commit()
 
-                    flash("LLM分析完成！", "success")
+                    flash("LLM analysis complete!", "success")
                 except Exception as e:
-                    flash(f"LLM分析失败: {str(e)}", "error")
+                    flash(f"LLM analysis failed: {str(e)}", "error")
 
                 try:
                     from lca_automation.excel_parser import ExcelLCAParser
@@ -1061,13 +1050,13 @@ def upload_excel(project_id):
                             matches = match_lifecycle_stage_with_llm(
                                 process_names, api_key
                             )
-                            print(f"✓ LLM成功匹配 {len(matches)} 个过程的生命周期环节")
+                            print(f"✓ LLM successfully matched life cycle stages for {len(matches)} processes")
                         except Exception as llm_error:
-                            print(f"⚠️ LLM匹配失败: {str(llm_error)}, 使用规则匹配")
+                            print(f"⚠️ LLM matching failed: {str(llm_error)}, using rule-based matching")
 
                             matches = fallback_rule_based_matching(process_names)
                             print(
-                                f"✓ 规则匹配成功为 {len(matches)} 个过程匹配生命周期环节"
+                                f"✓ Rule-based matching successfully matched life cycle stages for {len(matches)} processes"
                             )
 
                         if matches:
@@ -1084,11 +1073,11 @@ def upload_excel(project_id):
 
                             db.session.commit()
                             print(
-                                f"✓ 成功保存 {len(matches)} 个生命周期环节映射到数据库"
+                                f"✓ Successfully saved {len(matches)} life cycle stage mappings to database"
                             )
 
                 except Exception as e:
-                    print(f"⚠️ 过程生命周期环节匹配失败: {str(e)}")
+                    print(f"⚠️ Process life cycle stage matching failed: {str(e)}")
                     import traceback
 
                     traceback.print_exc()
@@ -1096,10 +1085,10 @@ def upload_excel(project_id):
                 return redirect(url_for("show_parsed_excel", file_id=excel_file.id))
 
             except Exception as e:
-                flash(f"Excel文件处理失败: {str(e)}", "error")
+                flash(f"Excel file processing failed: {str(e)}", "error")
                 return redirect(request.url)
         else:
-            flash("只支持Excel文件格式！", "error")
+            flash("Only Excel file formats are supported!", "error")
             return redirect(request.url)
 
     return render_template("upload_excel.html", project=project)
@@ -1113,7 +1102,7 @@ def show_parsed_excel(file_id):
     project = Project.query.get(excel_file.project_id)
 
     if project.user_id != current_user.id:
-        flash("您没有权限访问此文件！", "error")
+        flash("You do not have permission to access this file!", "error")
         return redirect(url_for("dashboard"))
 
     stage_mappings = ProcessLifecycleStage.query.filter_by(excel_file_id=file_id).all()
@@ -1139,7 +1128,7 @@ def update_lifecycle_stage(file_id):
     project = Project.query.get(excel_file.project_id)
 
     if project.user_id != current_user.id:
-        return jsonify({"success": False, "error": "您没有权限修改此文件！"}), 403
+        return jsonify({"success": False, "error": "You do not have permission to modify this file!"}), 403
 
     try:
         data = request.get_json()
@@ -1147,7 +1136,7 @@ def update_lifecycle_stage(file_id):
         new_stage = data.get("lifecycle_stage")
 
         if not process_name or not new_stage:
-            return jsonify({"success": False, "error": "缺少必要参数"}), 400
+            return jsonify({"success": False, "error": "Missing required parameters"}), 400
 
         stage_mapping = ProcessLifecycleStage.query.filter_by(
             excel_file_id=file_id, process_name=process_name
@@ -1170,11 +1159,11 @@ def update_lifecycle_stage(file_id):
 
         db.session.commit()
 
-        return jsonify({"success": True, "message": "生命周期环节已更新"})
+        return jsonify({"success": True, "message": "Life cycle stage updated"})
 
     except Exception as e:
         db.session.rollback()
-        return jsonify({"success": False, "error": f"更新失败: {str(e)}"}), 500
+        return jsonify({"success": False, "error": f"Update failed: {str(e)}"}), 500
 
 
 @app.route("/project/<string:project_id>/excel_files")
@@ -1183,7 +1172,7 @@ def excel_files(project_id):
 
     project = Project.query.get_or_404(project_id)
     if project.user_id != current_user.id:
-        flash("您没有权限访问此项目！", "error")
+        flash("You do not have permission to access this project!", "error")
         return redirect(url_for("dashboard"))
 
     excel_files = (
@@ -1202,7 +1191,7 @@ def download_excel(file_id):
     project = Project.query.get(excel_file.project_id)
 
     if project.user_id != current_user.id:
-        flash("您没有权限下载此文件！", "error")
+        flash("You do not have permission to download this file!", "error")
         return redirect(url_for("excel_files", project_id=excel_file.project_id))
 
     if os.path.exists(excel_file.file_path):
@@ -1212,7 +1201,7 @@ def download_excel(file_id):
             download_name=excel_file.original_filename,
         )
     else:
-        flash("文件不存在！", "error")
+        flash("File does not exist!", "error")
         return redirect(url_for("excel_files", project_id=excel_file.project_id))
 
 
@@ -1224,11 +1213,11 @@ def sync_excel_to_boundary(file_id):
     project = Project.query.get(excel_file.project_id)
 
     if project.user_id != current_user.id:
-        return jsonify({"success": False, "error": "您没有权限进行此操作！"}), 403
+        return jsonify({"success": False, "error": "You do not have permission to perform this operation!"}), 403
 
     try:
         if not excel_file.metadata_json:
-            return jsonify({"success": False, "error": "Excel文件没有元数据！"}), 400
+            return jsonify({"success": False, "error": "Excel file has no metadata!"}), 400
 
         success = sync_metadata_to_assessment_boundary(
             excel_file, excel_file.project_id
@@ -1236,16 +1225,16 @@ def sync_excel_to_boundary(file_id):
 
         if success:
             return jsonify(
-                {"success": True, "message": "✅ 成功将Excel元数据同步到评价边界设置！"}
+                {"success": True, "message": "✅ Successfully synced Excel metadata to assessment boundary settings!"}
             )
         else:
             return (
-                jsonify({"success": False, "error": "同步失败，请查看服务器日志"}),
+                jsonify({"success": False, "error": "Sync failed; please check server logs"}),
                 500,
             )
 
     except Exception as e:
-        return jsonify({"success": False, "error": f"同步失败: {str(e)}"}), 500
+        return jsonify({"success": False, "error": f"Sync failed: {str(e)}"}), 500
 
 
 @app.route("/excel_file/<int:file_id>/sync_to_report_info", methods=["POST"])
@@ -1256,26 +1245,26 @@ def sync_excel_to_report_info(file_id):
     project = Project.query.get(excel_file.project_id)
 
     if project.user_id != current_user.id:
-        return jsonify({"success": False, "error": "您没有权限进行此操作！"}), 403
+        return jsonify({"success": False, "error": "You do not have permission to perform this operation!"}), 403
 
     try:
         if not excel_file.metadata_json:
-            return jsonify({"success": False, "error": "Excel文件没有元数据！"}), 400
+            return jsonify({"success": False, "error": "Excel file has no metadata!"}), 400
 
         success = sync_metadata_to_report_info(excel_file, excel_file.project_id)
 
         if success:
             return jsonify(
-                {"success": True, "message": "✅ 成功将Excel元数据同步到LCA报告信息！"}
+                {"success": True, "message": "✅ Successfully synced Excel metadata to LCA report info!"}
             )
         else:
             return (
-                jsonify({"success": False, "error": "同步失败，请查看服务器日志"}),
+                jsonify({"success": False, "error": "Sync failed; please check server logs"}),
                 500,
             )
 
     except Exception as e:
-        return jsonify({"success": False, "error": f"同步失败: {str(e)}"}), 500
+        return jsonify({"success": False, "error": f"Sync failed: {str(e)}"}), 500
 
 
 @app.route("/excel_file/<int:file_id>/metadata", methods=["GET"])
@@ -1286,7 +1275,7 @@ def get_excel_metadata(file_id):
     project = Project.query.get(excel_file.project_id)
 
     if project.user_id != current_user.id:
-        return jsonify({"success": False, "error": "您没有权限访问此文件！"}), 403
+        return jsonify({"success": False, "error": "You do not have permission to access this file!"}), 403
 
     return jsonify(
         {
@@ -1304,23 +1293,23 @@ def update_excel_metadata(file_id):
     project = Project.query.get(excel_file.project_id)
 
     if project.user_id != current_user.id:
-        return jsonify({"success": False, "error": "您没有权限修改此文件！"}), 403
+        return jsonify({"success": False, "error": "You do not have permission to modify this file!"}), 403
 
     try:
 
         metadata = request.get_json()
 
         if not metadata:
-            return jsonify({"success": False, "error": "未提供元数据！"}), 400
+            return jsonify({"success": False, "error": "No metadata provided!"}), 400
 
         excel_file.metadata_json = metadata
         db.session.commit()
 
-        return jsonify({"success": True, "message": "元数据更新成功！"})
+        return jsonify({"success": True, "message": "Metadata updated successfully!"})
 
     except Exception as e:
         db.session.rollback()
-        return jsonify({"success": False, "error": f"更新失败: {str(e)}"}), 500
+        return jsonify({"success": False, "error": f"Update failed: {str(e)}"}), 500
 
 
 @app.route("/excel_file/<int:file_id>/delete", methods=["POST"])
@@ -1331,7 +1320,7 @@ def delete_excel_file(file_id):
     project = Project.query.get(excel_file.project_id)
 
     if project.user_id != current_user.id:
-        flash("您没有权限删除此文件！", "error")
+        flash("You do not have permission to delete this file!", "error")
         return redirect(url_for("project_detail", project_id=excel_file.project_id))
 
     excel_file.is_deleted = True
@@ -1341,10 +1330,10 @@ def delete_excel_file(file_id):
         try:
             os.remove(excel_file.file_path)
         except Exception as e:
-            flash(f"文件删除失败: {str(e)}", "warning")
+            flash(f"File deletion failed: {str(e)}", "warning")
 
     db.session.commit()
-    flash("文件已删除，对话历史已保留！", "success")
+    flash("File deleted; conversation history retained!", "success")
     return redirect(url_for("project_detail", project_id=excel_file.project_id))
 
 
@@ -1356,19 +1345,19 @@ def delete_excel_file_and_all_related(file_id):
     project = Project.query.get(excel_file.project_id)
 
     if project.user_id != current_user.id:
-        flash("您没有权限删除此文件！", "error")
+        flash("You do not have permission to delete this file!", "error")
         return redirect(url_for("project_detail", project_id=excel_file.project_id))
 
     if os.path.exists(excel_file.file_path):
         try:
             os.remove(excel_file.file_path)
         except Exception as e:
-            flash(f"文件删除失败: {str(e)}", "warning")
+            flash(f"File deletion failed: {str(e)}", "warning")
 
     try:
 
         lca_results = LCAResult.query.filter_by(excel_file_id=file_id).all()
-        print(f"🗑️ 找到 {len(lca_results)} 个关联的LCA分析结果，准备删除...")
+        print(f"🗑️ Found {len(lca_results)} related LCA analysis results, preparing to delete...")
 
         for lca_result in lca_results:
             db.session.delete(lca_result)
@@ -1376,7 +1365,7 @@ def delete_excel_file_and_all_related(file_id):
         lifecycle_stages = ProcessLifecycleStage.query.filter_by(
             excel_file_id=file_id
         ).all()
-        print(f"🗑️ 找到 {len(lifecycle_stages)} 个关联的生命周期环节映射，准备删除...")
+        print(f"🗑️ Found {len(lifecycle_stages)} related life cycle stage mappings, preparing to delete...")
 
         for stage in lifecycle_stages:
             db.session.delete(stage)
@@ -1385,19 +1374,19 @@ def delete_excel_file_and_all_related(file_id):
         db.session.commit()
 
         print(
-            f"✅ 成功删除Excel文件及 {len(lca_results)} 个LCA结果、{len(lifecycle_stages)} 个生命周期环节映射"
+            f"✅ Successfully deleted Excel file and {len(lca_results)} LCA results, {len(lifecycle_stages)} life cycle stage mappings"
         )
 
     except Exception as e:
         db.session.rollback()
-        flash(f"批量删除过程中发生错误: {str(e)}", "error")
-        print(f"❌ 删除失败: {str(e)}")
+        flash(f"Error during batch deletion: {str(e)}", "error")
+        print(f"❌ Deletion failed: {str(e)}")
         import traceback
 
         traceback.print_exc()
         return redirect(url_for("project_detail", project_id=excel_file.project_id))
 
-    flash("文件及所有相关内容已完全删除！", "success")
+    flash("File and all related content fully deleted!", "success")
     return redirect(url_for("project_detail", project_id=excel_file.project_id))
 
 
@@ -1408,7 +1397,7 @@ def delete_all_excel_files(project_id):
     project = Project.query.get_or_404(project_id)
 
     if project.user_id != current_user.id:
-        flash("您没有权限删除此项目的文件！", "error")
+        flash("You do not have permission to delete files for this project!", "error")
         return redirect(url_for("project_detail", project_id=project_id))
 
     excel_files = ExcelFile.query.filter_by(
@@ -1416,7 +1405,7 @@ def delete_all_excel_files(project_id):
     ).all()
 
     if not excel_files:
-        flash("该项目没有可删除的Excel文件！", "info")
+        flash("This project has no Excel files to delete!", "info")
         return redirect(url_for("project_detail", project_id=project_id))
 
     deleted_count = 0
@@ -1431,11 +1420,11 @@ def delete_all_excel_files(project_id):
                 deleted_count += 1
             except Exception as e:
                 flash(
-                    f"文件 {excel_file.original_filename} 删除失败: {str(e)}", "warning"
+                    f"Failed to delete file {excel_file.original_filename}: {str(e)}", "warning"
                 )
 
     db.session.commit()
-    flash(f"成功删除 {deleted_count} 个Excel文件，对话历史已保留！", "success")
+    flash(f"Successfully deleted {deleted_count} Excel files; conversation history retained!", "success")
     return redirect(url_for("project_detail", project_id=project_id))
 
 
@@ -1448,7 +1437,7 @@ def delete_all_excel_and_history(project_id):
     project = Project.query.get_or_404(project_id)
 
     if project.user_id != current_user.id:
-        flash("您没有权限删除此项目的文件！", "error")
+        flash("You do not have permission to delete files for this project!", "error")
         return redirect(url_for("project_detail", project_id=project_id))
 
     excel_files = ExcelFile.query.filter_by(
@@ -1456,7 +1445,7 @@ def delete_all_excel_and_history(project_id):
     ).all()
 
     if not excel_files:
-        flash("该项目没有可删除的Excel文件！", "info")
+        flash("This project has no Excel files to delete!", "info")
         return redirect(url_for("project_detail", project_id=project_id))
 
     deleted_count = 0
@@ -1470,7 +1459,7 @@ def delete_all_excel_and_history(project_id):
                     os.remove(excel_file.file_path)
                 except Exception as e:
                     flash(
-                        f"文件 {excel_file.original_filename} 删除失败: {str(e)}",
+                        f"Failed to delete file {excel_file.original_filename}: {str(e)}",
                         "warning",
                     )
 
@@ -1490,15 +1479,15 @@ def delete_all_excel_and_history(project_id):
 
         db.session.commit()
         print(
-            f"✅ 批量删除成功: {deleted_count} 个Excel文件, {total_lca_results_deleted} 个LCA结果"
+            f"✅ Batch deletion succeeded: {deleted_count} Excel files, {total_lca_results_deleted} LCA results"
         )
 
     except Exception as e:
         db.session.rollback()
-        flash(f"批量删除过程中发生错误: {str(e)}", "error")
-        print(f"❌ 批量删除失败: {str(e)}")
+        flash(f"Error during batch deletion: {str(e)}", "error")
+        print(f"❌ Batch deletion failed: {str(e)}")
         return redirect(url_for("project_detail", project_id=project_id))
-    flash(f"成功删除 {deleted_count} 个Excel文件及所有对话历史！", "success")
+    flash(f"Successfully deleted {deleted_count} Excel files and all conversation history!", "success")
     return redirect(url_for("project_detail", project_id=project_id))
 
 
@@ -1509,7 +1498,7 @@ def check_analysis_status(project_id):
     project = Project.query.get_or_404(project_id)
 
     if project.user_id != current_user.id:
-        return jsonify({"success": False, "error": "无权限访问"})
+        return jsonify({"success": False, "error": "Access denied"})
 
     latest_file = (
         ExcelFile.query.filter_by(project_id=project_id)
@@ -1543,12 +1532,12 @@ def get_full_analysis(file_id):
     project = Project.query.get(excel_file.project_id)
 
     if project.user_id != current_user.id:
-        return jsonify({"success": False, "error": "无权限访问"})
+        return jsonify({"success": False, "error": "Access denied"})
 
     if excel_file.llm_analysis:
         return jsonify({"success": True, "analysis": excel_file.llm_analysis})
     else:
-        return jsonify({"success": False, "error": "暂无分析结果"})
+        return jsonify({"success": False, "error": "No analysis results yet"})
 
 
 @app.route("/excel_file/<int:file_id>/preview")
@@ -1559,7 +1548,7 @@ def preview_excel(file_id):
     project = Project.query.get(excel_file.project_id)
 
     if project.user_id != current_user.id:
-        return jsonify({"success": False, "error": "无权限访问"})
+        return jsonify({"success": False, "error": "Access denied"})
 
     try:
         if os.path.exists(excel_file.file_path):
@@ -1584,7 +1573,7 @@ def preview_excel(file_id):
                 }
             )
         else:
-            return jsonify({"success": False, "error": "文件不存在"})
+            return jsonify({"success": False, "error": "File does not exist"})
 
     except Exception as e:
         return jsonify({"success": False, "error": str(e)})
@@ -1598,25 +1587,25 @@ def download_analysis(file_id):
     project = Project.query.get(excel_file.project_id)
 
     if project.user_id != current_user.id:
-        flash("您没有权限下载此分析结果！", "error")
+        flash("You do not have permission to download this analysis result!", "error")
         return redirect(url_for("project_detail", project_id=excel_file.project_id))
 
     if not excel_file.llm_analysis:
-        flash("暂无分析结果可下载！", "error")
+        flash("No analysis results available for download!", "error")
         return redirect(url_for("project_detail", project_id=excel_file.project_id))
 
-    analysis_text = f"""LCA Excel文件分析报告
+    analysis_text = f"""LCA Excel File Analysis Report
 
-文件名: {excel_file.original_filename}
-    上传时间: {excel_file.upload_time.strftime('%Y-%m-%d %H:%M:%S')}
-    分析时间: {excel_file.analysis_time.strftime('%Y-%m-%d %H:%M:%S') if excel_file.analysis_time else 'N/A'}
+File name: {excel_file.original_filename}
+    Upload time: {excel_file.upload_time.strftime('%Y-%m-%d %H:%M:%S')}
+    Analysis time: {excel_file.analysis_time.strftime('%Y-%m-%d %H:%M:%S') if excel_file.analysis_time else 'N/A'}
 
-AI分析结果:
+AI analysis results:
 {excel_file.llm_analysis}
 
 ---
-LCA服务网站生成
-    生成时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+Generated by LCA service website
+    Generated at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 """
 
     from io import BytesIO
@@ -1628,7 +1617,7 @@ LCA服务网站生成
     return send_file(
         output,
         as_attachment=True,
-        download_name=f"LCA分析报告_{excel_file.original_filename.replace('.xlsx', '').replace('.xls', '')}.txt",
+        download_name=f"LCA_Analysis_Report_{excel_file.original_filename.replace('.xlsx', '').replace('.xls', '')}.txt",
         mimetype="text/plain",
     )
 
@@ -1641,10 +1630,10 @@ def run_lca_analysis_async(file_id):
     project = Project.query.get(excel_file.project_id)
 
     if project.user_id != current_user.id:
-        return jsonify({"success": False, "error": "您没有权限对此文件进行LCA分析！"})
+        return jsonify({"success": False, "error": "You do not have permission to run LCA analysis on this file!"})
 
     if not os.path.exists(excel_file.file_path):
-        return jsonify({"success": False, "error": "文件不存在！"})
+        return jsonify({"success": False, "error": "File does not exist!"})
 
     try:
 
@@ -1668,12 +1657,12 @@ def run_lca_analysis_async(file_id):
                 "task_id": task_id,
                 "task_status": task_status.get("status"),
                 "queue_position": task_status.get("queue_position"),
-                "message": "任务已提交到调度器，请使用task_id查询进度",
+                "message": "Task submitted to scheduler; use task_id to query progress",
             }
         )
 
     except Exception as e:
-        return jsonify({"success": False, "error": f"启动分析失败: {str(e)}"})
+        return jsonify({"success": False, "error": f"Failed to start analysis: {str(e)}"})
 
 
 @app.route("/lca/batch/run_async", methods=["POST"])
@@ -1689,7 +1678,7 @@ def run_lca_batch_analysis_async():
             jsonify(
                 {
                     "success": False,
-                    "error": "file_ids必须是非空数组",
+                    "error": "file_ids must be a non-empty array",
                 }
             ),
             400,
@@ -1705,7 +1694,7 @@ def run_lca_batch_analysis_async():
             rejected_tasks.append(
                 {
                     "file_id": raw_file_id,
-                    "error": "无效的file_id",
+                    "error": "Invalid file_id",
                 }
             )
             continue
@@ -1715,7 +1704,7 @@ def run_lca_batch_analysis_async():
             rejected_tasks.append(
                 {
                     "file_id": file_id,
-                    "error": "文件不存在",
+                    "error": "File does not exist",
                 }
             )
             continue
@@ -1725,7 +1714,7 @@ def run_lca_batch_analysis_async():
             rejected_tasks.append(
                 {
                     "file_id": file_id,
-                    "error": "无权限访问该文件所属项目",
+                    "error": "No permission to access the project for this file",
                 }
             )
             continue
@@ -1734,7 +1723,7 @@ def run_lca_batch_analysis_async():
             rejected_tasks.append(
                 {
                     "file_id": file_id,
-                    "error": "文件路径不存在",
+                    "error": "File path does not exist",
                 }
             )
             continue
@@ -1760,7 +1749,7 @@ def run_lca_batch_analysis_async():
             rejected_tasks.append(
                 {
                     "file_id": file_id,
-                    "error": f"提交失败: {exc}",
+                    "error": f"Submission failed: {exc}",
                 }
             )
 
@@ -1785,7 +1774,7 @@ def get_lca_task_status(task_id):
         status = async_lca_service.get_task_status(task_id)
         return jsonify(status)
     except Exception as e:
-        return jsonify({"success": False, "error": f"获取状态失败: {str(e)}"})
+        return jsonify({"success": False, "error": f"Failed to get status: {str(e)}"})
 
 
 @app.route("/lca/queue/status")
@@ -1828,7 +1817,7 @@ def debug_lca_tasks():
             }
         )
     except Exception as e:
-        return jsonify({"success": False, "error": f"获取任务列表失败: {str(e)}"})
+        return jsonify({"success": False, "error": f"Failed to get task list: {str(e)}"})
 
 
 @app.route("/excel_file/<int:file_id>/check_lca_completion")
@@ -1840,7 +1829,7 @@ def check_lca_completion(file_id):
         project = Project.query.get(excel_file.project_id)
 
         if project.user_id != current_user.id:
-            return jsonify({"success": False, "error": "无权限"})
+            return jsonify({"success": False, "error": "Permission denied"})
 
         recent_result = (
             LCAResult.query.filter_by(excel_file_id=file_id)
@@ -1876,12 +1865,12 @@ def check_lca_completion(file_id):
                 {
                     "success": True,
                     "has_results": False,
-                    "message": "没有找到LCA分析记录",
+                    "message": "No LCA analysis records found",
                 }
             )
 
     except Exception as e:
-        return jsonify({"success": False, "error": f"检查失败: {str(e)}"})
+        return jsonify({"success": False, "error": f"Check failed: {str(e)}"})
 
 
 @app.route("/excel_file/<int:file_id>/create_manual_lca_result", methods=["POST"])
@@ -1893,7 +1882,7 @@ def create_manual_lca_result(file_id):
         project = Project.query.get(excel_file.project_id)
 
         if project.user_id != current_user.id:
-            return jsonify({"success": False, "error": "无权限"})
+            return jsonify({"success": False, "error": "Permission denied"})
 
         lca_result = LCAResult(
             excel_file_id=file_id,
@@ -1905,7 +1894,7 @@ def create_manual_lca_result(file_id):
             analysis_details=json.dumps(
                 {
                     "manual_creation": True,
-                    "message": "手动创建的LCA完成记录，基于终端显示的成功分析",
+                    "message": "Manually created LCA completion record based on successful analysis shown in the terminal",
                 },
                 ensure_ascii=False,
             ),
@@ -1917,13 +1906,13 @@ def create_manual_lca_result(file_id):
         return jsonify(
             {
                 "success": True,
-                "message": "已创建LCA完成记录",
+                "message": "LCA completion record created",
                 "result_id": lca_result.id,
             }
         )
 
     except Exception as e:
-        return jsonify({"success": False, "error": f"创建记录失败: {str(e)}"})
+        return jsonify({"success": False, "error": f"Failed to create record: {str(e)}"})
 
 
 @app.route("/excel_file/<int:file_id>/run_lca_analysis", methods=["POST"])
@@ -1934,10 +1923,10 @@ def run_lca_analysis(file_id):
     project = Project.query.get(excel_file.project_id)
 
     if project.user_id != current_user.id:
-        return jsonify({"success": False, "error": "您没有权限对此文件进行LCA分析！"})
+        return jsonify({"success": False, "error": "You do not have permission to run LCA analysis on this file!"})
 
     if not os.path.exists(excel_file.file_path):
-        return jsonify({"success": False, "error": "文件不存在！"})
+        return jsonify({"success": False, "error": "File does not exist!"})
 
     try:
 
@@ -1953,7 +1942,7 @@ def run_lca_analysis(file_id):
 
         if existing_analysis:
             return jsonify(
-                {"success": False, "error": "该文件已有LCA分析正在运行中，请等待完成！"}
+                {"success": False, "error": "An LCA analysis is already running for this file; please wait for it to finish!"}
             )
 
         lca_result = LCAResult(
@@ -1988,11 +1977,11 @@ def run_lca_analysis(file_id):
                     basic_results.get("product_systems", [])
                 )
                 print(
-                    f"✅ 从分析结果中提取统计信息: flows={lca_result.flows_count}, processes={lca_result.processes_count}, systems={lca_result.product_systems_count}"
+                    f"✅ Extracted stats from analysis results: flows={lca_result.flows_count}, processes={lca_result.processes_count}, systems={lca_result.product_systems_count}"
                 )
             else:
 
-                print("⚠️ basic_results不可用，尝试使用create_lca_case_preview方法...")
+                print("⚠️ basic_results unavailable, trying create_lca_case_preview method...")
                 case_preview = lca_service.create_lca_case_preview(excel_file.file_path)
                 if case_preview["success"]:
                     case_info = case_preview["lca_case_info"]
@@ -2002,21 +1991,21 @@ def run_lca_analysis(file_id):
                         "product_systems_count"
                     ]
                     print(
-                        f"✅ 从案例预览中提取统计信息: flows={lca_result.flows_count}, processes={lca_result.processes_count}, systems={lca_result.product_systems_count}"
+                        f"✅ Extracted stats from case preview: flows={lca_result.flows_count}, processes={lca_result.processes_count}, systems={lca_result.product_systems_count}"
                     )
                 else:
 
                     lca_result.flows_count = 0
                     lca_result.processes_count = 0
                     lca_result.product_systems_count = 0
-                    print("⚠️ 无法获取统计信息，设置为默认值0")
+                    print("⚠️ Unable to get statistics, setting defaults to 0")
 
             db.session.commit()
 
             return jsonify(
                 {
                     "success": True,
-                    "message": "LCA分析完成！",
+                    "message": "LCA analysis complete!",
                     "result": {
                         "id": lca_result.id,
                         "status": lca_result.analysis_status,
@@ -2038,7 +2027,7 @@ def run_lca_analysis(file_id):
             return jsonify(
                 {
                     "success": False,
-                    "error": f"LCA分析失败: {analysis_result.get('error', 'Unknown error')}",
+                    "error": f"LCA analysis failed: {analysis_result.get('error', 'Unknown error')}",
                     "details": analysis_result.get("details", ""),
                 }
             )
@@ -2051,7 +2040,7 @@ def run_lca_analysis(file_id):
             lca_result.end_time = datetime.now()
             db.session.commit()
 
-        return jsonify({"success": False, "error": f"分析过程中发生错误: {str(e)}"})
+        return jsonify({"success": False, "error": f"Error during analysis: {str(e)}"})
 
 
 @app.route("/api/available_lcia_methods", methods=["GET"])
@@ -2102,7 +2091,7 @@ def get_lca_results(file_id):
     project = Project.query.get(excel_file.project_id)
 
     if project.user_id != current_user.id:
-        return jsonify({"success": False, "error": "您没有权限查看此分析结果！"})
+        return jsonify({"success": False, "error": "You do not have permission to view this analysis result!"})
 
     lca_results = (
         LCAResult.query.filter_by(excel_file_id=file_id)
@@ -2146,7 +2135,7 @@ def lca_visualization(result_id):
     project = Project.query.get(excel_file.project_id)
 
     if project.user_id != current_user.id:
-        flash("您没有权限查看此分析结果！", "error")
+        flash("You do not have permission to view this analysis result!", "error")
         return redirect(url_for("dashboard"))
 
     timing_display = None
@@ -2189,7 +2178,7 @@ def get_lca_result_details(result_id):
     project = Project.query.get(excel_file.project_id)
 
     if project.user_id != current_user.id:
-        return jsonify({"success": False, "error": "您没有权限查看此分析结果！"})
+        return jsonify({"success": False, "error": "You do not have permission to view this analysis result!"})
 
     analysis_details = {}
     if lca_result.analysis_details:
@@ -2235,7 +2224,7 @@ def get_lca_chart_data(result_id):
     project = Project.query.get(excel_file.project_id)
 
     if project.user_id != current_user.id:
-        return jsonify({"success": False, "error": "您没有权限查看此分析结果！"})
+        return jsonify({"success": False, "error": "You do not have permission to view this analysis result!"})
 
     chart_data = {
         "success": True,
@@ -2250,7 +2239,7 @@ def get_lca_chart_data(result_id):
     }
 
     if not lca_result.analysis_details:
-        chart_data["debug_info"]["message"] = "没有analysis_details数据"
+        chart_data["debug_info"]["message"] = "No analysis_details data"
         return jsonify(chart_data)
 
     try:
@@ -2341,7 +2330,7 @@ def get_lca_chart_data(result_id):
                 chart_data["lifecycle_impact_category"] = selected_impact_category
                 chart_data["lifecycle_impact_unit"] = selected_impact_unit
                 print(
-                    f"📊 生命周期环节分析使用的影响类别: {selected_impact_category} ({selected_impact_unit})"
+                    f"📊 Life cycle stage analysis using impact category: {selected_impact_category} ({selected_impact_unit})"
                 )
 
             if "process_contributions" in contribution:
@@ -2363,13 +2352,13 @@ def get_lca_chart_data(result_id):
                     from lifecycle_classifier import classify_lifecycle_stage
 
                     stage_name_map = {
-                        "overall": "总体环节",
-                        "raw_material": "原材料获取",
-                        "production": "生产制造",
-                        "transport": "运输配送",
-                        "use": "使用阶段",
-                        "disposal": "废弃处理",
-                        "recycling": "回收再利用",
+                        "overall": "Overall Stage",
+                        "raw_material": "Raw Material Acquisition",
+                        "production": "Production",
+                        "transport": "Distribution",
+                        "use": "Use",
+                        "disposal": "End of Life",
+                        "recycling": "Recycling",
                     }
 
                     sorted_contribs = sorted(
@@ -2386,7 +2375,7 @@ def get_lca_chart_data(result_id):
 
                             stage_key = classify_lifecycle_stage(process_name)
 
-                        stage_name = stage_name_map.get(stage_key, "未分类")
+                        stage_name = stage_name_map.get(stage_key, "Unclassified")
 
                         chart_data["process_contributions"].append(
                             {
@@ -2418,7 +2407,7 @@ def get_lca_chart_data(result_id):
                             stage_key = classify_lifecycle_stage(process_name)
                             smart_classified_count += 1
 
-                        stage_name = stage_name_map.get(stage_key, "未分类")
+                        stage_name = stage_name_map.get(stage_key, "Unclassified")
 
                         if stage_name not in lifecycle_aggregated:
                             lifecycle_aggregated[stage_name] = {
@@ -2430,10 +2419,10 @@ def get_lca_chart_data(result_id):
                             process_name
                         )
 
-                    print(f"✅ 生命周期环节聚合完成:")
-                    print(f"   - 数据库映射: {db_matched_count} 个过程")
-                    print(f"   - 智能分类: {smart_classified_count} 个过程")
-                    print(f"   - 环节总数: {len(lifecycle_aggregated)} 个")
+                    print(f"✅ Life cycle stage aggregation complete:")
+                    print(f"   - Database mapping: {db_matched_count} processes")
+                    print(f"   - Smart classification: {smart_classified_count} processes")
+                    print(f"   - Total stages: {len(lifecycle_aggregated)}")
 
                     for stage_name, stage_data in lifecycle_aggregated.items():
                         impacts = stage_data["impacts"]
@@ -2458,7 +2447,7 @@ def get_lca_chart_data(result_id):
                         total_all_stages = sum(
                             s["value"]
                             for s in chart_data["lifecycle_stages"]
-                            if s["stage"] != "总体环节"
+                            if s["stage"] != "Overall Stage"
                         )
 
                         if total_all_stages > 1e-15:
@@ -2466,7 +2455,7 @@ def get_lca_chart_data(result_id):
                             chart_data["lifecycle_stages"].insert(
                                 0,
                                 {
-                                    "stage": "总体环节",
+                                    "stage": "Overall Stage",
                                     "value": total_all_stages,
                                     "unit": "kg CO2 eq",
                                     "process_count": sum(
@@ -2476,13 +2465,13 @@ def get_lca_chart_data(result_id):
                                     "processes": [],
                                 },
                             )
-                            print(f"✅ 添加了'总体环节' (包含所有子环节的总和)")
+                            print(f"✅ Added 'Overall Stage' (sum of all sub-stages)")
 
                     print(
-                        f"✅ 提取了 {len(chart_data['process_contributions'])} 个过程贡献"
+                        f"✅ Extracted {len(chart_data['process_contributions'])} process contributions"
                     )
                     print(
-                        f"✅ 识别了 {len([s for s in chart_data['lifecycle_stages'] if s['value'] > 0])} 个生命周期环节"
+                        f"✅ Identified {len([s for s in chart_data['lifecycle_stages'] if s['value'] > 0])} life cycle stages"
                     )
 
             system_structure = contribution.get("system_structure", {})
@@ -2501,7 +2490,7 @@ def get_lca_chart_data(result_id):
                 )
                 if all_category_contributions:
                     print(
-                        f"\n📊 从all_category_contributions提取所有影响类别（备用方案）..."
+                        f"\n📊 Extracting all impact categories from all_category_contributions (fallback)..."
                     )
                     for (
                         category_name,
@@ -2537,17 +2526,17 @@ def get_lca_chart_data(result_id):
                                 )
 
                     print(
-                        f"✅ 提取了 {len(chart_data['all_available_categories'])} 个影响类别（来自all_category_contributions）"
+                        f"✅ Extracted {len(chart_data['all_available_categories'])} impact categories (from all_category_contributions)"
                     )
                     print(
-                        f"✅ 其中 {len(chart_data['climate_categories'])} 个是Climate Change类别"
+                        f"✅ Of which {len(chart_data['climate_categories'])} are Climate Change categories"
                     )
             else:
                 print(
-                    f"✅ 已从impact_analysis提取 {len(chart_data['all_available_categories'])} 个影响类别"
+                    f"✅ Extracted {len(chart_data['all_available_categories'])} impact categories from impact_analysis"
                 )
                 print(
-                    f"✅ 其中 {len(chart_data['climate_categories'])} 个是Climate Change类别"
+                    f"✅ Of which {len(chart_data['climate_categories'])} are Climate Change categories"
                 )
 
         if not chart_data["process_contributions"]:
@@ -2645,9 +2634,9 @@ def get_lca_chart_data(result_id):
                 }
 
                 print(
-                    f"✅ 提取了 {len(climate_uncertainty)} 个Climate Change类别的不确定性分析结果"
+                    f"✅ Extracted uncertainty analysis results for {len(climate_uncertainty)} Climate Change categories"
                 )
-                print(f"✅ 提取了 {len(climate_raw_data)} 个类别的原始模拟数据")
+                print(f"✅ Extracted raw simulation data for {len(climate_raw_data)} categories")
 
     except Exception as e:
         import traceback
@@ -2655,7 +2644,7 @@ def get_lca_chart_data(result_id):
         chart_data["success"] = False
         chart_data["error"] = str(e)
         chart_data["debug_info"]["exception"] = traceback.format_exc()
-        print(f"图表数据提取错误: {str(e)}")
+        print(f"Chart data extraction error: {str(e)}")
         print(traceback.format_exc())
 
     return jsonify(chart_data)
@@ -2670,33 +2659,33 @@ def get_process_by_category(result_id):
     project = Project.query.get(excel_file.project_id)
 
     if project.user_id != current_user.id:
-        return jsonify({"success": False, "error": "您没有权限查看此分析结果！"})
+        return jsonify({"success": False, "error": "You do not have permission to view this analysis result!"})
 
     category_name = request.args.get("category", "")
 
     print(f"\n{'='*60}")
-    print(f"📊 API调用: get_process_by_category")
+    print(f"📊 API call: get_process_by_category")
     print(f"📊 Result ID: {result_id}")
-    print(f"📊 请求的类别: {category_name}")
+    print(f"📊 Requested category: {category_name}")
     print(f"{'='*60}")
 
     if not category_name:
-        return jsonify({"success": False, "error": "未指定影响类别"})
+        return jsonify({"success": False, "error": "Impact category not specified"})
 
     try:
         details = json.loads(lca_result.analysis_details)
         comprehensive = details.get("comprehensive_results", {})
         contribution = comprehensive.get("contribution_analysis", {})
 
-        print(f"\n📊 数据库中 contribution_analysis 的键:")
+        print(f"\n📊 contribution_analysis keys in database:")
         print(f"  {list(contribution.keys())}")
 
         if not contribution:
-            return jsonify({"success": False, "error": "无贡献分析数据"})
+            return jsonify({"success": False, "error": "No contribution analysis data"})
 
         all_category_contributions = contribution.get("all_category_contributions", {})
 
-        print(f"\n📊 all_category_contributions 中的类别:")
+        print(f"\n📊 Categories in all_category_contributions:")
         for cat_name in all_category_contributions.keys():
             cat_data = all_category_contributions[cat_name]
             total_val = (
@@ -2705,16 +2694,16 @@ def get_process_by_category(result_id):
                 else 0
             )
             print(
-                f"  - {cat_name}: {len(cat_data) if isinstance(cat_data, list) else 0} 个过程, 总计 {total_val:.6e}"
+                f"  - {cat_name}: {len(cat_data) if isinstance(cat_data, list) else 0} processes, total {total_val:.6e}"
             )
 
         if category_name in all_category_contributions:
-            print(f"\n✅ 找到预计算的 {category_name} 类别贡献数据")
+            print(f"\n✅ Found precomputed contribution data for category {category_name}")
             process_contribs = all_category_contributions[category_name]
 
-            print(f"📊 该类别包含 {len(process_contribs)} 个过程贡献")
+            print(f"📊 This category contains {len(process_contribs)} process contributions")
             if len(process_contribs) > 0:
-                print("📊 前3个过程样本:")
+                print("📊 First 3 process samples:")
                 for i, p in enumerate(process_contribs[:3]):
                     print(
                         f"  {i+1}. {p.get('process_name')}: {p.get('impact_value'):.6e} {p.get('unit')}"
@@ -2722,25 +2711,25 @@ def get_process_by_category(result_id):
 
                 category_total = sum(p.get("impact_value", 0) for p in process_contribs)
                 print(
-                    f"📊 该类别所有过程的总计: {category_total:.6f} {process_contribs[0].get('unit', 'kg CO2 eq')}"
+                    f"📊 Total of all processes in this category: {category_total:.6f} {process_contribs[0].get('unit', 'kg CO2 eq')}"
                 )
         elif "process_contributions" in contribution:
 
-            print(f"\n⚠️ 未找到 {category_name} 的预计算数据，使用默认贡献数据")
+            print(f"\n⚠️ No precomputed data for {category_name}, using default contribution data")
             process_contribs = contribution["process_contributions"]
 
             if process_contribs and len(process_contribs) > 0:
                 default_total = sum(p.get("impact_value", 0) for p in process_contribs)
-                print(f"⚠️ 默认贡献数据总计: {default_total:.6f}")
+                print(f"⚠️ Default contribution data total: {default_total:.6f}")
         else:
 
-            print(f"\n⚠️ 类别 '{category_name}' 没有贡献分析数据（影响值可能为0）")
+            print(f"\n⚠️ Category '{category_name}' has no contribution analysis data (impact value may be 0)")
             return jsonify(
                 {
                     "success": True,
                     "process_contributions": [],
                     "category_name": category_name,
-                    "message": "该类别暂无过程贡献数据（影响值为0或未进行贡献分析）",
+                    "message": "No process contribution data for this category (impact value is 0 or contribution analysis was not performed)",
                 }
             )
 
@@ -2755,13 +2744,13 @@ def get_process_by_category(result_id):
         from lifecycle_classifier import classify_lifecycle_stage
 
         stage_name_map = {
-            "overall": "总体环节",
-            "raw_material": "原材料获取",
-            "production": "生产制造",
-            "transport": "运输配送",
-            "use": "使用阶段",
-            "disposal": "废弃处理",
-            "recycling": "回收再利用",
+            "overall": "Overall Stage",
+            "raw_material": "Raw Material Acquisition",
+            "production": "Production",
+            "transport": "Distribution",
+            "use": "Use",
+            "disposal": "End of Life",
+            "recycling": "Recycling",
         }
 
         sorted_processes = sorted(
@@ -2778,7 +2767,7 @@ def get_process_by_category(result_id):
 
                 stage_key = classify_lifecycle_stage(process_name)
 
-            stage_name = stage_name_map.get(stage_key, "未分类")
+            stage_name = stage_name_map.get(stage_key, "Unclassified")
 
             enriched_processes.append(
                 {
@@ -2798,10 +2787,10 @@ def get_process_by_category(result_id):
         }
 
         print(f"\n{'='*60}")
-        print(f"✅ 准备返回数据给前端")
-        print(f"✅ 类别名称: {category_name}")
-        print(f"✅ 过程数量: {len(enriched_processes)}")
-        print(f"✅ 前3个过程（带生命周期环节）:")
+        print(f"✅ Preparing to return data to frontend")
+        print(f"✅ Category name: {category_name}")
+        print(f"✅ Process count: {len(enriched_processes)}")
+        print(f"✅ First 3 processes (with life cycle stages):")
         for proc in enriched_processes[:3]:
             print(
                 f"  - {proc.get('process_name')}: {proc.get('impact_value'):.6e} {proc.get('unit')} ({proc.get('lifecycle_stage')})"
@@ -2812,7 +2801,7 @@ def get_process_by_category(result_id):
     except Exception as e:
         import traceback
 
-        print(f"获取过程贡献数据失败: {str(e)}")
+        print(f"Failed to get process contribution data: {str(e)}")
         print(traceback.format_exc())
         return jsonify({"success": False, "error": str(e)})
 
@@ -2826,33 +2815,33 @@ def get_lifecycle_by_category(result_id):
     project = Project.query.get(excel_file.project_id)
 
     if project.user_id != current_user.id:
-        return jsonify({"success": False, "error": "您没有权限查看此分析结果！"})
+        return jsonify({"success": False, "error": "You do not have permission to view this analysis result!"})
 
     category_name = request.args.get("category", "")
 
     print(f"\n{'='*60}")
-    print(f"📊 API调用: get_lifecycle_by_category")
+    print(f"📊 API call: get_lifecycle_by_category")
     print(f"📊 Result ID: {result_id}")
-    print(f"📊 请求的类别: {category_name}")
+    print(f"📊 Requested category: {category_name}")
     print(f"{'='*60}")
 
     if not category_name:
-        return jsonify({"success": False, "error": "未指定影响类别"})
+        return jsonify({"success": False, "error": "Impact category not specified"})
 
     try:
         details = json.loads(lca_result.analysis_details)
         comprehensive = details.get("comprehensive_results", {})
         contribution = comprehensive.get("contribution_analysis", {})
 
-        print(f"\n📊 数据库中 contribution_analysis 的键:")
+        print(f"\n📊 contribution_analysis keys in database:")
         print(f"  {list(contribution.keys())}")
 
         if not contribution:
-            return jsonify({"success": False, "error": "无贡献分析数据"})
+            return jsonify({"success": False, "error": "No contribution analysis data"})
 
         all_category_contributions = contribution.get("all_category_contributions", {})
 
-        print(f"\n📊 all_category_contributions 中的类别:")
+        print(f"\n📊 Categories in all_category_contributions:")
         for cat_name in all_category_contributions.keys():
             cat_data = all_category_contributions[cat_name]
             total_val = (
@@ -2861,16 +2850,16 @@ def get_lifecycle_by_category(result_id):
                 else 0
             )
             print(
-                f"  - {cat_name}: {len(cat_data) if isinstance(cat_data, list) else 0} 个过程, 总计 {total_val:.6e}"
+                f"  - {cat_name}: {len(cat_data) if isinstance(cat_data, list) else 0} processes, total {total_val:.6e}"
             )
 
         if category_name in all_category_contributions:
-            print(f"\n✅ 找到预计算的 {category_name} 类别贡献数据")
+            print(f"\n✅ Found precomputed contribution data for category {category_name}")
             process_contribs = all_category_contributions[category_name]
 
-            print(f"📊 该类别包含 {len(process_contribs)} 个过程贡献")
+            print(f"📊 This category contains {len(process_contribs)} process contributions")
             if len(process_contribs) > 0:
-                print("📊 前3个过程样本:")
+                print("📊 First 3 process samples:")
                 for i, p in enumerate(process_contribs[:3]):
                     print(
                         f"  {i+1}. {p.get('process_name')}: {p.get('impact_value'):.6e} {p.get('unit')}"
@@ -2878,25 +2867,25 @@ def get_lifecycle_by_category(result_id):
 
                 category_total = sum(p.get("impact_value", 0) for p in process_contribs)
                 print(
-                    f"📊 该类别所有过程的总计: {category_total:.6f} {process_contribs[0].get('unit', 'kg CO2 eq')}"
+                    f"📊 Total of all processes in this category: {category_total:.6f} {process_contribs[0].get('unit', 'kg CO2 eq')}"
                 )
         elif "process_contributions" in contribution:
 
-            print(f"\n⚠️ 未找到 {category_name} 的预计算数据，使用默认贡献数据")
+            print(f"\n⚠️ No precomputed data for {category_name}, using default contribution data")
             process_contribs = contribution["process_contributions"]
 
             if process_contribs and len(process_contribs) > 0:
                 default_total = sum(p.get("impact_value", 0) for p in process_contribs)
-                print(f"⚠️ 默认贡献数据总计: {default_total:.6f}")
+                print(f"⚠️ Default contribution data total: {default_total:.6f}")
         else:
 
-            print(f"\n⚠️ 类别 '{category_name}' 没有贡献分析数据（影响值可能为0）")
+            print(f"\n⚠️ Category '{category_name}' has no contribution analysis data (impact value may be 0)")
             return jsonify(
                 {
                     "success": True,
                     "lifecycle_stages": [],
                     "category_name": category_name,
-                    "message": "该类别暂无生命周期环节数据（影响值为0或未进行贡献分析）",
+                    "message": "No life cycle stage data for this category (impact value is 0 or contribution analysis was not performed)",
                 }
             )
 
@@ -2911,13 +2900,13 @@ def get_lifecycle_by_category(result_id):
         from lifecycle_classifier import classify_lifecycle_stage
 
         stage_name_map = {
-            "overall": "总体环节",
-            "raw_material": "原材料获取",
-            "production": "生产制造",
-            "transport": "运输配送",
-            "use": "使用阶段",
-            "disposal": "废弃处理",
-            "recycling": "回收再利用",
+            "overall": "Overall Stage",
+            "raw_material": "Raw Material Acquisition",
+            "production": "Production",
+            "transport": "Distribution",
+            "use": "Use",
+            "disposal": "End of Life",
+            "recycling": "Recycling",
         }
 
         lifecycle_aggregated = {}
@@ -2930,7 +2919,7 @@ def get_lifecycle_by_category(result_id):
             if not stage_key:
                 stage_key = classify_lifecycle_stage(process_name)
 
-            stage_name = stage_name_map.get(stage_key, "未分类")
+            stage_name = stage_name_map.get(stage_key, "Unclassified")
 
             if stage_name not in lifecycle_aggregated:
                 lifecycle_aggregated[stage_name] = {"impacts": [], "processes": []}
@@ -2957,7 +2946,7 @@ def get_lifecycle_by_category(result_id):
                         }
                     )
 
-        print(f"✅ 聚合了 {len(lifecycle_stages)} 个生命周期环节")
+        print(f"✅ Aggregated {len(lifecycle_stages)} life cycle stages")
         for stage in lifecycle_stages:
             print(f"  - {stage['stage']}: {stage['value']:.6e} {stage['unit']}")
 
@@ -2966,13 +2955,13 @@ def get_lifecycle_by_category(result_id):
         )
         if has_overall_mapping:
             total_all_stages = sum(
-                s["value"] for s in lifecycle_stages if s["stage"] != "总体环节"
+                s["value"] for s in lifecycle_stages if s["stage"] != "Overall Stage"
             )
             if total_all_stages > 1e-15:
                 lifecycle_stages.insert(
                     0,
                     {
-                        "stage": "总体环节",
+                        "stage": "Overall Stage",
                         "value": total_all_stages,
                         "unit": unit,
                         "process_count": sum(
@@ -2981,7 +2970,7 @@ def get_lifecycle_by_category(result_id):
                         "processes": [],
                     },
                 )
-                print(f"✅ 添加了总体环节: {total_all_stages:.6e} {unit}")
+                print(f"✅ Added Overall Stage: {total_all_stages:.6e} {unit}")
 
         result_data = {
             "success": True,
@@ -2990,21 +2979,21 @@ def get_lifecycle_by_category(result_id):
         }
 
         print(f"\n{'='*60}")
-        print(f"✅ 准备返回数据给前端")
-        print(f"✅ 类别名称: {category_name}")
-        print(f"✅ 环节数量: {len(lifecycle_stages)}")
-        print(f"✅ 环节详情:")
+        print(f"✅ Preparing to return data to frontend")
+        print(f"✅ Category name: {category_name}")
+        print(f"✅ Stage count: {len(lifecycle_stages)}")
+        print(f"✅ Stage details:")
         for stage in lifecycle_stages:
             print(f"  - {stage['stage']}: {stage['value']:.6e} {stage['unit']}")
         total = sum(s["value"] for s in lifecycle_stages)
-        print(f"✅ 总计: {total:.6e}")
+        print(f"✅ Total: {total:.6e}")
         print(f"{'='*60}\n")
         return jsonify(result_data)
 
     except Exception as e:
         import traceback
 
-        print(f"获取生命周期数据失败: {str(e)}")
+        print(f"Failed to get life cycle data: {str(e)}")
         print(traceback.format_exc())
         return jsonify({"success": False, "error": str(e)})
 
@@ -3018,7 +3007,7 @@ def debug_raw_lca_data(result_id):
     project = Project.query.get(excel_file.project_id)
 
     if project.user_id != current_user.id:
-        return jsonify({"success": False, "error": "您没有权限查看此分析结果！"})
+        return jsonify({"success": False, "error": "You do not have permission to view this analysis result!"})
 
     debug_data = {
         "result_id": lca_result.id,
@@ -3122,7 +3111,7 @@ def delete_project(project_id):
     project = Project.query.get_or_404(project_id)
 
     if project.user_id != current_user.id:
-        flash("您没有权限删除此项目！", "error")
+        flash("You do not have permission to delete this project!", "error")
         return redirect(url_for("dashboard"))
 
     try:
@@ -3145,12 +3134,12 @@ def delete_project(project_id):
         db.session.delete(project)
         db.session.commit()
 
-        flash("项目已成功删除！", "success")
+        flash("Project deleted successfully!", "success")
         return redirect(url_for("dashboard"))
 
     except Exception as e:
         db.session.rollback()
-        flash(f"删除项目时发生错误：{str(e)}", "error")
+        flash(f"Error deleting project: {str(e)}", "error")
         return redirect(url_for("project_detail", project_id=project_id))
 
 
@@ -3177,7 +3166,7 @@ def batch_delete_projects():
 
     selected_project_ids = [pid for pid in request.form.getlist("project_ids") if pid]
     if not selected_project_ids:
-        flash("请先勾选要删除的项目。", "warning")
+        flash("Please select the projects to delete first.", "warning")
         return redirect(url_for("dashboard"))
 
     projects = Project.query.filter(
@@ -3185,7 +3174,7 @@ def batch_delete_projects():
     ).all()
 
     if not projects:
-        flash("未找到可删除的项目，或您没有删除权限。", "error")
+        flash("No deletable projects found, or you lack delete permission.", "error")
         return redirect(url_for("dashboard"))
 
     try:
@@ -3193,10 +3182,10 @@ def batch_delete_projects():
             _delete_project_with_related_data(project)
 
         db.session.commit()
-        flash(f"成功删除 {len(projects)} 个项目！", "success")
+        flash(f"Successfully deleted {len(projects)} projects!", "success")
     except Exception as e:
         db.session.rollback()
-        flash(f"批量删除项目时发生错误：{str(e)}", "error")
+        flash(f"Error during batch project deletion: {str(e)}", "error")
 
     return redirect(url_for("dashboard"))
 
@@ -3208,7 +3197,7 @@ def generate_report(project_id):
     project = Project.query.get_or_404(project_id)
 
     if project.user_id != current_user.id:
-        return jsonify({"success": False, "error": "您没有权限为此项目生成报告！"})
+        return jsonify({"success": False, "error": "You do not have permission to generate a report for this project!"})
 
     try:
 
@@ -3227,17 +3216,17 @@ def generate_report(project_id):
 
         template_suffix = {
             "gb24067": "GB24067",
-            "simple": "简化",
-            "custom": "自定义",
-        }.get(template_type, "通用")
-        filename = f"LCA报告_{project.name}_{template_suffix}_{timestamp}.pdf"
+            "simple": "Simple",
+            "custom": "Custom",
+        }.get(template_type, "General")
+        filename = f"LCA_Report_{project.name}_{template_suffix}_{timestamp}.pdf"
         output_path = os.path.join(reports_dir, filename)
 
-        print(f"🔄 开始生成报告: {filename}")
-        print(f"   OpenLCA项目名称: {openlca_project_name}")
-        print(f"   模板类型: {template_type}")
-        print(f"   颜色方案: {color_scheme}")
-        print(f"   端口: {port}")
+        print(f"🔄 Starting report generation: {filename}")
+        print(f"   OpenLCA project name: {openlca_project_name}")
+        print(f"   Template type: {template_type}")
+        print(f"   Color scheme: {color_scheme}")
+        print(f"   Port: {port}")
 
         result = report_service.generate_report(
             project_name=openlca_project_name,
@@ -3259,20 +3248,20 @@ def generate_report(project_id):
             return jsonify(
                 {
                     "success": True,
-                    "message": "报告生成成功！",
+                    "message": "Report generated successfully!",
                     "download_url": download_url,
                     "filename": filename,
                 }
             )
         else:
             return jsonify(
-                {"success": False, "error": result.get("error", "报告生成失败")}
+                {"success": False, "error": result.get("error", "Report generation failed")}
             )
 
     except Exception as e:
-        print(f"❌ 生成报告时出错: {e}")
+        print(f"❌ Error generating report: {e}")
         traceback.print_exc()
-        return jsonify({"success": False, "error": f"生成报告时发生错误: {str(e)}"})
+        return jsonify({"success": False, "error": f"Error generating report: {str(e)}"})
 
 
 @app.route("/project/<string:project_id>/download_report/<filename>")
@@ -3282,7 +3271,7 @@ def download_report(project_id, filename):
     project = Project.query.get_or_404(project_id)
 
     if project.user_id != current_user.id:
-        flash("您没有权限下载此报告！", "error")
+        flash("You do not have permission to download this report!", "error")
         return redirect(url_for("project_detail", project_id=project_id))
 
     try:
@@ -3302,11 +3291,11 @@ def download_report(project_id, filename):
                 file_path, as_attachment=True, download_name=filename, mimetype=mimetype
             )
         else:
-            flash("报告文件不存在！", "error")
+            flash("Report file does not exist!", "error")
             return redirect(url_for("project_detail", project_id=project_id))
 
     except Exception as e:
-        flash(f"下载报告时出错: {str(e)}", "error")
+        flash(f"Error downloading report: {str(e)}", "error")
         return redirect(url_for("project_detail", project_id=project_id))
 
 
@@ -3317,7 +3306,7 @@ def list_reports(project_id):
     project = Project.query.get_or_404(project_id)
 
     if project.user_id != current_user.id:
-        return jsonify({"success": False, "error": "您没有权限查看此项目的报告！"})
+        return jsonify({"success": False, "error": "You do not have permission to view reports for this project!"})
 
     try:
         reports_dir = os.path.join(app.root_path, "static", "reports")
@@ -3349,7 +3338,7 @@ def list_reports(project_id):
         return jsonify({"success": True, "reports": project_reports})
 
     except Exception as e:
-        return jsonify({"success": False, "error": f"获取报告列表时出错: {str(e)}"})
+        return jsonify({"success": False, "error": f"Error fetching report list: {str(e)}"})
 
 
 @app.route("/project/<string:project_id>/edit_report_info", methods=["GET", "POST"])
@@ -3359,7 +3348,7 @@ def edit_report_info_page(project_id):
     project = Project.query.filter_by(id=project_id, user_id=current_user.id).first()
 
     if project.user_id != current_user.id:
-        flash("您没有权限访问此项目！", "error")
+        flash("You do not have permission to access this project!", "error")
         return redirect(url_for("dashboard"))
 
     return render_template("edit_report_info.html", project=project)
@@ -3372,7 +3361,7 @@ def get_report_info(project_id):
     project = Project.query.get_or_404(project_id)
 
     if project.user_id != current_user.id:
-        return jsonify({"success": False, "error": "您没有权限访问此项目信息！"}), 403
+        return jsonify({"success": False, "error": "You do not have permission to access this project info!"}), 403
 
     try:
 
@@ -3422,10 +3411,10 @@ def get_report_info(project_id):
         return jsonify({"success": True, "data": info_dict})
 
     except Exception as e:
-        print(f"❌ 获取报告信息时出错: {e}")
+        print(f"❌ Error fetching report info: {e}")
         traceback.print_exc()
         return (
-            jsonify({"success": False, "error": f"获取报告信息时出错: {str(e)}"}),
+            jsonify({"success": False, "error": f"Error fetching report info: {str(e)}"}),
             500,
         )
 
@@ -3437,7 +3426,7 @@ def update_report_info(project_id):
     project = Project.query.get_or_404(project_id)
 
     if project.user_id != current_user.id:
-        return jsonify({"success": False, "error": "您没有权限修改此项目信息！"}), 403
+        return jsonify({"success": False, "error": "You do not have permission to modify this project info!"}), 403
 
     try:
         data = request.get_json() or {}
@@ -3486,14 +3475,14 @@ def update_report_info(project_id):
         report_info.updated_at = datetime.now()
         db.session.commit()
 
-        return jsonify({"success": True, "message": "报告信息已更新"})
+        return jsonify({"success": True, "message": "Report info updated"})
 
     except Exception as e:
         db.session.rollback()
-        print(f"❌ 更新报告信息时出错: {e}")
+        print(f"❌ Error updating report info: {e}")
         traceback.print_exc()
         return (
-            jsonify({"success": False, "error": f"更新报告信息时出错: {str(e)}"}),
+            jsonify({"success": False, "error": f"Error updating report info: {str(e)}"}),
             500,
         )
 
@@ -3505,7 +3494,7 @@ def generate_markdown_report(project_id):
     project = Project.query.get_or_404(project_id)
 
     if project.user_id != current_user.id:
-        return jsonify({"success": False, "error": "您没有权限生成此项目的报告！"}), 403
+        return jsonify({"success": False, "error": "You do not have permission to generate a report for this project!"}), 403
 
     try:
 
@@ -3518,13 +3507,13 @@ def generate_markdown_report(project_id):
         report_info = ProjectReportInfo.query.filter_by(project_id=project_id).first()
 
         if not report_info:
-            return jsonify({"success": False, "error": "请先填写项目报告信息！"}), 400
+            return jsonify({"success": False, "error": "Please fill in project report info first!"}), 400
 
         result_id = data.get("result_id")
 
         if result_id:
 
-            print(f"📍 使用用户指定的LCA结果: result_id={result_id}")
+            print(f"📍 Using user-specified LCA result: result_id={result_id}")
             lca_result = LCAResult.query.get(result_id)
 
             if not lca_result:
@@ -3532,7 +3521,7 @@ def generate_markdown_report(project_id):
                     jsonify(
                         {
                             "success": False,
-                            "error": f"未找到ID为{result_id}的LCA分析结果！",
+                            "error": f"LCA analysis result with ID {result_id} not found!",
                         }
                     ),
                     404,
@@ -3541,7 +3530,7 @@ def generate_markdown_report(project_id):
             excel_file = ExcelFile.query.get(lca_result.excel_file_id)
             if not excel_file or excel_file.project_id != project_id:
                 return (
-                    jsonify({"success": False, "error": "该LCA结果不属于当前项目！"}),
+                    jsonify({"success": False, "error": "This LCA result does not belong to the current project!"}),
                     403,
                 )
 
@@ -3550,14 +3539,14 @@ def generate_markdown_report(project_id):
                     jsonify(
                         {
                             "success": False,
-                            "error": f"该LCA分析尚未完成（状态：{lca_result.analysis_status}）！",
+                            "error": f"This LCA analysis is not complete yet (status: {lca_result.analysis_status})!",
                         }
                     ),
                     400,
                 )
         else:
 
-            print(f"📍 自动选择最新完成的LCA结果")
+            print(f"📍 Automatically selecting latest completed LCA result")
             excel_files = ExcelFile.query.filter_by(
                 project_id=project_id, is_deleted=False
             ).all()
@@ -3566,7 +3555,7 @@ def generate_markdown_report(project_id):
                     jsonify(
                         {
                             "success": False,
-                            "error": "项目中没有Excel文件，请先上传文件并进行LCA分析！",
+                            "error": "No Excel files in the project; please upload a file and run LCA analysis first!",
                         }
                     ),
                     400,
@@ -3587,7 +3576,7 @@ def generate_markdown_report(project_id):
                 jsonify(
                     {
                         "success": False,
-                        "error": "没有找到完成的LCA分析结果，请先进行LCA分析！",
+                        "error": "No completed LCA analysis results found; please run LCA analysis first!",
                     }
                 ),
                 400,
@@ -3596,9 +3585,9 @@ def generate_markdown_report(project_id):
         try:
             lca_details = json.loads(lca_result.analysis_details)
         except:
-            return jsonify({"success": False, "error": "LCA分析结果格式错误！"}), 400
+            return jsonify({"success": False, "error": "LCA analysis result format error!"}), 400
 
-        print(f"🔍 LCA结果详情键: {list(lca_details.keys())}")
+        print(f"🔍 LCA result detail keys: {list(lca_details.keys())}")
 
         comprehensive_results = lca_details.get("comprehensive_results")
         if not comprehensive_results:
@@ -3606,14 +3595,14 @@ def generate_markdown_report(project_id):
                 jsonify(
                     {
                         "success": False,
-                        "error": "未找到LCA分析的详细结果数据！请确保已成功运行LCA分析。",
+                        "error": "Detailed LCA analysis result data not found! Please ensure LCA analysis ran successfully.",
                     }
                 ),
                 400,
             )
 
         print(
-            f"🔍 comprehensive_results键: {list(comprehensive_results.keys()) if isinstance(comprehensive_results, dict) else 'Not a dict'}"
+            f"🔍 comprehensive_results keys: {list(comprehensive_results.keys()) if isinstance(comprehensive_results, dict) else 'Not a dict'}"
         )
 
         impact_analysis = comprehensive_results.get("impact_analysis", {})
@@ -3622,18 +3611,18 @@ def generate_markdown_report(project_id):
                 jsonify(
                     {
                         "success": False,
-                        "error": "未找到影响评估数据！请确保LCA分析包含影响评估步骤。",
+                        "error": "Impact assessment data not found! Please ensure LCA analysis includes the impact assessment step.",
                     }
                 ),
                 400,
             )
 
         print(
-            f"🔍 impact_analysis键: {list(impact_analysis.keys()) if isinstance(impact_analysis, dict) else 'Not a dict'}"
+            f"🔍 impact_analysis keys: {list(impact_analysis.keys()) if isinstance(impact_analysis, dict) else 'Not a dict'}"
         )
 
         print("\n" + "=" * 80)
-        print("🎯 报告数据提取（使用与网页可视化完全相同的逻辑）")
+        print("🎯 Report data extraction (using the same logic as web visualization)")
         print("=" * 80)
 
         contribution = comprehensive_results.get("contribution_analysis", {})
@@ -3644,20 +3633,20 @@ def generate_markdown_report(project_id):
                 jsonify(
                     {
                         "success": False,
-                        "error": "未找到 all_category_contributions 数据！请重新运行 LCA 分析。",
+                        "error": "all_category_contributions data not found! Please re-run LCA analysis.",
                     }
                 ),
                 400,
             )
 
-        print(f"\n📊 可用的影响类别:")
+        print(f"\n📊 Available impact categories:")
         for cat_name in all_category_contributions.keys():
             cat_data = all_category_contributions[cat_name]
             if isinstance(cat_data, list) and len(cat_data) > 0:
                 cat_total = sum(p.get("impact_value", 0) for p in cat_data)
                 cat_unit = cat_data[0].get("unit", "") if cat_data else ""
                 print(
-                    f"  - {cat_name}: {len(cat_data)} 个过程, 总计 {cat_total:.6f} {cat_unit}"
+                    f"  - {cat_name}: {len(cat_data)} processes, total {cat_total:.6f} {cat_unit}"
                 )
 
         def find_best_climate_category(category_names, label=""):
@@ -3710,26 +3699,26 @@ def generate_markdown_report(project_id):
             ):
                 m = best_hit(frags, exclude_sub=True, exclude_no_lt=False)
                 if m:
-                    print(f"  ✅ [{label}] P2-IPCC GWP100 (含noLT): {m}")
+                    print(f"  ✅ [{label}] P2-IPCC GWP100 (including noLT): {m}")
                     return m
 
             m = best_hit(["global warming"], exclude_sub=True, exclude_no_lt=True)
             if m:
-                print(f"  ✅ [{label}] P3-global warming (无noLT): {m}")
+                print(f"  ✅ [{label}] P3-global warming (excluding noLT): {m}")
                 return m
             m = best_hit(["global warming"], exclude_sub=True, exclude_no_lt=False)
             if m:
-                print(f"  ✅ [{label}] P3b-global warming (含noLT): {m}")
+                print(f"  ✅ [{label}] P3b-global warming (including noLT): {m}")
                 return m
 
             m = best_hit(["climate change"], exclude_sub=True, exclude_no_lt=True)
             if m:
-                print(f"  ✅ [{label}] P4-climate change 总量 (无noLT): {m}")
+                print(f"  ✅ [{label}] P4-climate change total (excluding noLT): {m}")
                 return m
 
             m = best_hit(["climate change"], exclude_sub=True, exclude_no_lt=False)
             if m:
-                print(f"  ✅ [{label}] P5-climate change 总量 (含noLT): {m}")
+                print(f"  ✅ [{label}] P5-climate change total (including noLT): {m}")
                 return m
 
             fallback = [
@@ -3739,14 +3728,14 @@ def generate_markdown_report(project_id):
             ]
             if fallback:
                 co = sorted(fallback)[0][1]
-                print(f"  ✅ [{label}] P6-兜底最短名称: {co}")
+                print(f"  ✅ [{label}] P6-fallback shortest name: {co}")
                 return co
 
-            print(f"  ❌ [{label}] 未匹配，可用类别: {list(category_names)[:10]}")
+            print(f"  ❌ [{label}] no match, available categories: {list(category_names)[:10]}")
             return None
 
         target_category_name = find_best_climate_category(
-            list(all_category_contributions.keys()), label="主报告"
+            list(all_category_contributions.keys()), label="main report"
         )
         process_contribs_for_report = None
         total_carbon_footprint = 0
@@ -3766,12 +3755,12 @@ def generate_markdown_report(project_id):
                 )
                 unit = process_contribs_for_report[0].get("unit", "kg CO2-Eq")
 
-                print(f"\n✅ 找到目标类别: {target_category_name}")
-                print(f"   过程数量: {len(process_contribs_for_report)}")
+                print(f"\n✅ Found target category: {target_category_name}")
+                print(f"   Process count: {len(process_contribs_for_report)}")
                 print(
-                    f"   ⭐ 总碳足迹（所有过程求和）: {total_carbon_footprint:.6f} {unit}"
+                    f"   ⭐ Total carbon footprint (sum of all processes): {total_carbon_footprint:.6f} {unit}"
                 )
-                print(f"   前3个过程样本:")
+                print(f"   First 3 process samples:")
                 for i, p in enumerate(process_contribs_for_report[:3]):
                     pname = p.get("process_name", "Unknown")
                     pval = p.get("impact_value", 0)
@@ -3784,9 +3773,9 @@ def generate_markdown_report(project_id):
                     {
                         "success": False,
                         "error": (
-                            "未找到气候变化（Climate change / Global warming）影响类别！\n\n"
-                            "支持的影响评价方法包括：IPCC 2021、EF 3.1/3.0、ReCiPe、CML、TRACI、ILCD 等。\n\n"
-                            f'当前可用类别：{", ".join(list(all_category_contributions.keys())[:15])}'
+                            "Climate change / Global warming impact category not found!\n\n"
+                            "Supported impact assessment methods include: IPCC 2021, EF 3.1/3.0, ReCiPe, CML, TRACI, ILCD, etc.\n\n"
+                            f'Currently available categories: {", ".join(list(all_category_contributions.keys())[:15])}'
                         ),
                     }
                 ),
@@ -3794,16 +3783,16 @@ def generate_markdown_report(project_id):
             )
 
         if total_carbon_footprint == 0:
-            print("⚠️ 总碳足迹为 0，可能原因：")
-            print("   1. Excel 流量未匹配到所选方法的特征化因子")
-            print("   2. 产品系统构建存在问题")
-            print("   将继续生成报告，碳足迹显示为 0")
+            print("⚠️ Total carbon footprint is 0, possible reasons:")
+            print("   1. Excel flows were not matched to characterization factors of the selected method")
+            print("   2. Issues in product system construction")
+            print("   Will continue generating the report with carbon footprint shown as 0")
 
-        print(f"\n✅ 数据提取成功:")
-        print(f"   影响类别: {target_category_name}")
-        print(f"   总碳足迹: {total_carbon_footprint:.6f} {unit}")
+        print(f"\n✅ Data extraction succeeded:")
+        print(f"   Impact category: {target_category_name}")
+        print(f"   Total carbon footprint: {total_carbon_footprint:.6f} {unit}")
         print(
-            f"   数据来源: all_category_contributions['{target_category_name}'] (与网页完全一致)"
+            f"   Data source: all_category_contributions['{target_category_name}'] (identical to web page)"
         )
         print(f"   LCA Result ID: {lca_result.id}")
 
@@ -3817,7 +3806,7 @@ def generate_markdown_report(project_id):
             print("   Report will be generated, but carbon footprint is 0")
 
         print("\n" + "=" * 80)
-        print("🔄 生成报告数据结构（使用与网页可视化完全相同的逻辑）")
+        print("🔄 Generating report data structure (using the same logic as web visualization)")
         print("=" * 80)
 
         lca_results_for_report = {
@@ -3922,10 +3911,10 @@ def generate_markdown_report(project_id):
                 )
                 if difference_ratio > 0.1:
                     print(
-                        f"\n⚠️ 警告：stages总和与total_carbon_footprint差异过大 ({difference_ratio:.1%})"
+                        f"\n⚠️ Warning: difference between stages sum and total_carbon_footprint is too large ({difference_ratio:.1%})"
                     )
                     print(
-                        f"   使用stages的实际总和 ({stage_sum:.2f}) 作为报告的总碳足迹"
+                        f"   Using actual stages sum ({stage_sum:.2f}) as the report total carbon footprint"
                     )
 
                     for stage_name in [
@@ -3943,7 +3932,7 @@ def generate_markdown_report(project_id):
                         }
 
                     lca_results_for_report["total_carbon_footprint"] = stage_sum
-                    print(f"   ✅ 已更新报告总碳足迹为: {stage_sum:.2f} kg CO2 eq")
+                    print(f"   ✅ Updated report total carbon footprint to: {stage_sum:.2f} kg CO2 eq")
 
         if not lca_results_for_report["stages"]:
             print("⚠️ Warning: No process contribution data found")
@@ -3966,7 +3955,7 @@ def generate_markdown_report(project_id):
                 f"✅ Default stage allocation completed (production stage: {total_carbon_footprint})"
             )
 
-        print("\n🔄 提取主要过程贡献数据...")
+        print("\n🔄 Extracting main process contribution data...")
         if (
             process_contribs
             and isinstance(process_contribs, list)
@@ -3997,13 +3986,13 @@ def generate_markdown_report(project_id):
                     stage_key = classify_lifecycle_stage(process_name)
 
                 stage_name_map = {
-                    "raw_material": "原材料获取",
-                    "production": "生产制造",
-                    "transport": "运输配送",
-                    "use": "使用阶段",
-                    "disposal": "废弃处理",
-                    "recycling": "回收再利用",
-                    "overall": "总体环节",
+                    "raw_material": "Raw Material Acquisition",
+                    "production": "Production",
+                    "transport": "Distribution",
+                    "use": "Use",
+                    "disposal": "End of Life",
+                    "recycling": "Recycling",
+                    "overall": "Overall Stage",
                 }
 
                 lca_results_for_report["process_contributions"].append(
@@ -4017,27 +4006,27 @@ def generate_markdown_report(project_id):
                 )
 
             print(
-                f"   ✅ 提取了 {len(lca_results_for_report['process_contributions'])} 个主要过程贡献"
+                f"   ✅ Extracted {len(lca_results_for_report['process_contributions'])} main process contributions"
             )
 
-        print("\n🔄 提取不确定性分析数据...")
+        print("\n🔄 Extracting uncertainty analysis data...")
         uncertainty = comprehensive_results.get("uncertainty_analysis", {})
         if uncertainty:
             statistics = uncertainty.get("statistics", {})
             if statistics:
-                print(f"   📊 可用的不确定性类别:")
+                print(f"   📊 Available uncertainty categories:")
                 for cat_name in statistics.keys():
                     print(f"      - {cat_name}")
 
                 target_category = find_best_climate_category(
-                    list(statistics.keys()), label="不确定性"
+                    list(statistics.keys()), label="uncertainty"
                 )
                 climate_uncertainty = {}
 
                 if target_category:
                     stat_data = statistics.get(target_category, {})
-                    print(f"\n   🔍 检查类别: {target_category}")
-                    print(f"      数据字段: {list(stat_data.keys())}")
+                    print(f"\n   🔍 Checking category: {target_category}")
+                    print(f"      Data fields: {list(stat_data.keys())}")
                     print(f"      mean: {stat_data.get('mean')}")
                     print(f"      std: {stat_data.get('std')}")
                     print(f"      std_dev: {stat_data.get('std_dev')}")
@@ -4056,11 +4045,11 @@ def generate_markdown_report(project_id):
                         "percentile_5": stat_data.get("p5", 0),
                         "percentile_95": stat_data.get("p95", 0),
                     }
-                    print(f"   ✅ 使用不确定性类别: {target_category}")
-                    print(f"      提取的数据: {climate_uncertainty[target_category]}")
+                    print(f"   ✅ Using uncertainty category: {target_category}")
+                    print(f"      Extracted data: {climate_uncertainty[target_category]}")
                 else:
-                    print(f"   ⚠️ 未找到合适的气候变化类别用于不确定性分析")
-                    print(f"      可用类别: {', '.join(statistics.keys())}")
+                    print(f"   ⚠️ No suitable climate change category found for uncertainty analysis")
+                    print(f"      Available categories: {', '.join(statistics.keys())}")
 
                 if climate_uncertainty:
                     lca_results_for_report["uncertainty_analysis"] = {
@@ -4069,12 +4058,12 @@ def generate_markdown_report(project_id):
                         "impact_method": uncertainty.get("impact_method", ""),
                     }
                     print(
-                        f"\n   ✅ 提取了 {len(climate_uncertainty)} 个Climate Change类别的不确定性分析结果"
+                        f"\n   ✅ Extracted uncertainty analysis results for {len(climate_uncertainty)} Climate Change categories"
                     )
-                    print(f"   📊 迭代次数: {uncertainty.get('iterations', 0)}")
+                    print(f"   📊 Iterations: {uncertainty.get('iterations', 0)}")
 
                     for cat_name, cat_data in climate_uncertainty.items():
-                        print(f"\n   📋 最终存储的数据 - {cat_name}:")
+                        print(f"\n   📋 Final stored data - {cat_name}:")
                         print(f"      mean: {cat_data.get('mean')}")
                         print(f"      std_dev: {cat_data.get('std_dev')}")
                         print(f"      median: {cat_data.get('median')}")
@@ -4082,13 +4071,13 @@ def generate_markdown_report(project_id):
                         print(f"      percentile_95: {cat_data.get('percentile_95')}")
                         print(f"      cv: {cat_data.get('cv')}")
                 else:
-                    print(f"\n   ⚠️ 没有找到符合条件的不确定性类别")
+                    print(f"\n   ⚠️ No matching uncertainty categories found")
             else:
-                print(f"   ⚠️ statistics 为空")
+                print(f"   ⚠️ statistics is empty")
         else:
-            print(f"   ⚠️ uncertainty_analysis 不存在")
+            print(f"   ⚠️ uncertainty_analysis does not exist")
 
-        print(f"\n📦 传递给报告生成器的 uncertainty_analysis:")
+        print(f"\n📦 uncertainty_analysis passed to report generator:")
         print(f"   {lca_results_for_report.get('uncertainty_analysis', 'None')}")
 
         project_info = {"name": project.name, "description": project.description}
@@ -4147,7 +4136,7 @@ def generate_markdown_report(project_id):
             )
 
         filename = os.path.basename(filepath)
-        lang_label = "中文" if lang == "zh" else "English"
+        lang_label = "English" if lang == "zh" else "English"
 
         return jsonify(
             {
@@ -4175,7 +4164,7 @@ def view_flows_units(project_id):
 
     project = Project.query.filter_by(id=project_id, user_id=current_user.id).first()
     if not project:
-        flash("项目不存在", "error")
+        flash("Project does not exist", "error")
         return redirect(url_for("dashboard"))
 
     try:
@@ -4187,7 +4176,7 @@ def view_flows_units(project_id):
         )
 
         if not latest_excel:
-            flash("该项目还没有上传 Excel 文件", "warning")
+            flash("This project has no uploaded Excel files yet", "warning")
             return redirect(url_for("project_detail", project_id=project_id))
 
         excel_path = latest_excel.file_path
@@ -4268,7 +4257,7 @@ def view_flows_units(project_id):
                 modeler = UniversalLCAModeler(lca_service.client)
                 available_units = modeler.list_all_unit_groups()
         except Exception as e:
-            print(f"⚠️ 无法获取单位组信息: {e}")
+            print(f"⚠️ Unable to get unit group info: {e}")
 
         return render_template(
             "flows_units.html",
@@ -4280,7 +4269,7 @@ def view_flows_units(project_id):
     except Exception as e:
         print(f"❌ Error viewing flows and units: {e}")
         traceback.print_exc()
-        flash(f"查看流和单位时出错: {str(e)}", "error")
+        flash(f"Error viewing flows and units: {str(e)}", "error")
         return redirect(url_for("project_detail", project_id=project_id))
 
 
@@ -4290,7 +4279,7 @@ def update_flow_unit(project_id):
 
     project = Project.query.filter_by(id=project_id, user_id=current_user.id).first()
     if not project:
-        return jsonify({"success": False, "error": "项目不存在"}), 404
+        return jsonify({"success": False, "error": "Project does not exist"}), 404
 
     try:
         data = request.get_json()
@@ -4300,7 +4289,7 @@ def update_flow_unit(project_id):
         new_unit = data.get("new_unit")
 
         if not all([sheet_name, flow_name, new_unit]):
-            return jsonify({"success": False, "error": "缺少必要参数"}), 400
+            return jsonify({"success": False, "error": "Missing required parameters"}), 400
 
         latest_excel = (
             ExcelFile.query.filter_by(project_id=project_id)
@@ -4309,7 +4298,7 @@ def update_flow_unit(project_id):
         )
 
         if not latest_excel:
-            return jsonify({"success": False, "error": "该项目没有 Excel 文件"}), 404
+            return jsonify({"success": False, "error": "This project has no Excel files"}), 404
 
         excel_path = latest_excel.file_path
 
@@ -4319,7 +4308,7 @@ def update_flow_unit(project_id):
 
         if sheet_name not in workbook.sheetnames:
             return (
-                jsonify({"success": False, "error": f"工作表 {sheet_name} 不存在"}),
+                jsonify({"success": False, "error": f"Sheet {sheet_name} does not exist"}),
                 404,
             )
 
@@ -4341,7 +4330,7 @@ def update_flow_unit(project_id):
                 break
 
         if not (flow_col and unit_col):
-            return jsonify({"success": False, "error": "无法找到Flow或Unit列"}), 400
+            return jsonify({"success": False, "error": "Could not find Flow or Unit columns"}), 400
 
         updated = False
         for row_idx in range(header_row + 1, sheet.max_row + 1):
@@ -4355,7 +4344,7 @@ def update_flow_unit(project_id):
                 )
 
         if not updated:
-            return jsonify({"success": False, "error": f'未找到流 "{flow_name}"'}), 404
+            return jsonify({"success": False, "error": f'Flow "{flow_name}" not found'}), 404
 
         workbook.save(excel_path)
         workbook.close()
@@ -4363,7 +4352,7 @@ def update_flow_unit(project_id):
         return jsonify(
             {
                 "success": True,
-                "message": f'成功更新流 "{flow_name}" 的单位从 "{old_unit}" 到 "{new_unit}"',
+                "message": f'Successfully updated unit of flow "{flow_name}" from "{old_unit}" to "{new_unit}"',
             }
         )
 

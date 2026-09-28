@@ -8,7 +8,7 @@ db_path = os.path.join(basedir, "instance", "lca_website.db")
 
 def migrate():
 
-    print(f"连接数据库: {db_path}")
+    print(f"Connecting to database: {db_path}")
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
@@ -22,7 +22,7 @@ def migrate():
         )
 
         if cursor.fetchone():
-            print("[OK] 评价边界表已存在，跳过创建")
+            print("[OK] Assessment boundary table already exists, skipping creation")
         else:
 
             cursor.execute(
@@ -98,13 +98,13 @@ def migrate():
             """
             )
 
-            print("[OK] 成功创建评价边界表")
+            print("[OK] Successfully created assessment boundary table")
 
         conn.commit()
-        print("[SUCCESS] 数据库迁移完成！")
+        print("[SUCCESS] Database migration complete!")
 
     except Exception as e:
-        print(f"[ERROR] 迁移失败: {str(e)}")
+        print(f"[ERROR] Migration failed: {str(e)}")
         conn.rollback()
         raise
     finally:

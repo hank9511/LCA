@@ -41,11 +41,11 @@ def export_results_to_json(
         with open(output_path, "w", encoding="utf-8") as f:
             json.dump(results, f, indent=indent, ensure_ascii=False, default=str)
 
-        print(f"✅ 结果已导出到JSON: {output_path}")
+        print(f"✅ Results exported to JSON: {output_path}")
         return True
 
     except Exception as e:
-        print(f"❌ JSON导出失败: {e}")
+        print(f"❌ JSON export failed: {e}")
         return False
 
 
@@ -63,7 +63,7 @@ def export_results_to_excel(results: Dict[str, Any], output_path: str) -> bool:
 
                     if impact_results:
                         df_impact = pd.DataFrame(impact_results)
-                        df_impact.to_excel(writer, sheet_name="影响评价", index=False)
+                        df_impact.to_excel(writer, sheet_name="Impact Assessment", index=False)
 
                 if (
                     "contribution_analysis" in lca_res
@@ -75,7 +75,7 @@ def export_results_to_excel(results: Dict[str, Any], output_path: str) -> bool:
                         proc_contrib = contrib["process_contributions"]
                         if proc_contrib:
                             df_proc = pd.DataFrame(proc_contrib)
-                            df_proc.to_excel(writer, sheet_name="过程贡献", index=False)
+                            df_proc.to_excel(writer, sheet_name="Process Contributions", index=False)
 
                 if (
                     "uncertainty_analysis" in lca_res
@@ -88,30 +88,30 @@ def export_results_to_excel(results: Dict[str, Any], output_path: str) -> bool:
                         if impact_cats:
                             df_unc = pd.DataFrame(impact_cats)
                             df_unc.to_excel(
-                                writer, sheet_name="不确定性分析", index=False
+                                writer, sheet_name="Uncertainty Analysis", index=False
                             )
 
             summary_data = {
-                "项目": [
+                "Project": [
                     (
                         results.get("lca_case", {}).get("case_name", "N/A")
                         if results.get("lca_case")
                         else "N/A"
                     )
                 ],
-                "Flows数量": [len(results.get("flow_refs", {}))],
-                "Processes数量": [len(results.get("process_refs", {}))],
-                "系统UUID": [results.get("system_uuid", "N/A")],
-                "完成时间": [datetime.now().strftime("%Y-%m-%d %H:%M:%S")],
+                "Flow count": [len(results.get("flow_refs", {}))],
+                "Process count": [len(results.get("process_refs", {}))],
+                "System UUID": [results.get("system_uuid", "N/A")],
+                "Completed at": [datetime.now().strftime("%Y-%m-%d %H:%M:%S")],
             }
             df_summary = pd.DataFrame(summary_data)
-            df_summary.to_excel(writer, sheet_name="摘要", index=False)
+            df_summary.to_excel(writer, sheet_name="Summary", index=False)
 
-        print(f"✅ 结果已导出到Excel: {output_path}")
+        print(f"✅ Results exported to Excel: {output_path}")
         return True
 
     except Exception as e:
-        print(f"❌ Excel导出失败: {e}")
+        print(f"❌ Excel export failed: {e}")
         import traceback
 
         traceback.print_exc()
@@ -126,11 +126,11 @@ def export_results_to_html(results: Dict[str, Any], output_path: str) -> bool:
         with open(output_path, "w", encoding="utf-8") as f:
             f.write(html_content)
 
-        print(f"✅ 结果已导出到HTML: {output_path}")
+        print(f"✅ Results exported to HTML: {output_path}")
         return True
 
     except Exception as e:
-        print(f"❌ HTML导出失败: {e}")
+        print(f"❌ HTML export failed: {e}")
         return False
 
 
@@ -138,14 +138,14 @@ def generate_html_report(results: Dict[str, Any]) -> str:
 
     html = f"""
     <!DOCTYPE html>
-    <html lang="zh-CN">
+    <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>LCA分析报告</title>
+        <title>LCA Analysis Report</title>
         <style>
             body {{
-                font-family: 'Microsoft YaHei', Arial, sans-serif;
+                font-family: Arial, sans-serif;
                 max-width: 1200px;
                 margin: 0 auto;
                 padding: 20px;
@@ -212,32 +212,32 @@ def generate_html_report(results: Dict[str, Any]) -> str:
     </head>
     <body>
         <div class="header">
-            <h1>🌍 LCA分析报告</h1>
-            <p>生成时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
+            <h1>🌍 LCA Analysis Report</h1>
+            <p>Generated at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
         </div>
     """
 
     html += """
         <div class="section">
-            <h2>📊 工作流摘要</h2>
+            <h2>📊 Workflow Summary</h2>
     """
 
     lca_case = results.get("lca_case")
     if lca_case:
         html += f"""
             <div class="metric">
-                <div class="metric-label">项目名称</div>
+                <div class="metric-label">Project name</div>
                 <div class="metric-value">{lca_case.case_name if hasattr(lca_case, 'case_name') else 'N/A'}</div>
             </div>
         """
 
     html += f"""
             <div class="metric">
-                <div class="metric-label">Flows数量</div>
+                <div class="metric-label">Flow count</div>
                 <div class="metric-value">{len(results.get('flow_refs', {}))}</div>
             </div>
             <div class="metric">
-                <div class="metric-label">Processes数量</div>
+                <div class="metric-label">Process count</div>
                 <div class="metric-value">{len(results.get('process_refs', {}))}</div>
             </div>
         </div>
@@ -253,12 +253,12 @@ def generate_html_report(results: Dict[str, Any]) -> str:
             if impact_results:
                 html += """
                 <div class="section">
-                    <h2>🌍 影响评价结果</h2>
+                    <h2>🌍 Impact Assessment Results</h2>
                     <table>
                         <tr>
-                            <th>影响类别</th>
-                            <th>数值</th>
-                            <th>单位</th>
+                            <th>Impact category</th>
+                            <th>Value</th>
+                            <th>Unit</th>
                         </tr>
                 """
 
@@ -290,11 +290,11 @@ def generate_html_report(results: Dict[str, Any]) -> str:
 def validate_excel_file(excel_path: str) -> bool:
 
     if not os.path.exists(excel_path):
-        print(f"❌ Excel文件不存在: {excel_path}")
+        print(f"❌ Excel file does not exist: {excel_path}")
         return False
 
     if not excel_path.endswith((".xlsx", ".xls")):
-        print(f"❌ 文件格式不正确: {excel_path}")
+        print(f"❌ Incorrect file format: {excel_path}")
         return False
 
     try:
@@ -302,7 +302,7 @@ def validate_excel_file(excel_path: str) -> bool:
         pd.read_excel(excel_path, nrows=1)
         return True
     except Exception as e:
-        print(f"❌ Excel文件读取失败: {e}")
+        print(f"❌ Failed to read Excel file: {e}")
         return False
 
 
@@ -313,16 +313,16 @@ def get_config_from_file(config_path: str) -> Dict[str, Any]:
             config = json.load(f)
         return config
     except Exception as e:
-        print(f"⚠️ 配置文件读取失败: {e}")
+        print(f"⚠️ Failed to read config file: {e}")
         return {}
 
 
 if __name__ == "__main__":
 
-    print("Utils模块 - 提供日志、导出等工具函数")
+    print("Utils module - logging, export, and other helpers")
 
     logger = setup_logger()
-    logger.info("测试日志功能")
+    logger.info("Testing logger")
 
     test_results = {
         "success": True,

@@ -7,20 +7,20 @@ def migrate_project_tables_cascade():
     db_path = os.path.join(os.path.dirname(__file__), "instance", "lca_website.db")
 
     if not os.path.exists(db_path):
-        print(f"数据库文件不存在: {db_path}")
+        print(f"Database file does not exist: {db_path}")
         return
 
-    print(f"正在迁移数据库: {db_path}")
+    print(f"Migrating database: {db_path}")
 
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
     try:
-        print("开始迁移项目关联表...")
+        print("Starting migration of project-related tables...")
 
         cursor.execute("PRAGMA foreign_keys=OFF")
 
-        print("\n[1/2] 迁移 assessment_boundary 表...")
+        print("\n[1/2] Migrating assessment_boundary table...")
 
         cursor.execute(
             """
@@ -37,10 +37,10 @@ def migrate_project_tables_cascade():
                 SELECT * FROM assessment_boundary
             """
             )
-            print("  ✓ 已备份现有数据")
+            print("  ✓ Backed up existing data")
 
             cursor.execute("DROP TABLE IF EXISTS assessment_boundary")
-            print("  ✓ 已删除旧表")
+            print("  ✓ Dropped old table")
 
             cursor.execute(
                 """
@@ -67,7 +67,7 @@ def migrate_project_tables_cascade():
                 )
             """
             )
-            print("  ✓ 已创建新表（带级联删除）")
+            print("  ✓ Created new table (with cascade delete)")
 
             cursor.execute(
                 """
@@ -75,7 +75,7 @@ def migrate_project_tables_cascade():
                 SELECT * FROM assessment_boundary_backup
             """
             )
-            print("  ✓ 已恢复数据")
+            print("  ✓ Restored data")
 
             cursor.execute(
                 """
@@ -83,14 +83,14 @@ def migrate_project_tables_cascade():
                 ON assessment_boundary(project_id)
             """
             )
-            print("  ✓ 已创建索引")
+            print("  ✓ Created indexes")
 
             cursor.execute("DROP TABLE IF EXISTS assessment_boundary_backup")
-            print("  ✓ 已清理备份")
+            print("  ✓ Cleaned up backup")
         else:
-            print("  ⚠️  表不存在，跳过")
+            print("  ⚠️  Table does not exist, skipping")
 
-        print("\n[2/2] 迁移 project_report_info 表...")
+        print("\n[2/2] Migrating project_report_info table...")
 
         cursor.execute(
             """
@@ -107,10 +107,10 @@ def migrate_project_tables_cascade():
                 SELECT * FROM project_report_info
             """
             )
-            print("  ✓ 已备份现有数据")
+            print("  ✓ Backed up existing data")
 
             cursor.execute("DROP TABLE IF EXISTS project_report_info")
-            print("  ✓ 已删除旧表")
+            print("  ✓ Dropped old table")
 
             cursor.execute(
                 """
@@ -151,7 +151,7 @@ def migrate_project_tables_cascade():
                 )
             """
             )
-            print("  ✓ 已创建新表（带级联删除）")
+            print("  ✓ Created new table (with cascade delete)")
 
             cursor.execute(
                 """
@@ -159,7 +159,7 @@ def migrate_project_tables_cascade():
                 SELECT * FROM project_report_info_backup
             """
             )
-            print("  ✓ 已恢复数据")
+            print("  ✓ Restored data")
 
             cursor.execute(
                 """
@@ -167,41 +167,41 @@ def migrate_project_tables_cascade():
                 ON project_report_info(project_id)
             """
             )
-            print("  ✓ 已创建索引")
+            print("  ✓ Created indexes")
 
             cursor.execute("DROP TABLE IF EXISTS project_report_info_backup")
-            print("  ✓ 已清理备份")
+            print("  ✓ Cleaned up backup")
         else:
-            print("  ⚠️  表不存在，跳过")
+            print("  ⚠️  Table does not exist, skipping")
 
         cursor.execute("PRAGMA foreign_keys=ON")
 
         conn.commit()
-        print("\n✅ 迁移成功完成！")
+        print("\n✅ Migration completed successfully!")
 
-        print("\n验证外键约束...")
+        print("\nVerifying foreign key constraints...")
         cursor.execute("PRAGMA foreign_key_check(assessment_boundary)")
         errors = cursor.fetchall()
         if errors:
-            print("⚠️ assessment_boundary 外键约束检查发现问题:")
+            print("⚠️ assessment_boundary foreign key check found issues:")
             for error in errors:
                 print(f"  - {error}")
         else:
-            print("✓ assessment_boundary 外键约束检查通过")
+            print("✓ assessment_boundary foreign key check passed")
 
         cursor.execute("PRAGMA foreign_key_check(project_report_info)")
         errors = cursor.fetchall()
         if errors:
-            print("⚠️ project_report_info 外键约束检查发现问题:")
+            print("⚠️ project_report_info foreign key check found issues:")
             for error in errors:
                 print(f"  - {error}")
         else:
-            print("✓ project_report_info 外键约束检查通过")
+            print("✓ project_report_info foreign key check passed")
 
     except Exception as e:
         conn.rollback()
-        print(f"\n❌ 迁移失败: {str(e)}")
-        print("正在尝试恢复...")
+        print(f"\n❌ Migration failed: {str(e)}")
+        print("Attempting to restore...")
 
         try:
 
@@ -224,9 +224,9 @@ def migrate_project_tables_cascade():
             cursor.execute("DROP TABLE IF EXISTS project_report_info_backup")
 
             conn.commit()
-            print("✓ 已从备份恢复")
+            print("✓ Restored from backup")
         except Exception as restore_error:
-            print(f"❌ 恢复失败: {str(restore_error)}")
+            print(f"❌ Restore failed: {str(restore_error)}")
 
     finally:
         conn.close()
@@ -234,7 +234,7 @@ def migrate_project_tables_cascade():
 
 if __name__ == "__main__":
     print("=" * 70)
-    print("修复项目关联表的级联删除配置")
+    print("Fix cascade delete configuration for project-related tables")
     print("- assessment_boundary")
     print("- project_report_info")
     print("=" * 70)
@@ -244,5 +244,5 @@ if __name__ == "__main__":
 
     print()
     print("=" * 70)
-    print("迁移脚本执行完成")
+    print("Migration script finished")
     print("=" * 70)

@@ -34,9 +34,9 @@ class JSONQueryEngine:
         self.export_dir = Path(json_export_dir)
 
         if not self.export_dir.exists():
-            raise FileNotFoundError(f"导出目录不存在: {json_export_dir}")
+            raise FileNotFoundError(f"Export directory does not exist: {json_export_dir}")
 
-        print(f"📂 加载 JSON-LD 数据...")
+        print(f"📂 Loading JSON-LD data...")
 
         self.processes = {}
         self.flows = {}
@@ -45,7 +45,7 @@ class JSONQueryEngine:
 
         self._load_data()
 
-        print(f"✅ JSON 查询引擎已初始化")
+        print(f"✅ JSON query engine initialized")
         self._print_stats()
 
     def _load_data(self):
@@ -66,7 +66,7 @@ class JSONQueryEngine:
                                     self.process_name_index[name] = []
                                 self.process_name_index[name].append(proc_id)
                 except Exception as e:
-                    print(f"⚠️  加载失败: {json_file.name} - {e}")
+                    print(f"⚠️  Failed to load: {json_file.name} - {e}")
 
         flows_dir = self.export_dir / "flows"
         if flows_dir.exists():
@@ -84,13 +84,13 @@ class JSONQueryEngine:
                                     self.flow_name_index[name] = []
                                 self.flow_name_index[name].append(flow_id)
                 except Exception as e:
-                    print(f"⚠️  加载失败: {json_file.name} - {e}")
+                    print(f"⚠️  Failed to load: {json_file.name} - {e}")
 
     def _print_stats(self):
 
-        print(f"📊 数据统计:")
-        print(f"   - 过程数: {len(self.processes):,}")
-        print(f"   - 流数: {len(self.flows):,}")
+        print(f"📊 Data statistics:")
+        print(f"   - Process count: {len(self.processes):,}")
+        print(f"   - Flow count: {len(self.flows):,}")
 
     def search_processes(
         self, keyword: str, limit: int = 100, exclude_market: bool = True
@@ -259,7 +259,7 @@ class JSONQueryEngine:
         excel_processes: List = None,
     ) -> Dict:
 
-        print(f"\n🔨 构建最小化产品系统: {root_process_name}")
+        print(f"\n🔨 Building minimal product system: {root_process_name}")
 
         root = None
 
@@ -277,17 +277,17 @@ class JSONQueryEngine:
                         category="Excel defined",
                         location="",
                     )
-                    print(f"✅ 根过程（来自 Excel）: {root.name}")
+                    print(f"✅ Root process (from Excel): {root.name}")
                     break
 
         if not root:
 
             root_candidates = self.search_processes(root_process_name, limit=10)
             if not root_candidates:
-                raise ValueError(f"未找到根过程: {root_process_name}")
+                raise ValueError(f"Root process not found: {root_process_name}")
 
             root = root_candidates[0]
-            print(f"✅ 根过程（来自数据库）: {root.name}")
+            print(f"✅ Root process (from database): {root.name}")
 
         system = {
             "root_id": root.id,
@@ -300,7 +300,7 @@ class JSONQueryEngine:
         exchanges = self.get_process_exchanges(root.id)
         input_exchanges = [e for e in exchanges if e.is_input]
 
-        print(f"📊 根过程有 {len(input_exchanges)} 个输入")
+        print(f"📊 Root process has {len(input_exchanges)} inputs")
 
         for key_input in key_inputs:
             matching_exchanges = [
@@ -308,7 +308,7 @@ class JSONQueryEngine:
             ]
 
             if not matching_exchanges:
-                print(f"⚠️  未找到关键输入: {key_input}")
+                print(f"⚠️  Matching input not found: {key_input}")
                 continue
 
             for exchange in matching_exchanges[:1]:
@@ -334,11 +334,11 @@ class JSONQueryEngine:
 
                     print(f"  ✅ {exchange.flow_name[:50]:<50} → {provider.name[:50]}")
                 else:
-                    print(f"  ⚠️  {exchange.flow_name[:50]:<50} → 未找到 provider")
+                    print(f"  ⚠️  {exchange.flow_name[:50]:<50} → provider not found")
 
-        print(f"\n✅ 系统构建完成:")
-        print(f"   - 总过程数: {system['total_processes']}")
-        print(f"   - 链接数: {len(system['links'])}")
+        print(f"\n✅ System build completed:")
+        print(f"   - Total processes: {system['total_processes']}")
+        print(f"   - Link count: {len(system['links'])}")
 
         return system
 
@@ -348,7 +348,7 @@ if __name__ == "__main__":
     engine = JSONQueryEngine("ecoinvent_elcd_tiangong")
 
     procs = engine.search_processes("steel production", limit=10)
-    print(f"\n找到 {len(procs)} 个钢铁生产过程:")
+    print(f"\nFound {len(procs)} steel production processes:")
     for i, proc in enumerate(procs[:5], 1):
         print(f"  {i}. {proc.name}")
 
@@ -356,7 +356,7 @@ if __name__ == "__main__":
         "electricity, medium voltage", preferred_keywords=["photovoltaic", "production"]
     )
     if provider:
-        print(f"\n最佳电力 provider: {provider.name}")
+        print(f"\nBest electricity provider: {provider.name}")
 
     system = engine.build_minimal_system(
         root_process_name="steel production, converter",

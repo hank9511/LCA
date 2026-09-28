@@ -60,31 +60,31 @@ warn()  { printf '\033[0;33m%s\033[0m\n' "$*"; }   # yellow
 err()   { printf '\033[0;31m%s\033[0m\n' "$*"; }   # red
 
 echo "=============================================================="
-note "openLCA headless IPC 服务器启动器（方案 A）"
+note "openLCA headless IPC server launcher (option A)"
 echo "=============================================================="
-echo "  应用    : $OLCA_APP"
-echo "  数据目录: $DATA_DIR"
-echo "  数据库  : $DB"
-echo "  端口    : $PORT"
-echo "  内存    : $XMX    线程: $THREADS"
+echo "  App     : $OLCA_APP"
+echo "  Data dir: $DATA_DIR"
+echo "  Database: $DB"
+echo "  Port    : $PORT"
+echo "  Memory  : $XMX    Threads: $THREADS"
 echo "--------------------------------------------------------------"
 
 # ---------------------------------------------------------------------------
 # Pre-start checks
 # ---------------------------------------------------------------------------
-[ -x "$JAVA" ]        || { err "❌ 找不到内置 Java：$JAVA"; exit 1; }
-[ -n "$LIBS_DIR" ]    || { err "❌ 找不到 openLCA 插件库目录（plugins/olca-app_*/libs）"; exit 1; }
+[ -x "$JAVA" ]        || { err "❌ Built-in Java not found: $JAVA"; exit 1; }
+[ -n "$LIBS_DIR" ]    || { err "❌ openLCA plugin libs directory not found (plugins/olca-app_*/libs)"; exit 1; }
 [ -d "$DATA_DIR/databases/$DB" ] || {
-  err "❌ 数据库不存在：$DATA_DIR/databases/$DB"
-  echo "   可用数据库："
+  err "❌ Database does not exist: $DATA_DIR/databases/$DB"
+  echo "   Available databases:"
   ls -1 "$DATA_DIR/databases" 2>/dev/null | sed 's/^/     - /'
   exit 1
 }
 
 # Port-in-use check
 if lsof -nP -iTCP:"$PORT" -sTCP:LISTEN >/dev/null 2>&1; then
-  err "❌ 端口 $PORT 已被占用（可能服务器已在运行，或 GUI 的 IPC 已开启）。"
-  echo "   先运行 stop_olca_ipc.command 停止，或换一个端口： OLCA_PORT=8090 $0"
+  err "❌ Port $PORT is already in use (server may already be running, or GUI IPC is enabled)."
+  echo "   Run stop_olca_ipc.command first, or use another port: OLCA_PORT=8090 $0"
   exit 1
 fi
 
@@ -95,19 +95,19 @@ fi
 #     an unclean exit. Leave it to Derby, which can recover a same-host stale lock.
 if pgrep -f "openLCA.app/Contents/MacOS" >/dev/null 2>&1; then
   if [ -f "$DATA_DIR/databases/$DB/db.lck" ]; then
-    err "❌ openLCA 图形界面正在运行，且该数据库已被打开（存在 db.lck）。"
-    err "   headless 服务器无法连接已被 GUI 打开的数据库。"
-    err "   请先在 GUI 中关闭该数据库（或退出 openLCA）后重试。"
+    err "❌ openLCA GUI is running and this database is already open (db.lck exists)."
+    err "   The headless server cannot connect to a database already opened by the GUI."
+    err "   Close the database in the GUI (or quit openLCA) and try again."
     exit 1
   fi
-  warn "⚠️  检测到 openLCA 图形界面正在运行；请确认它没有打开数据库「$DB」。"
+  warn "⚠️  openLCA GUI is running; make sure it has not opened database \"$DB\"."
 elif [ -f "$DATA_DIR/databases/$DB/db.lck" ]; then
-  warn "⚠️  发现残留锁文件 db.lck（GUI 未运行，多为上次异常退出遗留）。将尝试照常启动。"
+  warn "⚠️  Stale lock file db.lck found (GUI is not running; likely left from an unclean exit). Will try to start anyway."
 fi
 
 # Do not start a second server if the recorded PID is still alive
 if [ -f "$PID_FILE" ] && kill -0 "$(cat "$PID_FILE")" 2>/dev/null; then
-  warn "⚠️  服务器似乎已在运行（PID $(cat "$PID_FILE")，端口 ${PORT}）。"
+  warn "⚠️  Server appears to be already running (PID $(cat "$PID_FILE"), port ${PORT})."
   exit 0
 fi
 
@@ -116,7 +116,7 @@ fi
 #   - cd to a writable directory so Derby does not try to write derby.log inside the read-only .app
 #   - use nohup + setsid (when available) so the process survives closing the terminal
 # ---------------------------------------------------------------------------
-note "🚀 正在启动服务器…（首次加载数据库需要数秒）"
+note "🚀 Starting server… (first database load may take a few seconds)"
 cd "$RUN_DIR"
 
 # Prefer the launcher shim (loads the MKL solver); fall back to the stock entry if the .class or MKL directory is missing
@@ -147,31 +147,31 @@ echo "$SERVER_PID" > "$PID_FILE"
 # ---------------------------------------------------------------------------
 # Wait until the port is ready
 # ---------------------------------------------------------------------------
-note "⏳ 等待端口 $PORT 就绪…"
+note "⏳ Waiting for port $PORT to become ready…"
 for _ in $(seq 1 60); do
   if ! kill -0 "$SERVER_PID" 2>/dev/null; then
-    err "❌ 服务器进程意外退出，请查看日志：$LOG_FILE"
+    err "❌ Server process exited unexpectedly; check the log: $LOG_FILE"
     tail -n 20 "$LOG_FILE" || true
     rm -f "$PID_FILE"
     exit 1
   fi
   if (echo >/dev/tcp/127.0.0.1/"$PORT") 2>/dev/null; then
     echo
-    ok "✅ IPC 服务器已就绪！"
-    echo "   地址 : http://localhost:$PORT"
+    ok "✅ IPC server is ready!"
+    echo "   Address: http://localhost:$PORT"
     echo "   PID  : $SERVER_PID"
-    echo "   日志 : $LOG_FILE"
-    echo "   停止 : 运行 stop_olca_ipc.command  或  kill $SERVER_PID"
+    echo "   Log    : $LOG_FILE"
+    echo "   Stop   : run stop_olca_ipc.command  or  kill $SERVER_PID"
     # Performance note: detect whether native libraries were loaded.
     # Even when MKL is loaded, the old NativeLib check still prints
     # "no native libraries" (a false alarm), so prefer "loaded MKL libraries".
     if grep -q "loaded MKL libraries" "$LOG_FILE" 2>/dev/null; then
       echo
-      ok "⚡ 已启用 MKL 高性能求解器（计算走原生加速）。"
+      ok "⚡ MKL high-performance solver enabled (native acceleration)."
     elif grep -q "no native libraries could be loaded" "$LOG_FILE" 2>/dev/null; then
       echo
-      warn "⚠️  性能提示：未加载原生计算库（MKL），将使用较慢的纯 Java 求解器。"
-      warn "   若需启用 MKL 加速，请确认 $SHIM_DIR/OlcaIpcServer.class 与 olca-mkl 目录存在。"
+      warn "⚠️  Performance note: native compute libraries (MKL) were not loaded; using the slower pure-Java solver."
+      warn "   To enable MKL acceleration, confirm $SHIM_DIR/OlcaIpcServer.class and the olca-mkl directory exist."
     fi
     exit 0
   fi
@@ -180,6 +180,6 @@ for _ in $(seq 1 60); do
 done
 
 echo
-err "❌ 启动超时（60 秒内端口未就绪）。请查看日志：$LOG_FILE"
+err "❌ Startup timed out (port not ready within 60 seconds). Check the log: $LOG_FILE"
 tail -n 20 "$LOG_FILE" || true
 exit 1

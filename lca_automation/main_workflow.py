@@ -152,9 +152,9 @@ def _build_project_context_from_metadata(lca_case) -> ProjectContext:
     context.producer_name = producer_info.get("producer_name", "")
 
     if system_boundary_desc:
-        print(f"🌍 从Excel提取系统边界: {system_boundary_desc[:150]}...")
+        print(f"🌍 Extracted system boundary from Excel: {system_boundary_desc[:150]}...")
         if context.system_boundary.geographic_scope:
-            print(f"🌍 识别到地理范围: {context.system_boundary.geographic_scope}")
+            print(f"🌍 Identified geographic scope: {context.system_boundary.geographic_scope}")
 
     return context
 
@@ -217,7 +217,7 @@ def _extract_geographic_scope(context: ProjectContext, description: str):
         context.system_boundary.geographic_scope = ", ".join(found_regions)
     else:
         context.system_boundary.geographic_scope = "China"
-        print(f"🌍 系统边界描述中未识别到具体地区信息，默认使用中国地区(CN)")
+        print(f"🌍 No specific region found in system boundary description; defaulting to China (CN)")
 
 
 def run_automated_lca_workflow(
@@ -231,12 +231,12 @@ def run_automated_lca_workflow(
     config = build_ablation_config(config or {}, ablation_variant=ablation_variant)
 
     print("=" * 80)
-    print("🌍 自动化LCA建模系统")
+    print("🌍 Automated LCA modeling system")
     print("=" * 80)
-    print(f"📄 Excel文件: {excel_path}")
-    print(f"🗄️ 数据库: {database_path}")
+    print(f"📄 Excel file: {excel_path}")
+    print(f"🗄️ Database: {database_path}")
     print(
-        "🧪 消融配置: "
+        "🧪 Ablation config: "
         f"variant={config.get('ABLATION_VARIANT', 'custom')}, "
         f"provider_mode={config.get('PROVIDER_SELECTION_MODE', PROVIDER_SELECTION_MODE)}, "
         f"candidate_mode={config.get('CANDIDATE_CONSTRAINT_MODE', CANDIDATE_CONSTRAINT_MODE)}, "
@@ -260,34 +260,34 @@ def run_automated_lca_workflow(
 
         model_build_start = time.time()
         print(f"\n{'='*80}")
-        print("🔌 步骤1：连接OpenLCA")
+        print("🔌 Step 1: Connecting to OpenLCA")
         print("=" * 80)
 
         try:
             client = ipc.Client(ipc_port)
-            print(f"✅ 成功连接到OpenLCA (端口 {ipc_port})")
+            print(f"✅ Successfully connected to OpenLCA (port {ipc_port})")
         except Exception as e:
-            print(f"❌ 无法连接到OpenLCA: {e}")
-            print("请确保：")
-            print("  - OpenLCA正在运行")
-            print("  - IPC服务器已在开发者工具中启用")
-            print(f"  - IPC服务器端口为{ipc_port}")
-            result["error"] = f"OpenLCA连接失败: {e}"
+            print(f"❌ Unable to connect to OpenLCA: {e}")
+            print("Please ensure:")
+            print("  - OpenLCA is running")
+            print("  - The IPC server is enabled in developer tools")
+            print(f"  - The IPC server port is {ipc_port}")
+            result["error"] = f"OpenLCA connection failed: {e}"
             return result
 
-        print("\n🤖 初始化LLM客户端...")
+        print("\n🤖 Initializing LLM clients...")
         llm_clients = initialize_llm_clients()
         working_llms = [
             name for name, client in llm_clients.items() if client is not None
         ]
 
         if working_llms:
-            print(f"✅ 可用的LLM: {', '.join(working_llms)}")
+            print(f"✅ Available LLMs: {', '.join(working_llms)}")
         else:
-            print("⚠️ 没有可用的LLM，将使用基础模式")
+            print("⚠️ No available LLMs; falling back to basic mode")
 
         print(f"\n{'='*80}")
-        print("📊 步骤2：解析Excel数据")
+        print("📊 Step 2: Parsing Excel data")
         print("=" * 80)
 
         parser = DataParser(excel_path, database_path)
@@ -295,12 +295,12 @@ def run_automated_lca_workflow(
         result["lca_case"] = lca_case
 
         if not lca_case or not lca_case.processes:
-            print("❌ Excel解析失败或没有发现有效的过程")
-            result["error"] = "Excel解析失败"
+            print("❌ Excel parsing failed or no valid processes found")
+            result["error"] = "Excel parsing failed"
             return result
 
         print(f"\n{'='*80}")
-        print("🏗️ 步骤3：构建完整LCA模型")
+        print("🏗️ Step 3: Building complete LCA model")
         print("=" * 80)
 
         project_context = _build_project_context_from_metadata(lca_case)
@@ -310,8 +310,8 @@ def run_automated_lca_workflow(
         build_results = builder.build_complete_model(lca_case)
 
         if not build_results or "flows" not in build_results:
-            print("❌ 模型构建失败")
-            result["error"] = "模型构建失败"
+            print("❌ Model build failed")
+            result["error"] = "Model build failed"
             return result
 
         flow_refs = build_results.get("flows", {})
@@ -322,8 +322,8 @@ def run_automated_lca_workflow(
         result["process_refs"] = process_refs
 
         if not flow_refs or not process_refs or not system_results:
-            print("❌ 模型构建失败")
-            result["error"] = "模型构建失败"
+            print("❌ Model build failed")
+            result["error"] = "Model build failed"
             return result
 
         provider_cv_results = (
@@ -359,7 +359,7 @@ def run_automated_lca_workflow(
         }
 
         if not system_results:
-            result["error"] = "ProductSystem获取失败"
+            result["error"] = "Failed to obtain ProductSystem"
             return result
 
         system_name = list(system_results.keys())[0]
@@ -390,28 +390,28 @@ def run_automated_lca_workflow(
                                 pass
                         process_info_list.append((proc_name, proc_id))
         except Exception as e:
-            print(f"  ⚠️ 获取产品系统过程信息失败: {e}")
+            print(f"  ⚠️ Failed to get product system process info: {e}")
 
-        print(f"\n✅ 模型构建完成:")
+        print(f"\n✅ Model build completed:")
         print(f"  - Flows: {len(flow_refs)}")
         print(f"  - Processes: {len(process_refs)}")
         print(f"  - Product Systems: {len(system_results)}")
         if process_info_list:
-            print(f"  - 产品系统中的过程 (共 {len(process_info_list)} 个):")
+            print(f"  - Processes in product system ({len(process_info_list)} total):")
             for i, (proc_name, proc_id) in enumerate(process_info_list, 1):
                 print(f"    {i}. {proc_name} (UUID: {proc_id})")
 
-        print(f"\n📦 产品系统: {system_name}")
+        print(f"\n📦 Product system: {system_name}")
 
         print(f"\n{'='*80}")
-        print("🔗 步骤6：扩展上游供应链")
+        print("🔗 Step 6: Expanding upstream supply chain")
         print("=" * 80)
 
         from .config import DISABLE_UPSTREAM_EXPANSION_FOR_DEBUG
 
         if DISABLE_UPSTREAM_EXPANSION_FOR_DEBUG:
-            print("⚠️ 上游供应链扩展已禁用 (DISABLE_UPSTREAM_EXPANSION_FOR_DEBUG=True)")
-            print("   这是诊断模式，用于排查 MC 分析问题")
+            print("⚠️ Upstream supply-chain expansion disabled (DISABLE_UPSTREAM_EXPANSION_FOR_DEBUG=True)")
+            print("   Diagnostic mode for troubleshooting MC analysis issues")
             upstream_count = 0
         else:
             upstream_count = 0
@@ -423,7 +423,7 @@ def run_automated_lca_workflow(
                     if proc_ref and hasattr(proc_ref, "id"):
                         excel_process_ids.add(proc_ref.id)
 
-                print(f"  - Excel创建的过程数: {len(excel_process_ids)}")
+                print(f"  - Processes created from Excel: {len(excel_process_ids)}")
 
                 existing_process_ids = set()
                 if hasattr(system, "processes") and system.processes:
@@ -431,7 +431,7 @@ def run_automated_lca_workflow(
                         if proc_ref and hasattr(proc_ref, "id"):
                             existing_process_ids.add(proc_ref.id)
 
-                print(f"  - 当前系统过程数: {len(existing_process_ids)}")
+                print(f"  - Current system process count: {len(existing_process_ids)}")
 
                 upstream_provider_processes = []
                 for proc_id in existing_process_ids:
@@ -441,26 +441,26 @@ def run_automated_lca_workflow(
                 upstream_count = len(upstream_provider_processes)
 
                 if upstream_provider_processes:
-                    print(f"  - 发现 {upstream_count} 个上游提供者过程需要追溯")
+                    print(f"  - Found {upstream_count} upstream provider processes to trace")
 
                     merger = UpstreamMerger(client)
                     merge_result = merger.merge_upstream_chains(
                         system_uuid, upstream_provider_processes
                     )
                     if merge_result:
-                        print(f"✅ 上游供应链扩展成功 ({upstream_count} 个providers)")
+                        print(f"✅ Upstream supply-chain expansion succeeded ({upstream_count} providers)")
                     else:
-                        print(f"⚠️ 上游供应链扩展失败，但继续进行")
+                        print(f"⚠️ Upstream supply-chain expansion failed; continuing")
                 else:
-                    print("ℹ️ 没有发现上游Providers需要追溯，跳过上游扩展")
+                    print("ℹ️ No upstream providers to trace; skipping upstream expansion")
             except Exception as e:
-                print(f"⚠️ 上游扩展出错: {e}")
-                print("   继续进行后续步骤...")
+                print(f"⚠️ Upstream expansion error: {e}")
+                print("   Continuing with subsequent steps...")
 
         model_build_elapsed = time.time() - model_build_start
         minutes, seconds = divmod(model_build_elapsed, 60)
-        print(f"\n⏱️ 模型构建耗时（步骤1~6）: {int(minutes)}分{seconds:.1f}秒")
-        print(f"\n📊 LCA计算...")
+        print(f"\n⏱️ Model build time (steps 1–6): {int(minutes)} min {seconds:.1f} s")
+        print(f"\n📊 LCA calculation...")
         lca_calc_start = time.time()
         try:
             calculator = ResultCalculator(client, llm_clients, config, project_context)
@@ -471,31 +471,31 @@ def run_automated_lca_workflow(
             )
             result["lca_results"] = lca_results
         except Exception as e:
-            print(f"⚠️ LCA计算出错: {e}")
+            print(f"⚠️ LCA calculation error: {e}")
             result["lca_results"] = None
         lca_calc_elapsed = time.time() - lca_calc_start
 
         print(f"\n{'='*80}")
-        print("🎉 自动化LCA工作流完成！")
+        print("🎉 Automated LCA workflow completed!")
         print("=" * 80)
 
         total_elapsed = model_build_elapsed + lca_calc_elapsed
 
-        print(f"\n📊 工作流统计:")
-        print(f"  - Flows创建: {len(flow_refs)}")
-        print(f"  - Processes创建: {len(process_refs)}")
+        print(f"\n📊 Workflow statistics:")
+        print(f"  - Flows created: {len(flow_refs)}")
+        print(f"  - Processes created: {len(process_refs)}")
         print(f"  - Product Systems: {len(system_results)}")
-        print(f"  - 系统名称: {system_name}")
-        print(f"  - 系统UUID: {system_uuid}")
-        print(f"  - 上游扩展: {upstream_count} 个providers")
+        print(f"  - System name: {system_name}")
+        print(f"  - System UUID: {system_uuid}")
+        print(f"  - Upstream expansion: {upstream_count} providers")
 
         m1, s1 = divmod(model_build_elapsed, 60)
         m2, s2 = divmod(lca_calc_elapsed, 60)
         m3, s3 = divmod(total_elapsed, 60)
-        print(f"\n⏱️ 耗时统计:")
-        print(f"  - 模型构建（步骤1~6）: {int(m1)}分{s1:.1f}秒")
-        print(f"  - LCA计算（步骤7）:    {int(m2)}分{s2:.1f}秒")
-        print(f"  - 总计:                {int(m3)}分{s3:.1f}秒")
+        print(f"\n⏱️ Timing statistics:")
+        print(f"  - Model build (steps 1–6): {int(m1)} min {s1:.1f} s")
+        print(f"  - LCA calculation (step 7): {int(m2)} min {s2:.1f} s")
+        print(f"  - Total:                 {int(m3)} min {s3:.1f} s")
 
         result["success"] = True
         result["timing_breakdown"] = {
@@ -507,9 +507,9 @@ def run_automated_lca_workflow(
 
     except Exception as e:
         print(f"\n{'='*80}")
-        print(f"❌ 工作流执行失败")
+        print(f"❌ Workflow execution failed")
         print("=" * 80)
-        print(f"错误: {e}")
+        print(f"Error: {e}")
         import traceback
 
         traceback.print_exc()
@@ -538,32 +538,32 @@ if __name__ == "__main__":
 
     import argparse
 
-    parser = argparse.ArgumentParser(description="自动化LCA工作流（支持消融实验变体）")
+    parser = argparse.ArgumentParser(description="Automated LCA workflow (supports ablation variants)")
     parser.add_argument(
-        "excel_file", nargs="?", default="HS_case_EN_0120.xlsx", help="Excel文件路径"
+        "excel_file", nargs="?", default="HS_case_EN_0120.xlsx", help="Path to Excel file"
     )
     parser.add_argument(
         "--ablation-variant",
         default="config",
         choices=["config"] + list(ABLATION_VARIANT_CONFIGS.keys()),
-        help="消融实验变体（config=使用config.py设定）",
+        help="Ablation experiment variant (config=use settings from config.py)",
     )
     args = parser.parse_args()
 
-    print(f"运行自动化LCA工作流...")
-    print(f"Excel文件: {args.excel_file}")
+    print(f"Running automated LCA workflow...")
+    print(f"Excel file: {args.excel_file}")
     selected_variant = (
         None if args.ablation_variant == "config" else args.ablation_variant
     )
-    print(f"消融变体: {args.ablation_variant}")
+    print(f"Ablation variant: {args.ablation_variant}")
 
     results = run_automated_lca_workflow(
         args.excel_file, ablation_variant=selected_variant
     )
 
     if results["success"]:
-        print(f"\n✅ 工作流成功完成！")
-        print(f"系统UUID: {results['system_uuid']}")
+        print(f"\n✅ Workflow completed successfully!")
+        print(f"System UUID: {results['system_uuid']}")
     else:
-        print(f"\n❌ 工作流失败")
-        print(f"错误: {results.get('error', 'Unknown error')}")
+        print(f"\n❌ Workflow failed")
+        print(f"Error: {results.get('error', 'Unknown error')}")

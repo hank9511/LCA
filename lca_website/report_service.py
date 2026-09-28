@@ -135,30 +135,30 @@ class LCAReportService:
                                 pdfmetrics.registerFont(
                                     TTFont(register_name, font_path)
                                 )
-                                print(f"✅ 成功注册字体: {register_name}")
+                                print(f"✅ Successfully registered font: {register_name}")
                                 return register_name
                     except Exception as e:
                         continue
 
-            print("⚠️ 未找到中文字体，使用默认字体")
+            print("⚠️ Chinese font not found, using default font")
             return "Helvetica"
 
         except Exception as e:
-            print(f"❌ 字体注册失败: {e}")
+            print(f"❌ Font registration failed: {e}")
             return "Helvetica"
 
     def get_lca_data_from_openlca(self, port=8080, project_name=None, max_variants=10):
 
         try:
             client = ipc.Client(port)
-            print(f"✅ 成功连接到OpenLCA IPC服务器 (端口: {port})")
+            print(f"✅ Successfully connected to OpenLCA IPC server (port: {port})")
 
             if project_name:
                 possible_project_names = [project_name]
             else:
                 all_projects = client.get_all(o.Project)
                 if not all_projects:
-                    print("❌ 未找到任何项目")
+                    print("❌ No projects found")
                     return None
                 possible_project_names = [proj.name for proj in all_projects]
 
@@ -168,11 +168,11 @@ class LCAReportService:
                 project_ref = client.find(o.Project, proj_name)
                 if project_ref:
                     selected_project_name = proj_name
-                    print(f"✅ 找到项目: {proj_name}")
+                    print(f"✅ Found project: {proj_name}")
                     break
 
             if not project_ref:
-                print(f"❌ 未找到项目")
+                print(f"❌ Project not found")
                 return None
 
             project = client.get(o.Project, project_ref.id)
@@ -190,24 +190,24 @@ class LCAReportService:
                     )
 
             if len(variants) < 2:
-                print("❌ 项目需要至少2个变体进行对比")
+                print("❌ Project needs at least 2 variants for comparison")
                 return None
 
             if len(variants) > max_variants:
                 variants = variants[:max_variants]
 
-            print(f"✅ 发现 {len(variants)} 个变体: {[v['name'] for v in variants]}")
+            print(f"✅ Found {len(variants)} variants: {[v['name'] for v in variants]}")
 
             impact_method = project.impact_method
             if not impact_method:
-                print("❌ 项目未配置影响评估方法")
+                print("❌ Project has no impact assessment method configured")
                 return None
 
-            print("🔄 正在计算所有产品系统...")
+            print("🔄 Calculating all product systems...")
             calculation_results = []
 
             for i, variant in enumerate(variants):
-                print(f"   计算变体 {i+1}/{len(variants)}: {variant['name']}")
+                print(f"   Calculating variant {i+1}/{len(variants)}: {variant['name']}")
                 setup = o.CalculationSetup(
                     target=variant["product_system"], impact_method=impact_method
                 )
@@ -223,7 +223,7 @@ class LCAReportService:
                         }
                     )
                 except Exception as e:
-                    print(f"   ⚠️ {variant['name']} 计算出错: {e}")
+                    print(f"   ⚠️ {variant['name']} calculation error: {e}")
                     calculation_results.append(
                         {
                             "variant_name": variant["name"],
@@ -306,12 +306,12 @@ class LCAReportService:
                     calc_result["result"].dispose()
 
             print(
-                f"✅ 成功获取LCA数据，包含 {len(lca_data['variants'])} 个变体，{len(lca_data['comparison_data'])} 个影响类别"
+                f"✅ Successfully retrieved LCA data with {len(lca_data['variants'])} variants and {len(lca_data['comparison_data'])} impact categories"
             )
             return lca_data
 
         except Exception as e:
-            print(f"❌ 获取LCA数据时出错: {e}")
+            print(f"❌ Error retrieving LCA data: {e}")
             traceback.print_exc()
             return None
 
@@ -319,7 +319,7 @@ class LCAReportService:
 
         try:
             if not lca_data or not lca_data.get("comparison_data"):
-                print("❌ 没有对比数据，无法生成图表")
+                print("❌ No comparison data, cannot generate charts")
                 return None
 
             variant_names = [v["name"] for v in lca_data["variants"]]
@@ -339,7 +339,7 @@ class LCAReportService:
 
             fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(16, 14))
             fig.suptitle(
-                f'{lca_data["project_name"]} - 环境影响对比分析',
+                f'{lca_data["project_name"]} - Environmental Impact Comparison Analysis',
                 fontsize=16,
                 fontweight="bold",
                 y=0.95,
@@ -365,9 +365,9 @@ class LCAReportService:
                 )
                 bars_list.append(bars)
 
-            ax1.set_xlabel("环境影响类别", fontsize=12)
-            ax1.set_ylabel("环境影响值", fontsize=12)
-            ax1.set_title("绝对数值对比", fontsize=14, fontweight="bold")
+            ax1.set_xlabel("Impact Category", fontsize=12)
+            ax1.set_ylabel("Impact Value", fontsize=12)
+            ax1.set_title("Absolute Value Comparison", fontsize=14, fontweight="bold")
             ax1.set_xticks(x_pos)
             ax1.set_xticklabels(categories, rotation=45, ha="right", fontsize=10)
             ax1.legend(bbox_to_anchor=(1.05, 1), loc="upper left")
@@ -390,9 +390,9 @@ class LCAReportService:
                 )
                 bars_list2.append(bars)
 
-            ax2.set_xlabel("环境影响类别", fontsize=12)
-            ax2.set_ylabel("相对表现 (%)", fontsize=12)
-            ax2.set_title("相对表现对比 (%)", fontsize=14, fontweight="bold")
+            ax2.set_xlabel("Impact Category", fontsize=12)
+            ax2.set_ylabel("Relative Performance (%)", fontsize=12)
+            ax2.set_title("Relative Performance Comparison (%)", fontsize=14, fontweight="bold")
             ax2.set_xticks(x_pos)
             ax2.set_xticklabels(categories, rotation=45, ha="right", fontsize=10)
             ax2.set_ylim(0, 105)
@@ -417,7 +417,7 @@ class LCAReportService:
             return img_buffer
 
         except Exception as e:
-            print(f"❌ 创建图表时出错: {e}")
+            print(f"❌ Error creating charts: {e}")
             traceback.print_exc()
             return None
 
@@ -446,7 +446,7 @@ class LCAReportService:
     ):
 
         if not lca_data:
-            print("❌ 没有LCA数据，无法生成报告")
+            print("❌ No LCA data, cannot generate report")
             return False
 
         try:
@@ -476,7 +476,7 @@ class LCAReportService:
                 leading=24,
             )
 
-            story.append(Paragraph("LCA环境影响评估报告", title_style))
+            story.append(Paragraph("LCA Environmental Impact Assessment Report", title_style))
             story.append(Spacer(1, 40))
 
             normal_style = ParagraphStyle(
@@ -489,14 +489,14 @@ class LCAReportService:
             )
 
             project_info = [
-                ["项目名称:", self._fmt_or_blank(lca_data.get("project_name"), 30)],
+                ["Project Name:", self._fmt_or_blank(lca_data.get("project_name"), 30)],
                 [
-                    "影响评估方法:",
+                    "Impact Assessment Method:",
                     self._fmt_or_blank(lca_data.get("impact_method"), 30),
                 ],
-                ["计算时间:", self._fmt_or_blank(lca_data.get("calculation_time"), 30)],
+                ["Calculation Time:", self._fmt_or_blank(lca_data.get("calculation_time"), 30)],
                 [
-                    "变体数量:",
+                    "Number of Variants:",
                     self._fmt_or_blank(str(len(lca_data.get("variants", []))), 30),
                 ],
             ]
@@ -535,19 +535,19 @@ class LCAReportService:
                         textColor=colors.black,
                         fontName=self.chinese_font,
                     )
-                    story.append(Paragraph("环境影响对比图表", heading_style))
+                    story.append(Paragraph("Environmental Impact Comparison Charts", heading_style))
                     story.append(chart_img)
                     story.append(Spacer(1, 20))
                 except Exception as e:
-                    print(f"⚠️ 添加图表到PDF时出错: {e}")
+                    print(f"⚠️ Error adding charts to PDF: {e}")
 
             doc.build(story)
 
-            print(f"✅ PDF报告生成成功: {output_path}")
+            print(f"✅ PDF report generated successfully: {output_path}")
             return True
 
         except Exception as e:
-            print(f"❌ 生成PDF报告时出错: {e}")
+            print(f"❌ Error generating PDF report: {e}")
             traceback.print_exc()
             return False
 
@@ -569,12 +569,12 @@ class LCAReportService:
             if not lca_data:
                 return {
                     "success": False,
-                    "error": "无法获取LCA数据，请确保OpenLCA正在运行且项目存在",
+                    "error": "Unable to retrieve LCA data; ensure OpenLCA is running and the project exists",
                 }
 
             if not output_path:
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-                output_path = f"LCA报告_{timestamp}.pdf"
+                output_path = f"LCA_Report_{timestamp}.pdf"
 
             success = self.create_pdf_report(
                 lca_data,
@@ -586,14 +586,14 @@ class LCAReportService:
             if success:
                 return {
                     "success": True,
-                    "message": "报告生成成功",
+                    "message": "Report generated successfully",
                     "file_path": output_path,
                 }
             else:
-                return {"success": False, "error": "报告生成失败"}
+                return {"success": False, "error": "Report generation failed"}
 
         except Exception as e:
-            return {"success": False, "error": f"报告生成过程中出错: {str(e)}"}
+            return {"success": False, "error": f"Error during report generation: {str(e)}"}
 
 
 report_service = LCAReportService()

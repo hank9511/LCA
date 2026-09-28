@@ -5,7 +5,7 @@ from datetime import datetime
 
 def migrate_database(db_path):
 
-    print(f"正在迁移数据库: {db_path}")
+    print(f"Migrating database: {db_path}")
 
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
@@ -20,7 +20,7 @@ def migrate_database(db_path):
         )
 
         if cursor.fetchone():
-            print("表 'project_report_info' 已存在，跳过创建")
+            print("Table 'project_report_info' already exists, skipping creation")
             return
 
         cursor.execute(
@@ -92,13 +92,13 @@ def migrate_database(db_path):
         )
 
         conn.commit()
-        print("✓ 成功创建表 'project_report_info'")
+        print("✓ Successfully created table 'project_report_info'")
 
         cursor.execute("SELECT id, name FROM project")
         projects = cursor.fetchall()
 
         if projects:
-            print(f"为 {len(projects)} 个现有项目创建默认报告信息...")
+            print(f"Creating default report info for {len(projects)} existing projects...")
             for project_id, project_name in projects:
                 cursor.execute(
                     """
@@ -108,16 +108,16 @@ def migrate_database(db_path):
                     (project_id, project_name),
                 )
             conn.commit()
-            print(f"✓ 成功为 {len(projects)} 个项目创建默认记录")
+            print(f"✓ Successfully created default records for {len(projects)} projects")
 
     except sqlite3.Error as e:
-        print(f"✗ 数据库迁移失败: {e}")
+        print(f"✗ Database migration failed: {e}")
         conn.rollback()
         raise
     finally:
         conn.close()
 
-    print("数据库迁移完成！")
+    print("Database migration complete!")
 
 
 if __name__ == "__main__":
@@ -126,8 +126,8 @@ if __name__ == "__main__":
     db_path = os.path.join(basedir, "instance", "lca_website.db")
 
     if not os.path.exists(db_path):
-        print(f"错误: 数据库文件不存在: {db_path}")
-        print("请先运行主应用创建数据库")
+        print(f"Error: database file does not exist: {db_path}")
+        print("Please run the main application first to create the database")
         exit(1)
 
     migrate_database(db_path)

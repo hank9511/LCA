@@ -9,10 +9,10 @@ db_path = os.path.abspath(db_path)
 
 def migrate():
 
-    print(f"开始迁移数据库: {db_path}")
+    print(f"Starting database migration: {db_path}")
 
     if not os.path.exists(db_path):
-        print(f"错误: 数据库文件不存在: {db_path}")
+        print(f"Error: database file does not exist: {db_path}")
         return False
 
     conn = sqlite3.connect(db_path)
@@ -20,7 +20,7 @@ def migrate():
 
     try:
 
-        print("步骤 1: 备份现有数据...")
+        print("Step 1: Backing up existing data...")
         cursor.execute(
             """
             CREATE TEMPORARY TABLE process_lifecycle_stage_backup AS
@@ -30,12 +30,12 @@ def migrate():
 
         cursor.execute("SELECT COUNT(*) FROM process_lifecycle_stage_backup")
         backup_count = cursor.fetchone()[0]
-        print(f"  已备份 {backup_count} 条记录")
+        print(f"  Backed up {backup_count} records")
 
-        print("步骤 2: 删除旧表...")
+        print("Step 2: Dropping old table...")
         cursor.execute("DROP TABLE IF EXISTS process_lifecycle_stage")
 
-        print("步骤 3: 创建新表（带级联删除约束）...")
+        print("Step 3: Creating new table (with cascade delete constraint)...")
         cursor.execute(
             """
             CREATE TABLE process_lifecycle_stage (
@@ -53,7 +53,7 @@ def migrate():
         """
         )
 
-        print("步骤 4: 创建索引...")
+        print("Step 4: Creating indexes...")
         cursor.execute(
             """
             CREATE INDEX IF NOT EXISTS idx_process_lifecycle_excel_file_id
@@ -67,7 +67,7 @@ def migrate():
         """
         )
 
-        print("步骤 5: 恢复数据...")
+        print("Step 5: Restoring data...")
         cursor.execute(
             """
             INSERT INTO process_lifecycle_stage
@@ -77,24 +77,24 @@ def migrate():
 
         cursor.execute("SELECT COUNT(*) FROM process_lifecycle_stage")
         restored_count = cursor.fetchone()[0]
-        print(f"  已恢复 {restored_count} 条记录")
+        print(f"  Restored {restored_count} records")
 
         if backup_count != restored_count:
             raise Exception(
-                f"数据恢复验证失败: 备份 {backup_count} 条，恢复 {restored_count} 条"
+                f"Data restore verification failed: backed up {backup_count}, restored {restored_count}"
             )
 
-        print("步骤 6: 清理临时表...")
+        print("Step 6: Cleaning up temporary table...")
         cursor.execute("DROP TABLE process_lifecycle_stage_backup")
 
         conn.commit()
-        print("[OK] 迁移成功完成！")
-        print(f"  处理了 {restored_count} 条记录")
-        print(f"  外键约束已更新为 ON DELETE CASCADE")
+        print("[OK] Migration completed successfully!")
+        print(f"  Processed {restored_count} records")
+        print(f"  Foreign key constraint updated to ON DELETE CASCADE")
         return True
 
     except Exception as e:
-        print(f"[ERROR] 迁移失败: {str(e)}")
+        print(f"[ERROR] Migration failed: {str(e)}")
         conn.rollback()
         return False
 
@@ -105,8 +105,8 @@ def migrate():
 
 def rollback():
 
-    print("此迁移不支持自动回滚")
-    print("如需回滚，请从数据库备份恢复")
+    print("This migration does not support automatic rollback")
+    print("To roll back, please restore from a database backup")
     return False
 
 

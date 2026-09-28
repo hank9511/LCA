@@ -22,14 +22,14 @@ class DataParser:
 
     def parse(self) -> LCACase:
 
-        print(f"📊 开始解析Excel文件: {self.excel_path}")
+        print(f"📊 Parsing Excel file: {self.excel_path}")
 
         parser = ExcelLCAParser(self.excel_path, self.project_context)
 
         lca_case = parser.parse_excel_to_lca_case(
             case_name=f"LCA Case from {os.path.basename(self.excel_path)}",
-            case_description=f"自动生成的LCA案例，来源：{self.excel_path}",
-            category="自动化导入",
+            case_description=f"Auto-generated LCA case from: {self.excel_path}",
+            category="Automated import",
         )
 
         lca_case.flow_metadata = {
@@ -47,7 +47,7 @@ class DataParser:
 
         lca_case.excel_metadata = parser.parse_excel_metadata()
 
-        print(f"✅ 解析完成:")
+        print(f"✅ Parsing completed:")
         print(f"  - Flows: {len(lca_case.flows)}")
         print(f"  - Processes: {len(lca_case.processes)}")
         print(f"  - Product Systems: {len(lca_case.product_systems)}")
@@ -74,8 +74,8 @@ if __name__ == "__main__":
     parser = DataParser(excel_file)
     lca_case = parser.parse()
 
-    print(f"\n📋 解析结果:")
-    print(f"案例名称: {lca_case.case_name}")
-    print(f"描述: {lca_case.description}")
-    print(f"Flows数量: {len(lca_case.flows)}")
-    print(f"Processes数量: {len(lca_case.processes)}")
+    print(f"\n📋 Parse results:")
+    print(f"Case name: {lca_case.case_name}")
+    print(f"Description: {lca_case.description}")
+    print(f"Flow count: {len(lca_case.flows)}")
+    print(f"Process count: {len(lca_case.processes)}")

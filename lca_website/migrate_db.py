@@ -9,19 +9,19 @@ def migrate_database():
         inspector = db.inspect(db.engine)
         columns = [col["name"] for col in inspector.get_columns("excel_file")]
 
-        print("当前ExcelFile表字段:", columns)
+        print("Current ExcelFile table columns:", columns)
 
         if "is_deleted" not in columns:
-            print("添加 is_deleted 字段...")
+            print("Adding is_deleted field...")
             db.engine.execute(
                 "ALTER TABLE excel_file ADD COLUMN is_deleted BOOLEAN DEFAULT FALSE"
             )
 
         if "deleted_time" not in columns:
-            print("添加 deleted_time 字段...")
+            print("Adding deleted_time field...")
             db.engine.execute("ALTER TABLE excel_file ADD COLUMN deleted_time DATETIME")
 
-        print("数据库迁移完成！")
+        print("Database migration complete!")
 
 
 if __name__ == "__main__":

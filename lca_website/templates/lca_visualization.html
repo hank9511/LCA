@@ -10,19 +10,19 @@
                 ← {{ t('project_detail', 'back_to_project') }}
             </a>
             <h1>{{ t('lca_visualization', 'title') }}</h1>
-            <p class="project-info">{{ t('project_detail', 'project_name') }}：{{ project.name }} | {{ '分析ID' if get_lang() == 'zh' else 'Analysis ID' }}：{{ result.id }}</p>
+            <p class="project-info">{{ t('project_detail', 'project_name') }}：{{ project.name }} | {{ 'Analysis ID' if get_lang() == 'zh' else 'Analysis ID' }}：{{ result.id }}</p>
         </div>
         <div class="header-right">
             <span class="status-badge status-{{ result.analysis_status }}">
-                {% if result.analysis_status == 'completed' %}{{ '已完成' if get_lang() == 'zh' else 'Completed' }}{% elif result.analysis_status == 'failed' %}{{ '失败' if get_lang() == 'zh' else 'Failed' }}{% elif result.analysis_status == 'running' %}{{ '运行中' if get_lang() == 'zh' else 'Running' }}{% else %}{{ '待处理' if get_lang() == 'zh' else 'Pending' }}{% endif %}
+                {% if result.analysis_status == 'completed' %}{{ 'Completed' if get_lang() == 'zh' else 'Completed' }}{% elif result.analysis_status == 'failed' %}{{ 'Failed' if get_lang() == 'zh' else 'Failed' }}{% elif result.analysis_status == 'running' %}{{ 'Running' if get_lang() == 'zh' else 'Running' }}{% else %}{{ 'Pending' if get_lang() == 'zh' else 'Pending' }}{% endif %}
             </span>
             {% if result.analysis_status == 'completed' %}
             <button class="btn btn-sm btn-primary" onclick="generateReportFromVisualization()" style="margin-left: 1rem;">
-                📄 {{ '基于此结果生成报告' if get_lang() == 'zh' else 'Generate Report' }}
+                📄 {{ 'Generate Report' if get_lang() == 'zh' else 'Generate Report' }}
             </button>
             {% endif %}
             <button class="btn btn-sm btn-outline" onclick="showRawDebugData()" style="margin-left: 1rem;">
-                🔍 {{ '调试数据' if get_lang() == 'zh' else 'Debug Data' }}
+                🔍 {{ 'Debug Data' if get_lang() == 'zh' else 'Debug Data' }}
             </button>
         </div>
     </div>
@@ -34,10 +34,10 @@
             <div class="selector-icon">🎯</div>
             <div class="selector-content">
                 <label for="globalImpactCategorySelect" class="selector-label">
-                    {{ '选择影响类别：' if get_lang() == 'zh' else 'Select Impact Category:' }}
+                    {{ 'Select Impact Category:' if get_lang() == 'zh' else 'Select Impact Category:' }}
                 </label>
                 <select id="globalImpactCategorySelect" class="global-category-select">
-                    <option value="">{{ '加载中...' if get_lang() == 'zh' else 'Loading...' }}</option>
+                    <option value="">{{ 'Loading...' if get_lang() == 'zh' else 'Loading...' }}</option>
                 </select>
             </div>
         </div>
@@ -49,21 +49,21 @@
             <div class="stat-icon">🔄</div>
             <div class="stat-info">
                 <div class="stat-value">{{ result.flows_count or 0 }}</div>
-                <div class="stat-label">{{ '物质流数量' if get_lang() == 'zh' else 'Number of Flows' }}</div>
+                <div class="stat-label">{{ 'Number of Flows' if get_lang() == 'zh' else 'Number of Flows' }}</div>
             </div>
         </div>
         <div class="stat-card">
             <div class="stat-icon">⚙️</div>
             <div class="stat-info">
                 <div class="stat-value">{{ result.processes_count or 0 }}</div>
-                <div class="stat-label">{{ '过程数量' if get_lang() == 'zh' else 'Number of Processes' }}</div>
+                <div class="stat-label">{{ 'Number of Processes' if get_lang() == 'zh' else 'Number of Processes' }}</div>
             </div>
         </div>
         <div class="stat-card">
             <div class="stat-icon">🏭</div>
             <div class="stat-info">
                 <div class="stat-value">{{ result.product_systems_count or 0 }}</div>
-                <div class="stat-label">{{ '产品系统数量' if get_lang() == 'zh' else 'Number of Product Systems' }}</div>
+                <div class="stat-label">{{ 'Number of Product Systems' if get_lang() == 'zh' else 'Number of Product Systems' }}</div>
             </div>
         </div>
         <div class="stat-card timing-breakdown-card">
@@ -72,21 +72,21 @@
                 {% if timing_display %}
                 <div class="timing-rows">
                     <div class="timing-row">
-                        <span class="timing-label">{{ '模型构建' if get_lang() == 'zh' else 'Model Build' }}</span>
+                        <span class="timing-label">{{ 'Model Build' if get_lang() == 'zh' else 'Model Build' }}</span>
                         <span class="timing-value">{{ timing_display.model_build }}</span>
                     </div>
                     <div class="timing-row">
-                        <span class="timing-label">{{ 'LCA计算' if get_lang() == 'zh' else 'LCA Calc' }}</span>
+                        <span class="timing-label">{{ 'LCA Calc' if get_lang() == 'zh' else 'LCA Calc' }}</span>
                         <span class="timing-value">{{ timing_display.lca_calc }}</span>
                     </div>
                     <div class="timing-row timing-total">
-                        <span class="timing-label">{{ '总计' if get_lang() == 'zh' else 'Total' }}</span>
+                        <span class="timing-label">{{ 'Total' if get_lang() == 'zh' else 'Total' }}</span>
                         <span class="timing-value">{{ timing_display.total }}</span>
                     </div>
                 </div>
                 {% else %}
                 <div class="stat-value">{{ '%.2f'|format(result.duration_seconds or 0) }}s</div>
-                <div class="stat-label">{{ '分析用时' if get_lang() == 'zh' else 'Analysis Duration' }}</div>
+                <div class="stat-label">{{ 'Analysis Duration' if get_lang() == 'zh' else 'Analysis Duration' }}</div>
                 {% endif %}
             </div>
         </div>
@@ -96,8 +96,8 @@
 
         <div class="chart-card lifecycle-pie-card">
             <div class="chart-header">
-                <h2>⭕ {{ '生命周期环节贡献分析' if get_lang() == 'zh' else 'Lifecycle Stage Contribution Analysis' }}</h2>
-                <p class="chart-desc">{{ '各环节对总体影响的贡献占比' if get_lang() == 'zh' else 'Contribution ratio of each stage to overall impact' }}</p>
+                <h2>⭕ {{ 'Lifecycle Stage Contribution Analysis' if get_lang() == 'zh' else 'Lifecycle Stage Contribution Analysis' }}</h2>
+                <p class="chart-desc">{{ 'Contribution ratio of each stage to overall impact' if get_lang() == 'zh' else 'Contribution ratio of each stage to overall impact' }}</p>
             </div>
             <div class="chart-body">
                 <canvas id="lifecyclePieChart"></canvas>
@@ -106,8 +106,8 @@
 
         <div class="chart-card process-chart-card">
             <div class="chart-header">
-                <h2>🔗 {{ '主要过程贡献排名' if get_lang() == 'zh' else 'Top Process Contributions' }}</h2>
-                <p class="chart-desc">{{ '贡献最大的前5个过程' if get_lang() == 'zh' else 'Top 5 processes with largest contributions' }}</p>
+                <h2>🔗 {{ 'Top Process Contributions' if get_lang() == 'zh' else 'Top Process Contributions' }}</h2>
+                <p class="chart-desc">{{ 'Top 5 processes with largest contributions' if get_lang() == 'zh' else 'Top 5 processes with largest contributions' }}</p>
             </div>
             <div class="chart-body">
                 <canvas id="processHorizontalChart"></canvas>
@@ -117,8 +117,8 @@
         
         <div class="chart-card full-width" id="uncertaintyAnalysisCard" style="display: none;">
             <div class="chart-header">
-                <h2>📊 {{ '不确定性分析结果' if get_lang() == 'zh' else 'Uncertainty Analysis Results' }}</h2>
-                <p class="chart-desc">{{ '基于Monte Carlo模拟的不确定性分析（迭代次数：' if get_lang() == 'zh' else 'Uncertainty analysis based on Monte Carlo simulation (Iterations: ' }}<span id="uncertaintyIterations">N/A</span>{{ '）' if get_lang() == 'zh' else ')' }}</p>
+                <h2>📊 {{ 'Uncertainty Analysis Results' if get_lang() == 'zh' else 'Uncertainty Analysis Results' }}</h2>
+                <p class="chart-desc">{{ 'Uncertainty analysis based on Monte Carlo simulation (Iterations: ' if get_lang() == 'zh' else 'Uncertainty analysis based on Monte Carlo simulation (Iterations: ' }}<span id="uncertaintyIterations">N/A</span>{{ '）' if get_lang() == 'zh' else ')' }}</p>
             </div>
 
             
@@ -136,12 +136,12 @@
     {% else %}
 
     <div class="alert-box alert-warning">
-        <h3>⚠️ {{ '分析尚未完成' if get_lang() == 'zh' else 'Analysis Not Completed' }}</h3>
-        <p>{{ '当前分析状态' if get_lang() == 'zh' else 'Current analysis status' }}：{{ result.analysis_status }}</p>
+        <h3>⚠️ {{ 'Analysis Not Completed' if get_lang() == 'zh' else 'Analysis Not Completed' }}</h3>
+        <p>{{ 'Current analysis status' if get_lang() == 'zh' else 'Current analysis status' }}：{{ result.analysis_status }}</p>
         {% if result.error_message %}
-        <p class="error-text">{{ '错误信息' if get_lang() == 'zh' else 'Error message' }}：{{ result.error_message }}</p>
+        <p class="error-text">{{ 'Error message' if get_lang() == 'zh' else 'Error message' }}：{{ result.error_message }}</p>
         {% endif %}
-        <a href="{{ url_for('project_detail', project_id=project.id) }}" class="btn btn-primary">{{ '返回项目' if get_lang() == 'zh' else 'Back to Project' }}</a>
+        <a href="{{ url_for('project_detail', project_id=project.id) }}" class="btn btn-primary">{{ 'Back to Project' if get_lang() == 'zh' else 'Back to Project' }}</a>
     </div>
     {% endif %}
 </div>
@@ -557,31 +557,31 @@ const currentLang = '{{ get_lang() }}';
 
 const chartTranslations = {
     zh: {
-        impact_value: '影响值',
-        lifecycle_stage: '生命周期环节',
-        contribution_ratio: '贡献占比',
-        contribution_percent: '贡献百分比',
-        value: '数值',
-        percentage: '占比',
-        includes: '包含',
-        climate_categories: '个Climate Change类别',
-        no_climate_result: '未找到Climate Change影响评估结果',
-        loading: '正在加载数据...',
-        no_data: '该类别暂无过程贡献数据',
-        network_error: '网络请求失败',
-        no_impact_data: '暂无影响类别数据',
-        processes: '个过程',
-        view_details: '查看详情',
-        hide_details: '收起详情',
+        impact_value: 'Impact Value',
+        lifecycle_stage: 'Lifecycle Stage',
+        contribution_ratio: 'Contribution Ratio',
+        contribution_percent: 'Contribution Percent',
+        value: 'Value',
+        percentage: 'Share',
+        includes: 'Includes',
+        climate_categories: ' Climate Change categor(ies)',
+        no_climate_result: 'No Climate Change impact assessment result found',
+        loading: 'Loading data...',
+        no_data: 'No process contribution data for this category',
+        network_error: 'Network request failed',
+        no_impact_data: 'No impact category data',
+        processes: ' process(es)',
+        view_details: 'View Details',
+        hide_details: 'Hide Details',
         
-        '总体环节': '总体环节',
-        '原材料获取': '原材料获取',
-        '生产制造': '生产制造',
-        '运输配送': '运输配送',
-        '使用阶段': '使用阶段',
-        '废弃处理': '废弃处理',
-        '回收再利用': '回收再利用',
-        '未分类': '未分类'
+        'Overall Stage': 'Overall Stage',
+        'Raw Material Acquisition': 'Raw Material Acquisition',
+        'Production & Manufacturing': 'Production & Manufacturing',
+        'Transportation & Distribution': 'Transportation & Distribution',
+        'Use Phase': 'Use Phase',
+        'Waste Treatment': 'Waste Treatment',
+        'Recycling & Reuse': 'Recycling & Reuse',
+        'Uncategorized': 'Uncategorized'
     },
     en: {
         impact_value: 'Impact Value',
@@ -601,14 +601,14 @@ const chartTranslations = {
         view_details: 'View Details',
         hide_details: 'Hide Details',
         
-        '总体环节': 'Overall Stage',
-        '原材料获取': 'Raw Material Acquisition',
-        '生产制造': 'Production & Manufacturing',
-        '运输配送': 'Transportation & Distribution',
-        '使用阶段': 'Use Phase',
-        '废弃处理': 'Waste Treatment',
-        '回收再利用': 'Recycling & Reuse',
-        '未分类': 'Uncategorized'
+        'Overall Stage': 'Overall Stage',
+        'Raw Material Acquisition': 'Raw Material Acquisition',
+        'Production & Manufacturing': 'Production & Manufacturing',
+        'Transportation & Distribution': 'Transportation & Distribution',
+        'Use Phase': 'Use Phase',
+        'Waste Treatment': 'Waste Treatment',
+        'Recycling & Reuse': 'Recycling & Reuse',
+        'Uncategorized': 'Uncategorized'
     }
 };
 
@@ -627,17 +627,17 @@ function translateCategoryName(name) {
 
     
     const translations = {
-        '化石': 'Fossil',
-        '生物源': 'Biogenic',
-        '土地利用': 'Land Use',
-        '无长期': 'no LT',
-        '包括': 'including',
-        '短寿命': 'SLCFs',
-        '气候变化': 'Climate Change',
-        '全球变暖潜势': 'GWP',
-        '全球温度变化潜势': 'GTP',
-        '生物源，': 'Biogenic, ',
-        '+短寿命': '+SLCFs'
+        'Fossil': 'Fossil',
+        'Biogenic': 'Biogenic',
+        'Land Use': 'Land Use',
+        'no LT': 'no LT',
+        'including': 'including',
+        'SLCFs': 'SLCFs',
+        'Climate Change': 'Climate Change',
+        'GWP': 'GWP',
+        'GTP': 'GTP',
+        'Biogenic, ': 'Biogenic, ',
+        '+SLCFs': '+SLCFs'
     };
 
     let translatedName = name;
@@ -655,17 +655,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const resultId = {{ result.id }};
     currentResultId = resultId;  
 
-    console.log('开始加载图表数据，结果ID:', resultId);
+    console.log('Start loading chart data, result ID:', resultId);
 
     
     fetch(`/lca_result/${resultId}/chart_data`)
         .then(response => response.json())
         .then(data => {
-            console.log('接收到图表数据:', data);
+            console.log('Received chart data:', data);
 
             
             if (data.debug_info) {
-                console.log('=== 调试信息 ===');
+                console.log('=== Debug Info ===');
                 console.log('top_level_keys:', data.debug_info.top_level_keys);
                 console.log('has_impact_analysis:', data.debug_info.has_impact_analysis);
                 console.log('impact_results_count:', data.debug_info.impact_results_count);
@@ -677,9 +677,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             
-            console.log('影响类别数量:', data.impact_categories?.length || 0);
-            console.log('生命周期环节数量:', data.lifecycle_stages?.length || 0);
-            console.log('过程贡献数量:', data.process_contributions?.length || 0);
+            console.log('Impact category count:', data.impact_categories?.length || 0);
+            console.log('Lifecycle stage count:', data.lifecycle_stages?.length || 0);
+            console.log('Process contribution count:', data.process_contributions?.length || 0);
 
             if (data.success) {
                 
@@ -701,16 +701,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     showDebugInfo(data);
                 }
             } else {
-                console.error('获取图表数据失败:', data.error);
+                console.error('Failed to get chart data:', data.error);
                 if (data.debug_info?.exception) {
-                    console.error('异常详情:', data.debug_info.exception);
+                    console.error('Exception details:', data.debug_info.exception);
                 }
-                showError('无法加载图表数据: ' + (data.error || '未知错误'));
+                showError('Unable to load chart data: ' + (data.error || 'Unknown error'));
             }
         })
         .catch(error => {
-            console.error('请求失败:', error);
-            showError('网络请求失败: ' + error.message);
+            console.error('Request failed:', error);
+            showError('Network request failed: ' + error.message);
         });
 });
 
@@ -757,11 +757,11 @@ function simplifyImpactCategoryName(fullName) {
 
     
     const keywords = {
-        'land use': '土地利用',
-        'fossil': '化石',
-        'biogenic': '生物源',
-        'including SLCFs': '+短寿命',
-        'no LT': '(无长期)',
+        'land use': 'Land Use',
+        'fossil': 'Fossil',
+        'biogenic': 'Biogenic',
+        'including SLCFs': '+SLCFs',
+        'no LT': '(no LT)',
         'GWP100': 'GWP100',
         'GWP20': 'GWP20',
         'GTP100': 'GTP100',
@@ -816,13 +816,13 @@ function initializeGlobalImpactSelector(data) {
         : data.climate_categories;
 
     if (!categories || categories.length === 0) {
-        console.log('⚠️ 没有可用的影响类别，隐藏全局选择器');
+        console.log('⚠️ No impact categories available; hiding global selector');
         selectorContainer.style.display = 'none';
         return;
     }
 
-    console.log(`✅ 初始化全局影响类别选择器，共 ${categories.length} 个类别`);
-    console.log(`   数据来源: ${data.all_available_categories && data.all_available_categories.length > 0 ? 'all_available_categories（所有类别）' : 'climate_categories（仅气候变化）'}`);
+    console.log(`✅ Initialized global impact category selector with ${categories.length} categor(ies)`);
+    console.log(`   Data source: ${data.all_available_categories && data.all_available_categories.length > 0 ? 'all_available_categories (all categories)' : 'climate_categories (climate change only)'}`);
 
     
     selectElement.innerHTML = '';
@@ -856,12 +856,12 @@ function initializeGlobalImpactSelector(data) {
 function handleGlobalCategoryChange(event) {
     const selectedCategory = event.target.value;
     console.log('\n' + '='.repeat(80));
-    console.log('🌍 全局影响类别选择改变');
-    console.log('🌍 选择的类别:', selectedCategory);
+    console.log('🌍 Global impact category selection changed');
+    console.log('🌍 Selected category:', selectedCategory);
     console.log('='.repeat(80));
 
     if (!selectedCategory || !currentResultId) {
-        console.warn('⚠️ 缺少类别或 result ID');
+        console.warn('⚠️ Missing category or result ID');
         return;
     }
 
@@ -870,7 +870,7 @@ function handleGlobalCategoryChange(event) {
 }
 
 function loadAllChartsForCategory(categoryName) {
-    console.log(`\n📊 开始为类别 "${categoryName}" 加载所有图表...`);
+    console.log(`\n📊 Loading all charts for category "${categoryName}"...`);
 
     
     loadLifecycleChartForCategory(categoryName);
@@ -887,7 +887,7 @@ function loadAllChartsForCategory(categoryName) {
 }
 
 function loadLifecycleChartForCategory(categoryName) {
-    console.log(`\n🔄 加载生命周期环节图表: ${categoryName}`);
+    console.log(`\n🔄 Loading lifecycle stage chart: ${categoryName}`);
 
     const chartCanvas = document.getElementById('lifecyclePieChart');
     const ctx = chartCanvas.getContext('2d');
@@ -898,29 +898,29 @@ function loadLifecycleChartForCategory(categoryName) {
     ctx.fillText(chartT('loading'), chartCanvas.width / 2, chartCanvas.height / 2);
 
     const apiUrl = `/lca_result/${currentResultId}/lifecycle_by_category?category=${encodeURIComponent(categoryName)}`;
-    console.log('📡 API请求:', apiUrl);
+    console.log('📡 API request:', apiUrl);
 
     fetch(apiUrl)
         .then(response => response.json())
         .then(result => {
             if (result.success && result.lifecycle_stages && result.lifecycle_stages.length > 0) {
-                console.log('✅ 获取到生命周期数据，共', result.lifecycle_stages.length, '个环节');
+                console.log('✅ Got lifecycle data,', result.lifecycle_stages.length, ' stage(s)');
                 updateLifecyclePieChart(result.lifecycle_stages);
             } else {
-                console.warn('⚠️ 生命周期数据为空');
+                console.warn('⚠️ Lifecycle data is empty');
                 ctx.fillStyle = '#ffc107';
-                ctx.fillText('该类别暂无生命周期环节数据', chartCanvas.width / 2, chartCanvas.height / 2);
+                ctx.fillText('No lifecycle stage data for this category', chartCanvas.width / 2, chartCanvas.height / 2);
             }
         })
         .catch(error => {
-            console.error('❌ 加载生命周期数据失败:', error);
+            console.error('❌ Failed to load lifecycle data:', error);
             ctx.fillStyle = '#dc3545';
             ctx.fillText(chartT('network_error'), chartCanvas.width / 2, chartCanvas.height / 2);
         });
 }
 
 function loadProcessChartForCategory(categoryName) {
-    console.log(`\n🔄 加载过程贡献图表: ${categoryName}`);
+    console.log(`\n🔄 Loading process contribution chart: ${categoryName}`);
 
     const chartCanvas = document.getElementById('processHorizontalChart');
     const ctx = chartCanvas.getContext('2d');
@@ -931,29 +931,29 @@ function loadProcessChartForCategory(categoryName) {
     ctx.fillText(chartT('loading'), chartCanvas.width / 2, chartCanvas.height / 2);
 
     const apiUrl = `/lca_result/${currentResultId}/process_by_category?category=${encodeURIComponent(categoryName)}`;
-    console.log('📡 API请求:', apiUrl);
+    console.log('📡 API request:', apiUrl);
 
     fetch(apiUrl)
         .then(response => response.json())
         .then(result => {
             if (result.success && result.process_contributions && result.process_contributions.length > 0) {
-                console.log('✅ 获取到过程贡献数据，共', result.process_contributions.length, '个过程');
+                console.log('✅ Got process contribution data,', result.process_contributions.length, ' process(es)');
                 updateProcessChart(result.process_contributions);
             } else {
-                console.warn('⚠️ 过程贡献数据为空');
+                console.warn('⚠️ Process contribution data is empty');
                 ctx.fillStyle = '#ffc107';
                 ctx.fillText(chartT('no_data'), chartCanvas.width / 2, chartCanvas.height / 2);
             }
         })
         .catch(error => {
-            console.error('❌ 加载过程贡献数据失败:', error);
+            console.error('❌ Failed to load process contribution data:', error);
             ctx.fillStyle = '#dc3545';
             ctx.fillText(chartT('network_error'), chartCanvas.width / 2, chartCanvas.height / 2);
         });
 }
 
 function loadUncertaintyChartForCategory(categoryName) {
-    console.log(`\n🔄 加载不确定性分析图表: ${categoryName}`);
+    console.log(`\n🔄 Loading uncertainty analysis chart: ${categoryName}`);
 
     const stats = currentChartData.uncertainty_analysis.statistics[categoryName];
     const rawData = currentChartData.uncertainty_analysis.raw_data ? 
@@ -970,31 +970,31 @@ let currentResultId = null;
 
 function updateProcessChart(processContributions) {
     console.log('\n' + '='.repeat(60));
-    console.log('🎨 开始更新过程贡献图表');
-    console.log('🎨 输入参数:', {
-        是否有数据: !!processContributions,
-        过程数量: processContributions?.length,
-        当前图表实例: !!processChartInstance
+    console.log('🎨 Updating process contribution chart');
+    console.log('🎨 Input params:', {
+        Has data: !!processContributions,
+        Process count: processContributions?.length,
+        Current chart instance: !!processChartInstance
     });
 
     if (!processContributions || processContributions.length === 0) {
-        console.warn('⚠️ 没有过程贡献数据');
+        console.warn('⚠️ No process contribution data');
         return;
     }
 
     
-    console.log('\n📊 详细过程数据:');
+    console.log('\n📊 Detailed process data:');
     processContributions.forEach((proc, idx) => {
-        const stage = proc.lifecycle_stage || '未分类';
+        const stage = proc.lifecycle_stage || 'Uncategorized';
         console.log(`  ${idx + 1}. ${proc.process_name}: ${proc.impact_value.toFixed(6)} ${proc.unit} (${proc.contribution_percent.toFixed(2)}%) [${stage}]`);
     });
 
     
     if (processChartInstance) {
-        console.log('\n🗑️ 销毁旧图表实例');
+        console.log('\n🗑️ Destroying old chart instance');
         processChartInstance.destroy();
         processChartInstance = null;
-        console.log('✅ 旧图表已销毁');
+        console.log('✅ Old chart destroyed');
     }
 
     
@@ -1002,7 +1002,7 @@ function updateProcessChart(processContributions) {
     const labels = topProcesses.map(item => item.process_name || 'Unknown');
     const values = topProcesses.map(item => item.impact_value || 0);
     const percentages = topProcesses.map(item => item.contribution_percent || 0);
-    const stages = topProcesses.map(item => item.lifecycle_stage || '未分类');
+    const stages = topProcesses.map(item => item.lifecycle_stage || 'Uncategorized');
     const unit = topProcesses[0]?.unit || 'kg CO2 eq';
 
     
@@ -1010,18 +1010,18 @@ function updateProcessChart(processContributions) {
     const borderColors = stages.map(stage => getStageColor(stage, 'border'));
 
     const total = values.reduce((sum, v) => sum + v, 0);
-    console.log('\n📊 处理后的图表数据:');
-    console.log('  标签:', labels);
-    console.log('  数值:', values.map(v => v.toFixed(6)));
-    console.log('  百分比:', percentages.map(p => p.toFixed(2) + '%'));
-    console.log('  生命周期环节:', stages);
-    console.log('  单位:', unit);
-    console.log('  总计:', total.toFixed(6));
-    console.log('  背景颜色:', backgroundColors);
+    console.log('\n📊 Processed chart data:');
+    console.log('  Labels:', labels);
+    console.log('  Value:', values.map(v => v.toFixed(6)));
+    console.log('  Percentages:', percentages.map(p => p.toFixed(2) + '%'));
+    console.log('  Lifecycle Stage:', stages);
+    console.log('  Unit:', unit);
+    console.log('  Total:', total.toFixed(6));
+    console.log('  Background colors:', backgroundColors);
 
     
     const ctx = document.getElementById('processHorizontalChart').getContext('2d');
-    console.log('\n🎨 创建新图表实例...');
+    console.log('\n🎨 Creating new chart instance...');
 
     processChartInstance = new Chart(ctx, {
         type: 'bar',
@@ -1098,9 +1098,9 @@ function updateProcessChart(processContributions) {
         }
     });
 
-    console.log('\n✅ 新图表创建完成');
-    console.log('✅ 图表实例 ID:', processChartInstance.id);
-    console.log('✅ 图表数据点数:', values.length);
+    console.log('\n✅ New chart created');
+    console.log('✅ Chart instance ID:', processChartInstance.id);
+    console.log('✅ Chart data points:', values.length);
     console.log('='.repeat(60) + '\n');
 }
 
@@ -1113,7 +1113,7 @@ function generateReportFromVisualization() {
     const language = lang;  
 
     const confirmMsg = lang === 'zh'
-        ? `即将基于当前LCA分析结果（ID: ${resultId}）生成中文PDF报告。\n\n请确保已填写项目报告信息。\n\n是否继续？`
+        ? `About to generate a Chinese PDF report based on the current LCA analysis result (ID: ${resultId}).\n\nPlease ensure project report information is filled in.\n\nContinue?`
         : `About to generate English PDF report based on current LCA results (ID: ${resultId}).\n\nPlease ensure report information is filled.\n\nContinue?`;
 
     if (!confirm(confirmMsg)) {
@@ -1124,7 +1124,7 @@ function generateReportFromVisualization() {
     const btn = event.target;
     const originalText = btn.innerHTML;
     btn.disabled = true;
-    btn.innerHTML = lang === 'zh' ? '⏳ 生成中...' : '⏳ Generating...';
+    btn.innerHTML = lang === 'zh' ? '⏳ Generating...' : '⏳ Generating...';
 
     
     fetch(`/project/${projectId}/generate_markdown_report`, {
@@ -1143,9 +1143,9 @@ function generateReportFromVisualization() {
         btn.innerHTML = originalText;
 
         if (data.success) {
-            const langLabel = lang === 'zh' ? '中文' : 'English';
+            const langLabel = lang === 'zh' ? 'Chinese' : 'English';
             const message = lang === 'zh' 
-                ? `✅ ${langLabel}PDF报告生成成功！\n\n文件名: ${data.filename}`
+                ? `✅ ${langLabel} PDF report generated successfully!\n\nFilename: ${data.filename}`
                 : `✅ ${langLabel} PDF report generated successfully!\n\nFilename: ${data.filename}`;
 
             alert(message);
@@ -1156,7 +1156,7 @@ function generateReportFromVisualization() {
             }
         } else {
             const errorMsg = lang === 'zh' 
-                ? `❌ 报告生成失败：\n\n${data.error}\n\n请确保：\n1. 已填写项目报告信息\n2. 当前LCA分析已完成`
+                ? `❌ Report generation failed:\n\n${data.error}\n\nPlease ensure:\n1. Project report information is filled in\n2. Current LCA analysis is completed`
                 : `❌ Report generation failed:\n\n${data.error}\n\nPlease ensure:\n1. Report information is filled\n2. LCA analysis is completed`;
             alert(errorMsg);
         }
@@ -1165,44 +1165,44 @@ function generateReportFromVisualization() {
         console.error('Report generation failed:', error);
         btn.disabled = false;
         btn.innerHTML = originalText;
-        alert((lang === 'zh' ? '❌ 生成报告失败：' : '❌ Report generation failed: ') + error.message);
+        alert((lang === 'zh' ? '❌ Generate ReportFailed：' : '❌ Report generation failed: ') + error.message);
     });
 }
 
 const LIFECYCLE_COLORS = {
-    '总体环节': { background: '#FF6384', border: '#E5334F' },
-    '原材料获取': { background: '#36A2EB', border: '#1E8BC3' },
-    '生产制造': { background: '#FFCE56', border: '#E6B547' },
-    '运输配送': { background: '#4BC0C0', border: '#26A69A' },
-    '使用阶段': { background: '#9966FF', border: '#7E57C2' },
-    '废弃处理': { background: '#FF9F40', border: '#E68A2E' },
-    '回收再利用': { background: '#8BC34A', border: '#7CB342' },
-    '未分类': { background: '#95A5A6', border: '#7F8C8D' }
+    'Overall Stage': { background: '#FF6384', border: '#E5334F' },
+    'Raw Material Acquisition': { background: '#36A2EB', border: '#1E8BC3' },
+    'Production & Manufacturing': { background: '#FFCE56', border: '#E6B547' },
+    'Transportation & Distribution': { background: '#4BC0C0', border: '#26A69A' },
+    'Use Phase': { background: '#9966FF', border: '#7E57C2' },
+    'Waste Treatment': { background: '#FF9F40', border: '#E68A2E' },
+    'Recycling & Reuse': { background: '#8BC34A', border: '#7CB342' },
+    'Uncategorized': { background: '#95A5A6', border: '#7F8C8D' }
 };
 
 function getStageColor(stageName, type = 'background') {
-    const colors = LIFECYCLE_COLORS[stageName] || LIFECYCLE_COLORS['未分类'];
+    const colors = LIFECYCLE_COLORS[stageName] || LIFECYCLE_COLORS['Uncategorized'];
     return colors[type];
 }
 
 function updateLifecyclePieChart(lifecycleStages) {
-    console.log('🎨 开始创建生命周期环节饼图...', {
+    console.log('🎨 Creating lifecycle stage pie chart...', {
         stagesCount: lifecycleStages?.length,
         hasInstance: !!lifecycleChartInstance
     });
 
     if (!lifecycleStages || lifecycleStages.length === 0) {
-        console.warn('⚠️ 没有生命周期数据');
+        console.warn('⚠️ No lifecycle data');
         return;
     }
 
     
-    const filteredStages = lifecycleStages.filter(item => item.stage !== '总体环节');
+    const filteredStages = lifecycleStages.filter(item => item.stage !== 'Overall Stage');
 
-    console.log(`📊 原始环节数: ${lifecycleStages.length}, 过滤后: ${filteredStages.length}`);
+    console.log(`📊 Original stages: ${lifecycleStages.length}, after filter: ${filteredStages.length}`);
 
     if (filteredStages.length === 0) {
-        console.warn('⚠️ 过滤后没有数据');
+        console.warn('⚠️ No data after filtering');
         const ctx = document.getElementById('lifecyclePieChart').getContext('2d');
         ctx.font = '16px Arial';
         ctx.fillStyle = '#7f8c8d';
@@ -1218,7 +1218,7 @@ function updateLifecyclePieChart(lifecycleStages) {
     const unit = filteredStages[0]?.unit || 'kg CO2 eq';
 
     const total = values.reduce((sum, v) => sum + v, 0);
-    console.log('📊 饼图数据:', {
+    console.log('📊 Pie chart data:', {
         labels: labels,
         values: values.map(v => v.toFixed(6)),
         unit: unit,
@@ -1237,7 +1237,7 @@ function updateLifecyclePieChart(lifecycleStages) {
         roundedPercentages[maxIndex] = Math.round((roundedPercentages[maxIndex] + diff) * 100) / 100;
     }
 
-    console.log('📊 调整后的百分比:', roundedPercentages, '总和:', roundedPercentages.reduce((a, b) => a + b, 0));
+    console.log('📊 Adjusted percentages:', roundedPercentages, 'Sum:', roundedPercentages.reduce((a, b) => a + b, 0));
 
     
     const backgroundColors = originalStages.map(stage => getStageColor(stage, 'background'));
@@ -1245,14 +1245,14 @@ function updateLifecyclePieChart(lifecycleStages) {
 
     
     if (lifecycleChartInstance) {
-        console.log('🗑️ 销毁旧图表实例');
+        console.log('🗑️ Destroying old chart instance');
         lifecycleChartInstance.destroy();
         lifecycleChartInstance = null;
     }
 
     
     const ctx = document.getElementById('lifecyclePieChart').getContext('2d');
-    console.log('🎨 创建新饼图实例...');
+    console.log('🎨 Creating new pie chart instance...');
 
     lifecycleChartInstance = new Chart(ctx, {
         type: 'pie',
@@ -1327,9 +1327,9 @@ function updateLifecyclePieChart(lifecycleStages) {
         }
     });
 
-    console.log('✅ 生命周期饼图创建完成');
-    console.log('✅ 图表实例 ID:', lifecycleChartInstance.id);
-    console.log('✅ 图表数据点数:', values.length);
+    console.log('✅ Lifecycle pie chart created');
+    console.log('✅ Chart instance ID:', lifecycleChartInstance.id);
+    console.log('✅ Chart data points:', values.length);
 }
 
 function createProcessHorizontalChart(data) {
@@ -1362,12 +1362,12 @@ function createProcessHorizontalChart(data) {
 
     
     const backgroundColors = data.process_contributions.map(item => {
-        const stageName = item.lifecycle_stage || '未分类';
+        const stageName = item.lifecycle_stage || 'Uncategorized';
         return getStageColor(stageName, 'background');
     });
 
     const borderColors = data.process_contributions.map(item => {
-        const stageName = item.lifecycle_stage || '未分类';
+        const stageName = item.lifecycle_stage || 'Uncategorized';
         return getStageColor(stageName, 'border');
     });
 
@@ -1418,7 +1418,7 @@ function createProcessHorizontalChart(data) {
                         label: function(context) {
                             const index = context.dataIndex;
                             const item = data.process_contributions[index];
-                            const stageName = item.lifecycle_stage || '未分类';
+                            const stageName = item.lifecycle_stage || 'Uncategorized';
                             if (hasPercentage) {
                                 return `${stageName}: ${item.percentage.toFixed(2)}% (${item.value.toFixed(3)} ${item.unit})`;
                             } else {
@@ -1439,20 +1439,20 @@ function showError(message) {
 }
 
 function displayUncertaintyAnalysis(data) {
-    console.log('📊 检查不确定性分析数据...');
+    console.log('📊 Checking uncertainty analysis data...');
 
     const uncertaintyCard = document.getElementById('uncertaintyAnalysisCard');
     const uncertaintyData = data.uncertainty_analysis;
 
     if (!uncertaintyData || !uncertaintyData.statistics || Object.keys(uncertaintyData.statistics).length === 0) {
-        console.log('⚠️ 没有不确定性分析数据');
+        console.log('⚠️ No uncertainty analysis data');
         uncertaintyCard.style.display = 'none';
         return;
     }
 
-    console.log('✅ 找到不确定性分析数据');
-    console.log('  迭代次数:', uncertaintyData.iterations);
-    console.log('  可用类别数:', uncertaintyData.available_categories ? uncertaintyData.available_categories.length : 0);
+    console.log('✅ Found uncertainty analysis data');
+    console.log('  Iteration count:', uncertaintyData.iterations);
+    console.log('  Available categories:', uncertaintyData.available_categories ? uncertaintyData.available_categories.length : 0);
 
     
     uncertaintyCard.style.display = 'block';
@@ -1462,7 +1462,7 @@ function displayUncertaintyAnalysis(data) {
 }
 
 function displayUncertaintyStats(categoryName, stats, rawData) {
-    console.log('📊 显示不确定性统计数据:', categoryName);
+    console.log('📊 Showing uncertainty statistics:', categoryName);
 
     
     const banner = document.getElementById('uncertaintyStatsBanner');
@@ -1502,7 +1502,7 @@ function displayUncertaintyStats(categoryName, stats, rawData) {
 }
 
 function createUncertaintyChart(categoryName, stats, rawData) {
-    console.log('🎨 创建不确定性分析直方图...');
+    console.log('🎨 Creating uncertainty analysis histogram...');
 
     
     if (uncertaintyChartInstance) {
@@ -1513,16 +1513,16 @@ function createUncertaintyChart(categoryName, stats, rawData) {
     const unit = stats.unit || 'kg CO2 eq';
 
     if (!rawData || rawData.length === 0) {
-        console.warn('⚠️ 没有原始模拟数据，无法绘制直方图');
+        console.warn('⚠️ No raw simulation data; cannot draw histogram');
         
         ctx.font = '16px Arial';
         ctx.fillStyle = '#7f8c8d';
         ctx.textAlign = 'center';
-        ctx.fillText('原始模拟数据不可用，无法绘制直方图', ctx.canvas.width / 2, ctx.canvas.height / 2);
+        ctx.fillText('Raw simulation data unavailable; cannot draw histogram', ctx.canvas.width / 2, ctx.canvas.height / 2);
         return;
     }
 
-    console.log('📊 原始数据点数:', rawData.length);
+    console.log('📊 Raw data points:', rawData.length);
 
     
     const numBins = 50;  
@@ -1530,8 +1530,8 @@ function createUncertaintyChart(categoryName, stats, rawData) {
     const maxValue = Math.max(...rawData);
     const binWidth = (maxValue - minValue) / numBins;
 
-    console.log('📊 数值范围:', minValue.toFixed(3), '-', maxValue.toFixed(3));
-    console.log('📊 Bin宽度:', binWidth.toFixed(6));
+    console.log('📊 Value range:', minValue.toFixed(3), '-', maxValue.toFixed(3));
+    console.log('📊 Bin width:', binWidth.toFixed(6));
 
     
     const bins = new Array(numBins).fill(0);
@@ -1673,16 +1673,16 @@ function createUncertaintyChart(categoryName, stats, rawData) {
                     ctx.lineTo(x95, yScale.bottom);
                     ctx.stroke();
 
-                    console.log('🎨 绘制红色标记线:');
-                    console.log('  5%分位:', chartContext.stats.percentile_5.toFixed(3), '-> bin', bin5, '-> x:', x5.toFixed(1));
-                    console.log('  中位数:', chartContext.stats.median.toFixed(3), '-> bin', binMedian, '-> x:', xMedian.toFixed(1));
-                    console.log('  95%分位:', chartContext.stats.percentile_95.toFixed(3), '-> bin', bin95, '-> x:', x95.toFixed(1));
+                    console.log('🎨 Drawing red marker lines:');
+                    console.log('  5th percentile:', chartContext.stats.percentile_5.toFixed(3), '-> bin', bin5, '-> x:', x5.toFixed(1));
+                    console.log('  Median:', chartContext.stats.median.toFixed(3), '-> bin', binMedian, '-> x:', xMedian.toFixed(1));
+                    console.log('  95th percentile:', chartContext.stats.percentile_95.toFixed(3), '-> bin', bin95, '-> x:', x95.toFixed(1));
                 }
             }
         }
     });
 
-    console.log('✅ 不确定性分析直方图创建完成');
+    console.log('✅ Uncertainty analysis histogram created');
 }
 
 function showDebugInfo(data) {
@@ -1690,42 +1690,42 @@ function showDebugInfo(data) {
 
     const debugHtml = `
         <div style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 2rem; margin-top: 2rem;">
-            <h3 style="color: #856404; margin-top: 0;">🔍 诊断信息：未获取到影响评估结果</h3>
-            <p style="color: #856404;"><strong>问题：</strong>确定性影响评估返回了空结果或所有值为0。</p>
+            <h3 style="color: #856404; margin-top: 0;">🔍 Diagnostic: No impact assessment results obtained</h3>
+            <p style="color: #856404;"><strong>Issue:</strong>Deterministic impact assessment returned empty results or all zeros.</p>
 
             <div style="background: #fff; border: 1px solid #ffc107; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
-                <h4 style="color: #856404; margin-top: 0;">❌ 可能原因</h4>
+                <h4 style="color: #856404; margin-top: 0;">❌ Possible causes</h4>
                 <ul style="color: #856404; text-align: left; margin-bottom: 0;">
-                    <li><strong>产品系统未在OpenLCA中正确计算</strong> - 这是最常见的原因</li>
-                    <li>影响评估方法没有适用于该产品系统的特征化因子</li>
-                    <li>产品系统的参考流数量设置为0</li>
-                    <li>系统中所有交换的数值都是0</li>
+                    <li><strong>Product system was not calculated correctly in OpenLCA</strong> - This is the most common cause</li>
+                    <li>Impact assessment method has no characterization factors for this product system</li>
+                    <li>Product system reference flow amount is set to 0</li>
+                    <li>All exchange values in the system are 0</li>
                 </ul>
             </div>
 
             <div style="background: #d4edda; border: 1px solid #28a745; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
-                <h4 style="color: #155724; margin-top: 0;">✅ 解决方案</h4>
+                <h4 style="color: #155724; margin-top: 0;">✅ Solutions</h4>
                 <ol style="color: #155724; text-align: left; margin-bottom: 0;">
-                    <li><strong>打开OpenLCA软件</strong></li>
-                    <li><strong>找到产品系统</strong>：导航至"Product systems" → 找到 <code style="background: #fff; padding: 2px 6px; border-radius: 3px;">{{ result.excel_file.product_system_name }}</code></li>
-                    <li><strong>右键点击产品系统</strong> → 选择 <strong>"Calculate"（计算）</strong></li>
-                    <li><strong>选择影响评估方法</strong>：确保选择了方法（如 <code style="background: #fff; padding: 2px 6px; border-radius: 3px;">IPCC 2013 GWP 100a</code>）</li>
-                    <li><strong>运行计算</strong>：等待计算完成（可能需要几分钟）</li>
-                    <li><strong>验证结果</strong>：在OpenLCA中查看"Impact analysis"标签页，确认有非零结果</li>
-                    <li><strong>返回本平台</strong>：重新运行LCA分析</li>
+                    <li><strong>Open openLCA software</strong></li>
+                    <li><strong>Find the product system</strong>: Navigate to "Product systems" → find <code style="background: #fff; padding: 2px 6px; border-radius: 3px;">{{ result.excel_file.product_system_name }}</code></li>
+                    <li><strong>Right-click the product system</strong> → Select <strong>"Calculate"</strong></li>
+                    <li><strong>Select impact assessment method</strong>: Ensure a method is selected (e.g. <code style="background: #fff; padding: 2px 6px; border-radius: 3px;">IPCC 2013 GWP 100a</code>）</li>
+                    <li><strong>Run calculation</strong>: Wait for calculation to finish (may take a few minutes)</li>
+                    <li><strong>Verify results</strong>: In OpenLCA, open the "Impact analysis" tab and confirm non-zero results</li>
+                    <li><strong>Return to this platform</strong>：Re-run LCA analysis</li>
                 </ol>
             </div>
 
             <div style="background: #d1ecf1; border: 1px solid #17a2b8; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
-                <h4 style="color: #0c5460; margin-top: 0;">ℹ️ 注意事项</h4>
+                <h4 style="color: #0c5460; margin-top: 0;">ℹ️ Notes</h4>
                 <p style="color: #0c5460; margin-bottom: 0;">
-                    不确定性分析（蒙特卡洛模拟）显示有结果，但<strong>确定性分析需要在OpenLCA中先手动运行一次完整的影响评估计算</strong>。
-                    这是OpenLCA IPC API的已知行为。
+                    Uncertainty analysis (Monte Carlo) shows results, but<strong>Deterministic analysis requires running a full impact assessment once manually in OpenLCA first</strong>。
+                    This is known behavior of the OpenLCA IPC API.
                 </p>
             </div>
 
             <details style="margin-top: 1rem;">
-                <summary style="cursor: pointer; color: #856404; font-weight: bold;">点击查看技术详情</summary>
+                <summary style="cursor: pointer; color: #856404; font-weight: bold;">Click to view technical details</summary>
                 <pre style="background: white; padding: 1rem; border-radius: 4px; overflow: auto; font-size: 0.85rem; margin-top: 1rem; border: 1px solid #ddd;">
 ${JSON.stringify(data.debug_info, null, 2)}
                 </pre>
@@ -1733,10 +1733,10 @@ ${JSON.stringify(data.debug_info, null, 2)}
 
             <div style="margin-top: 1rem; display: flex; gap: 10px;">
                 <button class="btn btn-primary" onclick="showRawDebugData()">
-                    📄 查看完整原始数据
+                    📄 View Full Raw Data
                 </button>
                 <button class="btn btn-info" onclick="window.location.reload()">
-                    🔄 刷新页面
+                    🔄 Refresh Page
                 </button>
             </div>
         </div>

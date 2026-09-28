@@ -75,7 +75,7 @@ def _normalize_proxy(url: Optional[str]) -> Optional[str]:
     if low.startswith("socks4"):
         rest = u.split("://", 1)[1] if "://" in u else u
         new = "socks5h://" + rest
-        print(f"⚠️ 检测到 socks4 代理（httpx 不支持），已自动改用 {new}")
+        print(f"⚠️ Detected socks4 proxy (unsupported by httpx); automatically switched to {new}")
         return new
     return u
 
@@ -89,19 +89,19 @@ def build_llm_http_client() -> httpx.Client:
             import socksio
         except ImportError:
             print(
-                '⚠️ 使用 socks 代理需要先安装依赖： pip install "httpx[socks]"；'
-                "当前未安装，已回退为直连。"
+                '⚠️ Using a socks proxy requires: pip install "httpx[socks]"; '
+                "dependency not installed, falling back to a direct connection."
             )
             proxy = None
 
     timeout = httpx.Timeout(60.0, connect=30.0)
     try:
         if proxy:
-            print(f"🌐 LLM 请求将通过代理：{proxy}")
+            print(f"🌐 LLM requests will use proxy: {proxy}")
             return httpx.Client(proxy=proxy, trust_env=False, timeout=timeout)
         return httpx.Client(trust_env=False, timeout=timeout)
     except Exception as e:
-        print(f"⚠️ 创建带代理的 HTTP 客户端失败（{e}），改用直连客户端")
+        print(f"⚠️ Failed to create proxied HTTP client ({e}); using direct client")
         return httpx.Client(trust_env=False, timeout=timeout)
 
 
@@ -113,16 +113,16 @@ def initialize_llm_clients() -> Dict[str, OpenAI]:
         print("⚠️ LLM_CONFIGS is empty, no LLM clients to initialize")
         return llm_clients
 
-    print(f"📋 找到 {len(LLM_CONFIGS)} 个LLM配置，开始初始化...")
+    print(f"📋 Found {len(LLM_CONFIGS)} LLM configs; starting initialization...")
 
     http_client = build_llm_http_client()
 
     for name, config in LLM_CONFIGS.items():
         try:
-            print(f"  🔄 正在初始化 {name} LLM客户端...")
+            print(f"  🔄 Initializing {name} LLM client...")
 
             if not config:
-                print(f"⚠️ {name} LLM: 配置为空，跳过初始化")
+                print(f"⚠️ {name} LLM: empty config, skipping initialization")
                 llm_clients[name] = None
                 continue
 
@@ -133,24 +133,24 @@ def initialize_llm_clients() -> Dict[str, OpenAI]:
                 continue
 
             base_url = config.get("base_url", "https://api.openai.com/v1")
-            print(f"  📡 使用base_url: {base_url}")
+            print(f"  📡 Using base_url: {base_url}")
 
             llm_clients[name] = OpenAI(
                 api_key=api_key, base_url=base_url, http_client=http_client
             )
-            print(f"✅ 成功初始化 {name} LLM客户端")
+            print(f"✅ Successfully initialized {name} LLM client")
 
         except Exception as e:
             import traceback
 
             error_msg = str(e)
-            print(f"❌ 初始化 {name} LLM客户端失败: {error_msg}")
-            print(f"   错误详情: {traceback.format_exc()}")
+            print(f"❌ Failed to initialize {name} LLM client: {error_msg}")
+            print(f"   Error details: {traceback.format_exc()}")
             llm_clients[name] = None
 
     working_count = sum(1 for client in llm_clients.values() if client is not None)
     total_count = len(llm_clients)
-    print(f"📊 LLM初始化完成: {working_count}/{total_count} 个客户端可用")
+    print(f"📊 LLM initialization complete: {working_count}/{total_count} clients available")
 
     return llm_clients
 

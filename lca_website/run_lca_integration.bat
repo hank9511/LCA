@@ -1,45 +1,45 @@
 @echo off
 echo ====================================
-echo LCA集成系统启动脚本
+echo LCA Integration System Startup Script
 echo ====================================
 
 echo.
-echo 步骤1: 激活Conda环境...
+echo Step 1: Activating Conda environment...
 call conda activate olca_py311
 if errorlevel 1 (
-    echo 错误: 无法激活olca_py311环境
-    echo 请确保已正确安装Conda环境
+    echo Error: Failed to activate olca_py311 environment
+    echo Please ensure the Conda environment is installed correctly
     pause
     exit /b 1
 )
 
 echo.
-echo 步骤2: 检查openLCA连接...
-echo 请确保：
-echo - openLCA软件正在运行
-echo - IPC服务器已启用（开发者工具 → IPC服务器）
-echo - IPC服务器端口设置为8080
+echo Step 2: Checking openLCA connection...
+echo Please ensure:
+echo - openLCA software is running
+echo - IPC server is enabled (Developer Tools → IPC Server)
+echo - IPC server port is set to 8080
 echo.
-set /p continue="确认openLCA已准备就绪？(y/n): "
+set /p continue="Confirm openLCA is ready? (y/n): "
 if /i not "%continue%"=="y" (
-    echo 取消启动
+    echo Startup cancelled
     pause
     exit /b 0
 )
 
 echo.
-echo 步骤3: 运行数据库迁移...
+echo Step 3: Running database migration...
 python migrate_lca_integration.py
 if errorlevel 1 (
-    echo 错误: 数据库迁移失败
+    echo Error: Database migration failed
     pause
     exit /b 1
 )
 
 echo.
-echo 步骤4: 启动LCA集成网站...
-echo 网站将在 http://localhost:8081 启动
-echo 按 Ctrl+C 可停止服务器
+echo Step 4: Starting LCA integration website...
+echo Website will start at http://localhost:8081
+echo Press Ctrl+C to stop the server
 echo.
 python app.py
 

@@ -52,13 +52,13 @@ class AsyncLCAService:
         self.last_port_check_at = None
 
         self.analysis_steps = {
-            1: {"name": "Step 1: 连接openLCA服务器", "progress": 10},
-            2: {"name": "Step 2: 解析Excel文件", "progress": 20},
-            3: {"name": "Step 3: 创建LCA流程", "progress": 35},
-            4: {"name": "Step 4: 建立流程关系", "progress": 50},
-            5: {"name": "Step 5: 创建产品系统", "progress": 70},
-            6: {"name": "Step 6: 运行影响评估", "progress": 85},
-            7: {"name": "Step 7: 保存分析结果", "progress": 100},
+            1: {"name": "Step 1: Connect to openLCA server", "progress": 10},
+            2: {"name": "Step 2: Parse Excel file", "progress": 20},
+            3: {"name": "Step 3: Create LCA processes", "progress": 35},
+            4: {"name": "Step 4: Establish process relationships", "progress": 50},
+            5: {"name": "Step 5: Create product system", "progress": 70},
+            6: {"name": "Step 6: Run impact assessment", "progress": 85},
+            7: {"name": "Step 7: Save analysis results", "progress": 100},
         }
 
         self._start_worker_pool()
@@ -428,10 +428,10 @@ class AsyncLCAService:
             lca_result.error_message = task_info.get("error")
 
             original_result = task_info.get("result")
-            print(f"🔍 异步任务 {task_id}: 原始结果类型: {type(original_result)}")
+            print(f"🔍 Async task {task_id}: original result type: {type(original_result)}")
             if original_result:
                 print(
-                    f"🔍 异步任务 {task_id}: 原始结果键: {list(original_result.keys()) if isinstance(original_result, dict) else 'Not a dict'}"
+                    f"🔍 Async task {task_id}: original result keys: {list(original_result.keys()) if isinstance(original_result, dict) else 'Not a dict'}"
                 )
 
             safe_result_str = json.dumps(
@@ -439,20 +439,20 @@ class AsyncLCAService:
             )
             safe_result = json.loads(safe_result_str)
 
-            print(f"🔍 异步任务 {task_id}: 序列化后结果类型: {type(safe_result)}")
+            print(f"🔍 Async task {task_id}: serialized result type: {type(safe_result)}")
             if safe_result and isinstance(safe_result, dict):
                 print(
-                    f"🔍 异步任务 {task_id}: 序列化后结果键: {list(safe_result.keys())}"
+                    f"🔍 Async task {task_id}: serialized result keys: {list(safe_result.keys())}"
                 )
 
             if safe_result and isinstance(safe_result, dict):
                 basic_results = safe_result.get("basic_results", {})
                 print(
-                    f"🔍 异步任务 {task_id}: basic_results类型: {type(basic_results)}"
+                    f"🔍 Async task {task_id}: basic_results type: {type(basic_results)}"
                 )
                 if basic_results:
                     print(
-                        f"🔍 异步任务 {task_id}: basic_results内容: {list(basic_results.keys()) if isinstance(basic_results, dict) else basic_results}"
+                        f"🔍 Async task {task_id}: basic_results content: {list(basic_results.keys()) if isinstance(basic_results, dict) else basic_results}"
                     )
                     flows = basic_results.get("flows", [])
                     processes = basic_results.get("processes", [])
@@ -462,7 +462,7 @@ class AsyncLCAService:
                     lca_result.processes_count = len(processes)
                     lca_result.product_systems_count = len(systems)
                     print(
-                        f"✅ 异步任务 {task_id}: 提取统计信息 flows={lca_result.flows_count}, processes={lca_result.processes_count}, systems={lca_result.product_systems_count}"
+                        f"✅ Async task {task_id}: extracted stats flows={lca_result.flows_count}, processes={lca_result.processes_count}, systems={lca_result.product_systems_count}"
                     )
                 else:
 
@@ -470,14 +470,14 @@ class AsyncLCAService:
                     lca_result.processes_count = 0
                     lca_result.product_systems_count = 0
                     print(
-                        f"⚠️ 异步任务 {task_id}: basic_results为空或不存在，设置统计信息为0"
+                        f"⚠️ Async task {task_id}: basic_results empty or missing, setting stats to 0"
                     )
             else:
 
                 lca_result.flows_count = 0
                 lca_result.processes_count = 0
                 lca_result.product_systems_count = 0
-                print(f"⚠️ 异步任务 {task_id}: 结果数据格式异常，设置统计信息为0")
+                print(f"⚠️ Async task {task_id}: result data format invalid, setting stats to 0")
 
             if safe_result and isinstance(safe_result, dict):
 
@@ -492,15 +492,15 @@ class AsyncLCAService:
                     analysis_details_to_save["basic_results"] = safe_result[
                         "basic_results"
                     ]
-                    print(f"✅ 异步任务 {task_id}: 保存basic_results")
+                    print(f"✅ Async task {task_id}: saving basic_results")
 
                 if "comprehensive_results" in safe_result:
                     analysis_details_to_save["comprehensive_results"] = safe_result[
                         "comprehensive_results"
                     ]
-                    print(f"✅ 异步任务 {task_id}: 保存comprehensive_results")
+                    print(f"✅ Async task {task_id}: saving comprehensive_results")
                 else:
-                    print(f"⚠️ 异步任务 {task_id}: 结果中没有comprehensive_results")
+                    print(f"⚠️ Async task {task_id}: no comprehensive_results in result")
 
                 if "details" in safe_result:
                     analysis_details_to_save["details"] = safe_result["details"]
@@ -509,13 +509,13 @@ class AsyncLCAService:
                     analysis_details_to_save["timing_breakdown"] = safe_result[
                         "timing_breakdown"
                     ]
-                    print(f"✅ 异步任务 {task_id}: 保存timing_breakdown")
+                    print(f"✅ Async task {task_id}: saving timing_breakdown")
 
                 lca_result.analysis_details = json.dumps(
                     analysis_details_to_save, ensure_ascii=False, default=str
                 )
                 print(
-                    f"🔍 异步任务 {task_id}: 保存的数据键: {list(analysis_details_to_save.keys())}"
+                    f"🔍 Async task {task_id}: saved data keys: {list(analysis_details_to_save.keys())}"
                 )
             else:
 
@@ -528,7 +528,7 @@ class AsyncLCAService:
                     ensure_ascii=False,
                     default=str,
                 )
-                print(f"⚠️ 异步任务 {task_id}: 结果数据无效，只保存基本信息")
+                print(f"⚠️ Async task {task_id}: invalid result data, saving basic info only")
 
             session.commit()
             print(

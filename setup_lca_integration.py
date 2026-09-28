@@ -5,31 +5,31 @@ import shutil
 
 def setup_lca_integration():
 
-    print("🔧 设置LCA集成环境...")
+    print("🔧 Setting up LCA integration environment...")
 
     project_root = os.path.dirname(os.path.abspath(__file__))
     lca_package_dir = os.path.join(project_root, "lca_package")
     lca_website_dir = os.path.join(project_root, "lca_website")
 
-    print(f"📁 项目根目录: {project_root}")
-    print(f"📁 LCA包目录: {lca_package_dir}")
-    print(f"📁 网站目录: {lca_website_dir}")
+    print(f"📁 Project root: {project_root}")
+    print(f"📁 LCA package directory: {lca_package_dir}")
+    print(f"📁 Website directory: {lca_website_dir}")
 
     if not os.path.exists(lca_package_dir):
-        print("❌ lca_package目录不存在")
+        print("❌ lca_package directory does not exist")
         return False
 
     if not os.path.exists(lca_website_dir):
-        print("❌ lca_website目录不存在")
+        print("❌ lca_website directory does not exist")
         return False
 
     website_lca_package = os.path.join(lca_website_dir, "lca_package")
 
     if os.path.exists(website_lca_package):
-        print("🗑️ 删除现有的lca_package副本...")
+        print("🗑️ Removing existing lca_package copy...")
         shutil.rmtree(website_lca_package)
 
-    print("📋 复制lca_package到网站目录...")
+    print("📋 Copying lca_package to website directory...")
     shutil.copytree(lca_package_dir, website_lca_package)
 
     init_file = os.path.join(website_lca_package, "__init__.py")
@@ -37,7 +37,7 @@ def setup_lca_integration():
         with open(init_file, "w") as f:
             f.write("# LCA Package\n")
 
-    print("✅ LCA包复制完成")
+    print("✅ LCA package copy complete")
 
     lca_service_file = os.path.join(lca_website_dir, "lca_service.py")
 
@@ -52,7 +52,7 @@ def setup_lca_integration():
     with open(lca_service_file, "w", encoding="utf-8") as f:
         f.write(updated_content)
 
-    print("✅ lca_service.py已更新")
+    print("✅ lca_service.py updated")
 
     os.chdir(lca_website_dir)
     sys.path.insert(0, lca_website_dir)
@@ -61,18 +61,18 @@ def setup_lca_integration():
         from lca_service import lca_service
 
         status = lca_service.get_system_status()
-        print("✅ LCA服务测试成功")
-        print(f"系统状态: {status}")
+        print("✅ LCA service test succeeded")
+        print(f"System status: {status}")
         return True
     except Exception as e:
-        print(f"❌ LCA服务测试失败: {e}")
+        print(f"❌ LCA service test failed: {e}")
         return False
 
 
 if __name__ == "__main__":
     success = setup_lca_integration()
     if success:
-        print("\n🎉 LCA集成设置完成！")
-        print("现在可以运行完整的LCA分析功能")
+        print("\n🎉 LCA integration setup complete!")
+        print("You can now run full LCA analysis features")
     else:
-        print("\n💥 设置失败，请检查错误信息")
+        print("\n💥 Setup failed, please check the error messages")

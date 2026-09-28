@@ -11,7 +11,7 @@ def create_upstream_system(
         temp_system_ref = client.create_product_system(provider_ref, linking_config)
         return client.get(o.ProductSystem, temp_system_ref.id)
     except Exception as e:
-        print(f"✗ 创建上游系统失败: {e}")
+        print(f"✗ Failed to create upstream system: {e}")
         return None
 
 
@@ -23,11 +23,11 @@ def merge_upstream_systems_into_original(
     cutoff: float = None,
 ):
 
-    print("步骤 6.1：获取原系统")
+    print("Step 6.1: Get original system")
     try:
         original_system = client.get(o.ProductSystem, system_uuid)
         if not original_system:
-            raise Exception(f"找不到系统 {system_uuid}")
+            raise Exception(f"System not found: {system_uuid}")
 
         original_processes = (
             list(original_system.processes) if original_system.processes else []
@@ -37,10 +37,10 @@ def merge_upstream_systems_into_original(
         )
 
         print(
-            f"✓ {original_system.name} - 过程:{len(original_processes)}, 连接:{len(original_links)}"
+            f"✓ {original_system.name} - processes:{len(original_processes)}, links:{len(original_links)}"
         )
     except Exception as e:
-        print(f"✗ 获取原系统失败: {e}")
+        print(f"✗ Failed to get original system: {e}")
         return None
 
     if linking_config is None:
@@ -51,9 +51,9 @@ def merge_upstream_systems_into_original(
 
     if cutoff is not None:
         linking_config.cutoff = cutoff
-        print(f"  ✓ 截断阈值: {cutoff * 100}%（贡献度低于此值的上游链将被截断）")
+        print(f"  ✓ Cutoff threshold: {cutoff * 100}% (upstream chains below this contribution will be truncated)")
 
-    print(f"\n步骤 6.2：创建 {len(upstream_provider_uuids)} 个上游系统")
+    print(f"\nStep 6.2: Create {len(upstream_provider_uuids)} upstream systems")
 
     all_upstream_systems = []
 
@@ -79,7 +79,7 @@ def merge_upstream_systems_into_original(
                     else 0
                 )
                 print(
-                    f"  [{i}/{len(upstream_provider_uuids)}] ✓ {provider_name}: {proc_count}过程, {link_count}连接"
+                    f"  [{i}/{len(upstream_provider_uuids)}] ✓ {provider_name}: {proc_count} processes, {link_count} links"
                 )
 
                 all_upstream_systems.append(
@@ -91,18 +91,18 @@ def merge_upstream_systems_into_original(
                 )
             else:
                 print(
-                    f"  [{i}/{len(upstream_provider_uuids)}] ✗ {provider_name[:20]}: 创建失败"
+                    f"  [{i}/{len(upstream_provider_uuids)}] ✗ {provider_name[:20]}: creation failed"
                 )
 
         except Exception as e:
-            print(f"  [{i}/{len(upstream_provider_uuids)}] ✗ 处理失败: {e}")
+            print(f"  [{i}/{len(upstream_provider_uuids)}] ✗ Processing failed: {e}")
             continue
 
     if not all_upstream_systems:
-        print("✗ 没有成功创建任何上游系统")
+        print("✗ No upstream systems were created successfully")
         return None
 
-    print("\n步骤 6.3：合并上游系统")
+    print("\nStep 6.3: Merge upstream systems")
 
     merged_processes_dict = {p.id: p for p in original_processes}
     merged_links_dict = {}
@@ -145,18 +145,18 @@ def merge_upstream_systems_into_original(
     merged_links = list(merged_links_dict.values())
 
     print(
-        f"✓ 合并完成: {len(original_processes)}→{len(merged_processes)}过程, {len(original_links)}→{len(merged_links)}连接"
+        f"✓ Merge completed: {len(original_processes)}→{len(merged_processes)} processes, {len(original_links)}→{len(merged_links)} links"
     )
     if duplicate_link_count > 0:
         print(
-            f"ℹ️ ProcessLink 去重数量: {duplicate_link_count}（按 process/provider/exchange/flow 复合键）"
+            f"ℹ️ ProcessLink duplicates removed: {duplicate_link_count} (by process/provider/exchange/flow composite key)"
         )
     if skipped_self_loop_links > 0:
         print(
-            f"ℹ️ ProcessLink 自环过滤数量: {skipped_self_loop_links}（process.id == provider.id）"
+            f"ℹ️ ProcessLink self-loops filtered: {skipped_self_loop_links} (process.id == provider.id)"
         )
 
-    print("\n步骤 6.4：保存系统")
+    print("\nStep 6.4: Save system")
     try:
         original_system.processes = merged_processes
         original_system.process_links = merged_links
@@ -167,25 +167,25 @@ def merge_upstream_systems_into_original(
         upstream_names = ", ".join(
             [info["provider_name"] for info in all_upstream_systems]
         )
-        update_msg = f"\n[增量更新于 {update_time}，添加上游供应链: {upstream_names}]"
+        update_msg = f"\n[Incremental update at {update_time}, added upstream supply chains: {upstream_names}]"
         original_system.description = (original_system.description or "") + update_msg
 
         client.put(original_system)
-        print(f"✓ 已保存: {original_system.name}")
+        print(f"✓ Saved: {original_system.name}")
     except Exception as e:
-        print(f"✗ 保存失败: {e}")
+        print(f"✗ Save failed: {e}")
         return None
 
-    print("\n步骤 6.5：清理临时系统")
+    print("\nStep 6.5: Clean up temporary systems")
     for upstream_info in all_upstream_systems:
         try:
             temp_ref = o.Ref(
                 id=upstream_info["system"].id, ref_type=o.RefType.ProductSystem
             )
             client.delete(temp_ref)
-            print(f"  ✓ 已删除: {upstream_info['provider_name']}")
+            print(f"  ✓ Deleted: {upstream_info['provider_name']}")
         except Exception:
-            print(f"  ⚠️ 删除失败: {upstream_info['provider_name']}")
+            print(f"  ⚠️ Delete failed: {upstream_info['provider_name']}")
 
     return o.Ref(
         id=original_system.id,
@@ -224,16 +224,16 @@ def main():
     CUTOFF = 0.05
 
     print("=" * 70)
-    print("合并上游供应链到产品系统")
+    print("Merge upstream supply chains into product system")
     print("=" * 70)
-    print(f"\n配置信息:")
-    print(f"  - 目标系统: {system_uuid}")
-    print(f"  - 上游供应商数量: {len(upstream_provider_uuids)}")
+    print(f"\nConfiguration:")
+    print(f"  - Target system: {system_uuid}")
+    print(f"  - Upstream provider count: {len(upstream_provider_uuids)}")
     if CUTOFF is not None:
-        print(f"  - 截断阈值: {CUTOFF * 100}% (减少系统复杂度)")
-        print(f"    说明: 贡献度低于{CUTOFF * 100}%的上游链将被截断")
+        print(f"  - Cutoff threshold: {CUTOFF * 100}% (reduce system complexity)")
+        print(f"    Note: upstream chains with contribution below {CUTOFF * 100}% will be truncated")
     else:
-        print(f"  - 截断阈值: 未设置 (展开所有上游链)")
+        print(f"  - Cutoff threshold: not set (expand all upstream chains)")
     print()
 
     linking_config = o.LinkingConfig(
@@ -251,10 +251,10 @@ def main():
 
     if result:
         print(f"\n{'='*70}")
-        print(f"✓ 合并完成: {result.name}")
+        print(f"✓ Merge completed: {result.name}")
         print("=" * 70)
     else:
-        print("\n✗ 合并失败")
+        print("\n✗ Merge failed")
 
 
 if __name__ == "__main__":

@@ -4,8 +4,8 @@ from typing import Dict, List, Optional, Tuple
 
 STANDARD_LIFECYCLE_STAGES = {
     "overall": {
-        "name": "总体环节",
-        "description": "代表整个产品生命周期的系统级过程，不属于单一环节",
+        "name": "Overall stage",
+        "description": "System-level process representing the entire product life cycle, not belonging to a single stage",
         "keywords": [
             "life cycle",
             "lifecycle",
@@ -15,73 +15,94 @@ STANDARD_LIFECYCLE_STAGES = {
             "complete",
             "entire",
             "whole",
-            "全生命周期",
-            "整体",
-            "系统",
-            "总体",
         ],
     },
     "raw_material": {
-        "name": "原材料获取",
-        "description": "包括原材料的开采、提取、初加工等活动",
+        "name": "Raw material acquisition",
+        "description": "Includes raw material extraction, mining, and primary processing activities",
         "keywords": [
-            "开采",
-            "提取",
-            "采矿",
-            "林业",
-            "农业",
-            "原料",
-            "矿石",
-            "木材",
-            "石油",
-            "天然气",
+            "extraction",
+            "extract",
+            "mining",
+            "forestry",
+            "agriculture",
+            "feedstock",
+            "ore",
+            "timber",
+            "petroleum",
+            "natural gas",
         ],
     },
     "production": {
-        "name": "生产制造",
-        "description": "产品的加工、制造、组装等生产活动",
+        "name": "Manufacturing",
+        "description": "Product processing, manufacturing, assembly, and other production activities",
         "keywords": [
-            "生产",
-            "制造",
-            "加工",
-            "组装",
-            "合成",
-            "成型",
-            "铸造",
-            "锻造",
-            "焊接",
-            "注塑",
+            "production",
+            "manufacturing",
+            "processing",
+            "assembly",
+            "synthesis",
+            "forming",
+            "casting",
+            "forging",
+            "welding",
+            "injection molding",
         ],
     },
     "transport": {
-        "name": "运输配送",
-        "description": "产品或物料的运输、物流、配送活动",
+        "name": "Transport and distribution",
+        "description": "Transport, logistics, and distribution of products or materials",
         "keywords": [
-            "运输",
-            "物流",
-            "配送",
-            "交通",
-            "货运",
-            "船运",
-            "空运",
-            "铁路",
-            "公路",
+            "transport",
+            "logistics",
+            "distribution",
+            "traffic",
+            "freight",
+            "shipping",
+            "air freight",
+            "rail",
+            "road",
         ],
     },
     "use": {
-        "name": "使用阶段",
-        "description": "产品在使用过程中的能源消耗、维护等活动",
-        "keywords": ["使用", "运行", "操作", "维护", "保养", "消耗", "电力", "燃料"],
+        "name": "Use stage",
+        "description": "Energy consumption, maintenance, and related activities during product use",
+        "keywords": [
+            "use",
+            "operation",
+            "operate",
+            "maintenance",
+            "upkeep",
+            "consumption",
+            "electricity",
+            "fuel",
+        ],
     },
     "disposal": {
-        "name": "废弃处理",
-        "description": "产品废弃后的处理、处置活动,如填埋、焚烧等",
-        "keywords": ["废弃", "处理", "处置", "填埋", "焚烧", "垃圾", "废物", "销毁"],
+        "name": "End-of-life treatment",
+        "description": "Treatment and disposal after product discard, such as landfill or incineration",
+        "keywords": [
+            "disposal",
+            "treatment",
+            "landfill",
+            "incineration",
+            "waste",
+            "refuse",
+            "destruction",
+        ],
     },
     "recycling": {
-        "name": "回收再利用",
-        "description": "产品或材料的回收、再生、循环利用活动",
-        "keywords": ["回收", "再生", "循环", "重复使用", "再制造", "翻新", "回用"],
+        "name": "Recycling and reuse",
+        "description": "Recovery, regeneration, and recycling of products or materials",
+        "keywords": [
+            "recycling",
+            "recovery",
+            "regeneration",
+            "circular",
+            "reuse",
+            "remanufacturing",
+            "refurbishment",
+        ],
     },
 }
 
@@ -105,31 +126,31 @@ def match_lifecycle_stage_with_llm(
             [f"{i+1}. {name}" for i, name in enumerate(process_names)]
         )
 
-        prompt = f"""你是一个专业的LCA(生命周期评估)专家。请为以下过程匹配最合适的生命周期环节。
+        prompt = f"""You are a professional LCA (Life Cycle Assessment) expert. Match each process below to the most appropriate life-cycle stage.
 
-可选的生命周期环节:
+Available life-cycle stages:
 {stages_desc}
 
-需要匹配的过程列表:
+Processes to match:
 {processes_list}
 
-请以JSON格式返回结果,格式如下:
+Return the result in JSON with this format:
 {{
     "matches": [
         {{
-            "process": "过程名称",
-            "stage": "环节代码(如raw_material)",
+            "process": "process name",
+            "stage": "stage code (e.g. raw_material)",
             "confidence": 0.95,
-            "reasoning": "匹配理由"
+            "reasoning": "matching rationale"
         }}
     ]
 }}
 
-要求:
-1. confidence是0-1之间的小数,表示匹配的置信度
-2. reasoning简要说明为什么选择这个环节
-3. 每个过程必须匹配一个环节
-4. 只返回JSON,不要返回其他文本
+Requirements:
+1. confidence is a decimal between 0 and 1 indicating match confidence
+2. reasoning briefly explains why this stage was chosen
+3. every process must be matched to one stage
+4. return JSON only, with no other text
 """
 
         response = client.chat.completions.create(
@@ -137,7 +158,7 @@ def match_lifecycle_stage_with_llm(
             messages=[
                 {
                     "role": "system",
-                    "content": "你是专业的LCA专家,请准确地为过程匹配生命周期环节。",
+                    "content": "You are a professional LCA expert. Accurately match processes to life-cycle stages.",
                 },
                 {"role": "user", "content": prompt},
             ],
@@ -181,7 +202,7 @@ def fallback_rule_based_matching(process_names: List[str]) -> Dict[str, Dict]:
         process_lower = process.lower()
         matched_stage = "production"
         confidence = 0.3
-        reasoning = "基于规则的默认匹配"
+        reasoning = "Rule-based default match"
 
         max_score = 0
         for stage_key, stage_info in STANDARD_LIFECYCLE_STAGES.items():
@@ -197,10 +218,10 @@ def fallback_rule_based_matching(process_names: List[str]) -> Dict[str, Dict]:
                 matched_stage = stage_key
                 if matched_keywords:
                     confidence = min(0.7, 0.3 + score * 0.1)
-                    reasoning = f"包含关键词: {', '.join(matched_keywords)}"
+                    reasoning = f"Contains keywords: {', '.join(matched_keywords)}"
                 else:
                     confidence = 0.3
-                    reasoning = "基于规则的默认匹配"
+                    reasoning = "Rule-based default match"
 
         matches[process] = {
             "stage": matched_stage,

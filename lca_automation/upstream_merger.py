@@ -23,12 +23,12 @@ class UpstreamMerger:
     ) -> Optional[o.Ref]:
 
         if not upstream_provider_uuids:
-            print("⚠️ 没有提供上游provider UUIDs，跳过上游合并")
+            print("⚠️ No upstream provider UUIDs provided; skipping upstream merge")
             return None
 
-        print(f"\n🔗 开始上游供应链合并...")
-        print(f"  - 产品系统UUID: {system_uuid}")
-        print(f"  - 上游Providers数量: {len(upstream_provider_uuids)}")
+        print(f"\n🔗 Starting upstream supply-chain merge...")
+        print(f"  - Product system UUID: {system_uuid}")
+        print(f"  - Upstream provider count: {len(upstream_provider_uuids)}")
 
         if linking_config is None:
             linking_config = o.LinkingConfig(
@@ -39,7 +39,7 @@ class UpstreamMerger:
         cutoff_value = CUTOFF_THRESHOLD
         if cutoff_value is not None:
             print(
-                f"  ✓ 应用截断阈值: {cutoff_value * 100}%（贡献度低于此值的上游链将被截断）"
+                f"  ✓ Applying cutoff threshold: {cutoff_value * 100}% (upstream chains below this contribution will be truncated)"
             )
 
         result = merge_upstream_systems_into_original(
@@ -51,9 +51,9 @@ class UpstreamMerger:
         )
 
         if result:
-            print(f"\n✅ 上游供应链合并完成: {result.name}")
+            print(f"\n✅ Upstream supply-chain merge completed: {result.name}")
         else:
-            print(f"\n✗ 上游供应链合并失败")
+            print(f"\n✗ Upstream supply-chain merge failed")
 
         return result
 
@@ -77,7 +77,7 @@ class UpstreamMerger:
 
 if __name__ == "__main__":
 
-    print("UpstreamMerger模块 - 用于合并上游供应链")
-    print("使用示例:")
+    print("UpstreamMerger module - merge upstream supply chains")
+    print("Usage example:")
     print("  merger = UpstreamMerger(client)")
     print("  result = merger.merge_upstream_chains(system_uuid, provider_uuids)")

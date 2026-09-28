@@ -18,7 +18,7 @@ ok()   { printf '\033[0;32m%s\033[0m\n' "$*"; }
 warn() { printf '\033[0;33m%s\033[0m\n' "$*"; }
 err()  { printf '\033[0;31m%s\033[0m\n' "$*"; }
 
-echo "停止 openLCA IPC 服务器（端口 ${PORT}）…"
+echo "Stopping openLCA IPC server (port ${PORT})…"
 
 # Collect every candidate PID before shutdown (closing the DB via RPC frees the port):
 #   - the process recorded in the PID file
@@ -45,7 +45,7 @@ for PID in $PIDS; do
     sleep 1
   done
   if kill -0 "$PID" 2>/dev/null; then
-    warn "进程未响应，强制结束 PID $PID"
+    warn "Process did not respond; force-killing PID $PID"
     kill -9 "$PID" 2>/dev/null || true
   fi
 done
@@ -54,14 +54,14 @@ rm -f "$PID_FILE"
 # 3) Fallback: check once more for a process still listening on the port
 LEFT="$(lsof -nP -tiTCP:"$PORT" -sTCP:LISTEN 2>/dev/null || true)"
 if [ -n "$LEFT" ]; then
-  warn "清理端口 $PORT 上的残留进程：$LEFT"
+  warn "Cleaning residual process(es) on port $PORT: $LEFT"
   kill $LEFT 2>/dev/null || true
   sleep 1
 fi
 
 if lsof -nP -iTCP:"$PORT" -sTCP:LISTEN >/dev/null 2>&1; then
-  err "❌ 端口 $PORT 仍被占用，请手动检查。"
+  err "❌ Port $PORT is still in use; please check manually."
   exit 1
 fi
 
-ok "✅ 服务器已停止，数据库已释放。现在可在 openLCA 图形界面中打开该数据库查看结果。"
+ok "✅ Server stopped and database released. You can now open this database in the openLCA GUI to view results."

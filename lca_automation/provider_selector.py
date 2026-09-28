@@ -38,15 +38,15 @@ class ProviderSelector:
         if excel_provider:
             provider_ref = self._find_excel_provider(excel_provider)
             if provider_ref:
-                print(f"    🎯 使用Excel指定的Provider: {excel_provider}")
+                print(f"    🎯 Using Excel-specified provider: {excel_provider}")
                 return provider_ref, 0.0
-            print(f"    ⚠️ Excel指定的Provider未找到: {excel_provider}")
+            print(f"    ⚠️ Excel-specified provider not found: {excel_provider}")
 
         if not candidates or len(candidates) == 0:
             return None, 0.0
 
         if len(candidates) == 1:
-            print(f"    ✓ 仅一个候选Provider: {candidates[0].name}")
+            print(f"    ✓ Only one candidate provider: {candidates[0].name}")
             return candidates[0], 0.0
 
         provider_ref, metadata = self._select_by_semantic_similarity(
@@ -55,13 +55,13 @@ class ProviderSelector:
         if provider_ref:
             score = metadata.get("semantic_score", 0.0)
             print(
-                f"    ✓ 语义匹配选择Provider: {provider_ref.name} "
+                f"    ✓ Selected provider by semantic match: {provider_ref.name} "
                 f"(score={score:.3f})"
             )
             return provider_ref, 0.0
 
         default_provider = candidates[0]
-        print(f"    ✓ 使用默认Provider: {default_provider.name}")
+        print(f"    ✓ Using default provider: {default_provider.name}")
         return default_provider, 0.0
 
     def _select_by_semantic_similarity(
@@ -122,14 +122,14 @@ class ProviderSelector:
             return None
 
         except Exception as e:
-            print(f"    ⚠️ 查找Provider时出错: {e}")
+            print(f"    ⚠️ Error looking up provider: {e}")
             return None
 
     def select_providers_for_case(
         self, lca_case: LCACase, flow_refs: Dict[str, o.Ref]
     ) -> Dict[str, Any]:
 
-        print(f"\n🎯 开始为 {len(lca_case.processes)} 个Processes选择Providers...")
+        print(f"\n🎯 Selecting providers for {len(lca_case.processes)} processes...")
 
         provider_results = {
             "providers": {},
@@ -178,8 +178,8 @@ class ProviderSelector:
             "default_selections": total_selections,
         }
 
-        print(f"\n✅ Provider选择完成:")
-        print(f"  - 总选择数: {total_selections}")
+        print(f"\n✅ Provider selection completed:")
+        print(f"  - Total selections: {total_selections}")
 
         return provider_results
 
@@ -193,7 +193,7 @@ class ProviderSelector:
                     valid_providers.append(provider)
             return valid_providers
         except Exception as e:
-            print(f"    ⚠️ 获取候选providers时出错: {e}")
+            print(f"    ⚠️ Error getting candidate providers: {e}")
             return []
 
     def get_upstream_provider_uuids(
@@ -208,9 +208,9 @@ class ProviderSelector:
                 provider_uuids.append(provider_ref.id)
 
         provider_uuids = list(set(provider_uuids))
-        print(f"\n🔗 找到 {len(provider_uuids)} 个唯一的上游Providers")
+        print(f"\n🔗 Found {len(provider_uuids)} unique upstream providers")
         return provider_uuids
 
 
 if __name__ == "__main__":
-    print("ProviderSelector模块 - 使用语义匹配选择Provider")
+    print("ProviderSelector module - select providers via semantic matching")

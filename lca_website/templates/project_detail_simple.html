@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ project.name }} - 项目详情{% endblock %}
+{% block title %}{{ project.name }} - Project Details{% endblock %}
 
 {% block content %}
 <div class="project-detail-container">
@@ -8,64 +8,64 @@
         <div class="project-title">
             <h1>{{ project.name }}</h1>
             <span class="project-status status-{{ project.status }}">
-                {{ {'active': '进行中', 'completed': '已完成', 'archived': '已归档'}[project.status] }}
+                {{ {'active': 'In Progress', 'completed': 'Completed', 'archived': 'Archived'}[project.status] }}
             </span>
         </div>
         <div class="project-actions">
-            <a href="{{ url_for('edit_project', project_id=project.id) }}" class="btn btn-outline">编辑项目</a>
-            <a href="{{ url_for('dashboard') }}" class="btn btn-outline">返回仪表板</a>
+            <a href="{{ url_for('edit_project', project_id=project.id) }}" class="btn btn-outline">Edit Project</a>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-outline">Back to Dashboard</a>
         </div>
     </div>
 
     <div class="project-info">
         <div class="info-card">
-            <h3>项目信息</h3>
+            <h3>Project Information</h3>
             <div class="info-item">
-                <span class="info-label">创建时间:</span>
+                <span class="info-label">Created At:</span>
                 <span class="info-value">{{ project.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
             </div>
             <div class="info-item">
-                <span class="info-label">最后更新:</span>
+                <span class="info-label">Last Updated:</span>
                 <span class="info-value">{{ project.updated_at.strftime('%Y-%m-%d %H:%M') }}</span>
             </div>
             <div class="info-item">
-                <span class="info-label">项目描述:</span>
-                <span class="info-value">{{ project.description or '暂无描述' }}</span>
+                <span class="info-label">Project Description:</span>
+                <span class="info-value">{{ project.description or 'No description' }}</span>
             </div>
         </div>
     </div>
 
     <div class="excel-upload-section">
-        <h3>上传LCI Excel文件</h3>
+        <h3>Upload LCI Excel File</h3>
         <form method="POST" action="{{ url_for('upload_excel', project_id=project.id) }}" enctype="multipart/form-data" class="inline-upload-form" id="uploadForm">
             <div class="upload-form-content">
                 <div class="file-input-group">
                     <input type="file" id="excel_file" name="excel_file" accept=".xlsx,.xls" required>
-                    <label for="excel_file" class="file-label">选择Excel文件</label>
+                    <label for="excel_file" class="file-label">Select Excel File</label>
                 </div>
                 <button type="submit" class="btn btn-primary" id="uploadBtn">
-                    <span class="btn-text">上传并分析</span>
-                    <span class="btn-loading" style="display: none;">上传中...</span>
+                    <span class="btn-text">Upload and Analyze</span>
+                    <span class="btn-loading" style="display: none;">Uploading...</span>
                 </button>
             </div>
-            <small class="form-help">支持 .xlsx 和 .xls 格式，文件大小不超过10MB</small>
+            <small class="form-help">Supports .xlsx and .xls formats, max file size 10MB</small>
 
             
             <div id="uploadStatus" class="upload-status" style="display: none;">
                 <div class="status-item">
                     <span class="status-icon">📤</span>
-                    <span class="status-text">文件上传中...</span>
+                    <span class="status-text">Uploading file...</span>
                 </div>
                 <div class="status-item" id="analysisStatus" style="display: none;">
                     <span class="status-icon">🤖</span>
-                    <span class="status-text">AI分析中...</span>
+                    <span class="status-text">AI analyzing...</span>
                 </div>
             </div>
         </form>
     </div>
 
     <div class="excel-files-section">
-        <h3>已上传的Excel文件</h3>
+        <h3>Uploaded Excel Files</h3>
         {% if project.excel_files %}
             <div class="files-grid">
                 {% for file in project.excel_files %}
@@ -79,26 +79,26 @@
                     </div>
 
                     <div class="file-meta">
-                        <span class="upload-time">上传时间: {{ file.upload_time.strftime('%Y-%m-%d %H:%M') }}</span>
+                        <span class="upload-time">Upload time: {{ file.upload_time.strftime('%Y-%m-%d %H:%M') }}</span>
                         {% if file.analysis_time %}
-                            <span class="analysis-time">分析时间: {{ file.analysis_time.strftime('%Y-%m-%d %H:%M') }}</span>
+                            <span class="analysis-time">Analysis time: {{ file.analysis_time.strftime('%Y-%m-%d %H:%M') }}</span>
                         {% endif %}
                     </div>
 
                     {% if file.llm_analysis %}
                     <div class="llm-analysis">
-                        <h5>AI分析结果:</h5>
+                        <h5>AI Analysis Result:</h5>
                         <div class="analysis-content" data-full-analysis="{{ file.llm_analysis }}">
                             {{ file.llm_analysis[:150] }}{% if file.llm_analysis|length > 150 %}...{% endif %}
                         </div>
-                        <button class="btn btn-outline btn-sm" onclick="showFullAnalysis({{ file.id }})">查看完整分析</button>
+                        <button class="btn btn-outline btn-sm" onclick="showFullAnalysis({{ file.id }})">View Full Analysis</button>
                     </div>
                     {% endif %}
 
                     <div class="file-actions">
-                        <a href="{{ url_for('download_excel', file_id=file.id) }}" class="btn btn-secondary btn-sm">下载</a>
+                        <a href="{{ url_for('download_excel', file_id=file.id) }}" class="btn btn-secondary btn-sm">Download</a>
                         {% if file.llm_analysis %}
-                            <button class="btn btn-primary btn-sm" onclick="showFullAnalysis({{ file.id }})">查看分析</button>
+                            <button class="btn btn-primary btn-sm" onclick="showFullAnalysis({{ file.id }})">View Analysis</button>
                         {% endif %}
                     </div>
                 </div>
@@ -106,8 +106,8 @@
             </div>
         {% else %}
             <div class="empty-state">
-                <p>暂无Excel文件</p>
-                <p>请上传LCI数据文件进行分析</p>
+                <p>No Excel files</p>
+                <p>Please upload an LCI data file for analysis</p>
             </div>
         {% endif %}
     </div>
@@ -115,7 +115,7 @@
     <div id="analysisModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h2>AI分析结果</h2>
+            <h2>AI Analysis Result</h2>
             <div id="modalContent"></div>
         </div>
     </div>
@@ -130,7 +130,7 @@ document.querySelector('.file-label').addEventListener('click', function() {
 });
 
 document.getElementById('excel_file').addEventListener('change', function() {
-    const fileName = this.files[0] ? this.files[0].name : '选择Excel文件';
+    const fileName = this.files[0] ? this.files[0].name : 'Select Excel File';
     document.querySelector('.file-label').textContent = fileName;
 });
 
@@ -176,13 +176,13 @@ function showFullAnalysis(fileId) {
         } else {
             modalContent.innerHTML = `
                 <h3>${fileName}</h3>
-                <p>暂无分析结果</p>
+                <p>No analysis results</p>
             `;
         }
     } else {
         modalContent.innerHTML = `
-            <h3>文件ID: ${fileId}</h3>
-            <p>无法找到文件信息</p>
+            <h3>File ID: ${fileId}</h3>
+            <p>File information not found</p>
         `;
     }
 

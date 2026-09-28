@@ -17,143 +17,143 @@
     <form method="POST" enctype="multipart/form-data" class="boundary-form">
 
         <div class="form-section">
-            <h2>📊 {{ '生命周期模型类型' if get_lang() == 'zh' else 'Life Cycle Model Type' }}</h2>
-            <p class="section-description">{{ '选择产品生命周期评价的范围类型' if get_lang() == 'zh' else 'Select the scope type for product life cycle assessment' }}</p>
+            <h2>📊 {{ 'Life Cycle Model Type' if get_lang() == 'zh' else 'Life Cycle Model Type' }}</h2>
+            <p class="section-description">{{ 'Select the scope type for product life cycle assessment' if get_lang() == 'zh' else 'Select the scope type for product life cycle assessment' }}</p>
 
             <div class="lifecycle-models-grid">
                 <label class="model-card {% if (boundary and boundary.lifecycle_model == 'cradle_to_gate') or not boundary %}selected{% endif %}">
                     <input type="radio" name="lifecycle_model" value="cradle_to_gate" 
                            {% if (boundary and boundary.lifecycle_model == 'cradle_to_gate') or not boundary %}checked{% endif %}>
                     <div class="model-icon">🏭</div>
-                    <div class="model-name">{{ '摇篮到大门' if get_lang() == 'zh' else 'Cradle to Gate' }}</div>
-                    <div class="model-desc">{{ '从原材料获取到出厂门' if get_lang() == 'zh' else 'From raw material extraction to factory gate' }}</div>
+                    <div class="model-name">{{ 'Cradle to Gate' if get_lang() == 'zh' else 'Cradle to Gate' }}</div>
+                    <div class="model-desc">{{ 'From raw material extraction to factory gate' if get_lang() == 'zh' else 'From raw material extraction to factory gate' }}</div>
                 </label>
 
                 <label class="model-card {% if boundary and boundary.lifecycle_model == 'cradle_to_grave' %}selected{% endif %}">
                     <input type="radio" name="lifecycle_model" value="cradle_to_grave"
                            {% if boundary and boundary.lifecycle_model == 'cradle_to_grave' %}checked{% endif %}>
                     <div class="model-icon">♻️</div>
-                    <div class="model-name">{{ '摇篮到坟墓' if get_lang() == 'zh' else 'Cradle to Grave' }}</div>
-                    <div class="model-desc">{{ '完整生命周期（含使用和废弃）' if get_lang() == 'zh' else 'Complete life cycle (including use and disposal)' }}</div>
+                    <div class="model-name">{{ 'Cradle to Grave' if get_lang() == 'zh' else 'Cradle to Grave' }}</div>
+                    <div class="model-desc">{{ 'Complete life cycle (including use and disposal)' if get_lang() == 'zh' else 'Complete life cycle (including use and disposal)' }}</div>
                 </label>
 
                 <label class="model-card {% if boundary and boundary.lifecycle_model == 'gate_to_gate' %}selected{% endif %}">
                     <input type="radio" name="lifecycle_model" value="gate_to_gate"
                            {% if boundary and boundary.lifecycle_model == 'gate_to_gate' %}checked{% endif %}>
                     <div class="model-icon">🚪</div>
-                    <div class="model-name">{{ '大门到大门' if get_lang() == 'zh' else 'Gate to Gate' }}</div>
-                    <div class="model-desc">{{ '仅生产制造环节' if get_lang() == 'zh' else 'Manufacturing process only' }}</div>
+                    <div class="model-name">{{ 'Gate to Gate' if get_lang() == 'zh' else 'Gate to Gate' }}</div>
+                    <div class="model-desc">{{ 'Manufacturing process only' if get_lang() == 'zh' else 'Manufacturing process only' }}</div>
                 </label>
 
                 <label class="model-card {% if boundary and boundary.lifecycle_model == 'cradle_to_cradle' %}selected{% endif %}">
                     <input type="radio" name="lifecycle_model" value="cradle_to_cradle"
                            {% if boundary and boundary.lifecycle_model == 'cradle_to_cradle' %}checked{% endif %}>
                     <div class="model-icon">🔄</div>
-                    <div class="model-name">{{ '摇篮到摇篮' if get_lang() == 'zh' else 'Cradle to Cradle' }}</div>
-                    <div class="model-desc">{{ '循环经济模式（含回收再利用）' if get_lang() == 'zh' else 'Circular economy model (including recycling)' }}</div>
+                    <div class="model-name">{{ 'Cradle to Cradle' if get_lang() == 'zh' else 'Cradle to Cradle' }}</div>
+                    <div class="model-desc">{{ 'Circular economy model (including recycling)' if get_lang() == 'zh' else 'Circular economy model (including recycling)' }}</div>
                 </label>
             </div>
         </div>
 
         <div class="form-section">
-            <h2>📏 {{ '功能单位与参考流' if get_lang() == 'zh' else 'Functional Unit and Reference Flow' }}</h2>
+            <h2>📏 {{ 'Functional Unit and Reference Flow' if get_lang() == 'zh' else 'Functional Unit and Reference Flow' }}</h2>
             <div class="form-row">
                 <div class="form-group">
-                    <label>{{ '功能单位' if get_lang() == 'zh' else 'Functional Unit' }} *</label>
+                    <label>{{ 'Functional Unit' if get_lang() == 'zh' else 'Functional Unit' }} *</label>
                     <input type="text" name="functional_unit" class="form-control" 
-                           placeholder="{{ '例如：1kg产品、1件产品、1m²表面积' if get_lang() == 'zh' else 'e.g., 1kg product, 1 unit, 1m² surface area' }}" 
+                           placeholder="{{ 'e.g., 1kg product, 1 unit, 1m² surface area' if get_lang() == 'zh' else 'e.g., 1kg product, 1 unit, 1m² surface area' }}" 
                            value="{{ boundary.functional_unit if boundary else '' }}" required>
-                    <small class="help-text">{{ '定义产品的计量单位和基准量' if get_lang() == 'zh' else 'Define the measurement unit and reference quantity of the product' }}</small>
+                    <small class="help-text">{{ 'Define the measurement unit and reference quantity of the product' if get_lang() == 'zh' else 'Define the measurement unit and reference quantity of the product' }}</small>
                 </div>
                 <div class="form-group">
-                    <label>{{ '参考流' if get_lang() == 'zh' else 'Reference Flow' }}</label>
+                    <label>{{ 'Reference Flow' if get_lang() == 'zh' else 'Reference Flow' }}</label>
                     <input type="text" name="reference_flow" class="form-control" 
-                           placeholder="{{ '例如：1kg钢材、100kWh电力' if get_lang() == 'zh' else 'e.g., 1kg steel, 100kWh electricity' }}" 
+                           placeholder="{{ 'e.g., 1kg steel, 100kWh electricity' if get_lang() == 'zh' else 'e.g., 1kg steel, 100kWh electricity' }}" 
                            value="{{ boundary.reference_flow if boundary else '' }}">
-                    <small class="help-text">{{ '系统的输出流或主要产品' if get_lang() == 'zh' else 'System output flow or main product' }}</small>
+                    <small class="help-text">{{ 'System output flow or main product' if get_lang() == 'zh' else 'System output flow or main product' }}</small>
                 </div>
             </div>
         </div>
 
         <div class="form-section">
-            <h2>🎯 {{ '系统边界描述' if get_lang() == 'zh' else 'System Boundary Description' }}</h2>
+            <h2>🎯 {{ 'System Boundary Description' if get_lang() == 'zh' else 'System Boundary Description' }}</h2>
             <textarea name="boundary_description" class="form-control" rows="4" 
-                      placeholder="{{ '描述评价的系统边界、包含和排除的内容...' if get_lang() == 'zh' else 'Describe the system boundary, included and excluded content...' }}">{{ boundary.boundary_description if boundary else '' }}</textarea>
+                      placeholder="{{ 'Describe the system boundary, included and excluded content...' if get_lang() == 'zh' else 'Describe the system boundary, included and excluded content...' }}">{{ boundary.boundary_description if boundary else '' }}</textarea>
         </div>
 
         <div class="form-section">
-            <h2>🌍 {{ '地理、时间与技术边界' if get_lang() == 'zh' else 'Geographical, Temporal and Technological Boundaries' }}</h2>
+            <h2>🌍 {{ 'Geographical, Temporal and Technological Boundaries' if get_lang() == 'zh' else 'Geographical, Temporal and Technological Boundaries' }}</h2>
             <div class="form-row">
                 <div class="form-group">
                     <label>{{ t('assessment_boundary', 'geographical_boundary') }}</label>
                     <input type="text" name="geographical_boundary" class="form-control" 
-                           placeholder="{{ '例如：中国、全球、特定地区' if get_lang() == 'zh' else 'e.g., China, Global, Specific region' }}" 
+                           placeholder="{{ 'e.g., China, Global, Specific region' if get_lang() == 'zh' else 'e.g., China, Global, Specific region' }}" 
                            value="{{ boundary.geographical_boundary if boundary else '' }}">
                 </div>
                 <div class="form-group">
                     <label>{{ t('assessment_boundary', 'temporal_boundary') }}</label>
                     <input type="text" name="temporal_boundary" class="form-control" 
-                           placeholder="{{ '例如：2023年数据、近5年平均' if get_lang() == 'zh' else 'e.g., 2023 data, 5-year average' }}" 
+                           placeholder="{{ 'e.g., 2023 data, 5-year average' if get_lang() == 'zh' else 'e.g., 2023 data, 5-year average' }}" 
                            value="{{ boundary.temporal_boundary if boundary else '' }}">
                 </div>
             </div>
             <div class="form-group">
                 <label>{{ t('assessment_boundary', 'technological_boundary') }}</label>
                 <textarea name="technological_boundary" class="form-control" rows="3" 
-                          placeholder="{{ '描述采用的技术水平和工艺...' if get_lang() == 'zh' else 'Describe the technology level and processes used...' }}">{{ boundary.technological_boundary if boundary else '' }}</textarea>
+                          placeholder="{{ 'Describe the technology level and processes used...' if get_lang() == 'zh' else 'Describe the technology level and processes used...' }}">{{ boundary.technological_boundary if boundary else '' }}</textarea>
             </div>
         </div>
 
         <div class="form-section">
-            <h2>✂️ {{ '截断规则' if get_lang() == 'zh' else 'Cut-off Rules' }}</h2>
+            <h2>✂️ {{ 'Cut-off Rules' if get_lang() == 'zh' else 'Cut-off Rules' }}</h2>
             <div class="form-row">
                 <div class="form-group">
-                    <label>{{ '截断阈值（%）' if get_lang() == 'zh' else 'Cut-off Threshold (%)' }}</label>
+                    <label>{{ 'Cut-off Threshold (%)' if get_lang() == 'zh' else 'Cut-off Threshold (%)' }}</label>
                     <input type="number" name="cutoff_threshold" class="form-control" step="0.1" min="0" max="10"
                            placeholder="1.0" value="{{ boundary.cutoff_threshold if boundary else '1.0' }}">
-                    <small class="help-text">{{ '低于此阈值的物流可忽略（通常为1-3%）' if get_lang() == 'zh' else 'Flows below this threshold can be ignored (typically 1-3%)' }}</small>
+                    <small class="help-text">{{ 'Flows below this threshold can be ignored (typically 1-3%)' if get_lang() == 'zh' else 'Flows below this threshold can be ignored (typically 1-3%)' }}</small>
                 </div>
                 <div class="form-group">
-                    <label>{{ '截断标准说明' if get_lang() == 'zh' else 'Cut-off Criteria Description' }}</label>
+                    <label>{{ 'Cut-off Criteria Description' if get_lang() == 'zh' else 'Cut-off Criteria Description' }}</label>
                     <textarea name="cutoff_criteria" class="form-control" rows="3" 
-                              placeholder="{{ '描述截断规则的应用方式和依据...' if get_lang() == 'zh' else 'Describe the application and basis of cut-off rules...' }}">{{ boundary.cutoff_criteria if boundary else '' }}</textarea>
+                              placeholder="{{ 'Describe the application and basis of cut-off rules...' if get_lang() == 'zh' else 'Describe the application and basis of cut-off rules...' }}">{{ boundary.cutoff_criteria if boundary else '' }}</textarea>
                 </div>
             </div>
         </div>
 
         <div class="form-section">
-            <h2>⚖️ {{ '分配方法' if get_lang() == 'zh' else 'Allocation Method' }}</h2>
+            <h2>⚖️ {{ 'Allocation Method' if get_lang() == 'zh' else 'Allocation Method' }}</h2>
             <div class="form-row">
                 <div class="form-group">
-                    <label>{{ '分配方法' if get_lang() == 'zh' else 'Allocation Method' }}</label>
+                    <label>{{ 'Allocation Method' if get_lang() == 'zh' else 'Allocation Method' }}</label>
                     <select name="allocation_method" class="form-control">
-                        <option value="none" {% if boundary and boundary.allocation_method == 'none' %}selected{% endif %}>{{ 'None（无分配）' if get_lang() == 'zh' else 'None (No Allocation)' }}</option>
-                        <option value="mass" {% if (boundary and boundary.allocation_method == 'mass') or not boundary %}selected{% endif %}>{{ '质量分配' if get_lang() == 'zh' else 'Mass Allocation' }}</option>
-                        <option value="economic" {% if boundary and boundary.allocation_method == 'economic' %}selected{% endif %}>{{ '经济价值分配' if get_lang() == 'zh' else 'Economic Value Allocation' }}</option>
-                        <option value="physical" {% if boundary and boundary.allocation_method == 'physical' %}selected{% endif %}>{{ '物理因果关系分配' if get_lang() == 'zh' else 'Physical Causality Allocation' }}</option>
-                        <option value="energy" {% if boundary and boundary.allocation_method == 'energy' %}selected{% endif %}>{{ '能量分配' if get_lang() == 'zh' else 'Energy Allocation' }}</option>
+                        <option value="none" {% if boundary and boundary.allocation_method == 'none' %}selected{% endif %}>{{ 'None (No Allocation)' if get_lang() == 'zh' else 'None (No Allocation)' }}</option>
+                        <option value="mass" {% if (boundary and boundary.allocation_method == 'mass') or not boundary %}selected{% endif %}>{{ 'Mass Allocation' if get_lang() == 'zh' else 'Mass Allocation' }}</option>
+                        <option value="economic" {% if boundary and boundary.allocation_method == 'economic' %}selected{% endif %}>{{ 'Economic Value Allocation' if get_lang() == 'zh' else 'Economic Value Allocation' }}</option>
+                        <option value="physical" {% if boundary and boundary.allocation_method == 'physical' %}selected{% endif %}>{{ 'Physical Causality Allocation' if get_lang() == 'zh' else 'Physical Causality Allocation' }}</option>
+                        <option value="energy" {% if boundary and boundary.allocation_method == 'energy' %}selected{% endif %}>{{ 'Energy Allocation' if get_lang() == 'zh' else 'Energy Allocation' }}</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>{{ '分配说明' if get_lang() == 'zh' else 'Allocation Description' }}</label>
+                    <label>{{ 'Allocation Description' if get_lang() == 'zh' else 'Allocation Description' }}</label>
                     <textarea name="allocation_description" class="form-control" rows="3" 
-                              placeholder="{{ '说明分配方法的应用场景和计算方式...' if get_lang() == 'zh' else 'Describe the application scenario and calculation method...' }}">{{ boundary.allocation_description if boundary else '' }}</textarea>
+                              placeholder="{{ 'Describe the application scenario and calculation method...' if get_lang() == 'zh' else 'Describe the application scenario and calculation method...' }}">{{ boundary.allocation_description if boundary else '' }}</textarea>
                 </div>
             </div>
         </div>
 
         <div class="form-section">
-            <h2>📊 {{ '工艺流程图' if get_lang() == 'zh' else 'Process Flow Diagram' }}</h2>
+            <h2>📊 {{ 'Process Flow Diagram' if get_lang() == 'zh' else 'Process Flow Diagram' }}</h2>
             {% if boundary and boundary.process_flow_diagram %}
             <div class="current-diagram">
-                <p>{{ '当前流程图：' if get_lang() == 'zh' else 'Current Diagram: ' }}<strong>{{ boundary.process_flow_diagram }}</strong></p>
+                <p>{{ 'Current Diagram: ' if get_lang() == 'zh' else 'Current Diagram: ' }}<strong>{{ boundary.process_flow_diagram }}</strong></p>
             </div>
             {% endif %}
             <div class="form-group">
-                <label>{{ '上传工艺流程图（支持图片格式）' if get_lang() == 'zh' else 'Upload Process Flow Diagram (Image Formats Supported)' }}</label>
+                <label>{{ 'Upload Process Flow Diagram (Image Formats Supported)' if get_lang() == 'zh' else 'Upload Process Flow Diagram (Image Formats Supported)' }}</label>
                 <input type="file" name="process_flow_diagram" class="form-control" 
                        accept=".jpg,.jpeg,.png,.gif,.pdf,.svg">
-                <small class="help-text">{{ '支持 JPG, PNG, GIF, PDF, SVG 格式' if get_lang() == 'zh' else 'Supports JPG, PNG, GIF, PDF, SVG formats' }}</small>
+                <small class="help-text">{{ 'Supports JPG, PNG, GIF, PDF, SVG formats' if get_lang() == 'zh' else 'Supports JPG, PNG, GIF, PDF, SVG formats' }}</small>
             </div>
         </div>
 

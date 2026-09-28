@@ -64,7 +64,7 @@ class MarkdownReportGenerator:
             plt.rcParams["axes.unicode_minus"] = False
             plt.rcParams["font.size"] = 10
         except Exception as e:
-            print(f"字体配置警告: {e}")
+            print(f"Font configuration warning: {e}")
 
     def _get_value(self, key, default="[Information provided by the user]"):
 
@@ -170,7 +170,7 @@ class MarkdownReportGenerator:
             return f"data:image/png;base64,{img_base64}"
 
         except Exception as e:
-            print(f"创建饼图时出错: {e}")
+            print(f"Error creating pie chart: {e}")
             return None
 
     def _create_bar_chart(self):
@@ -247,7 +247,7 @@ class MarkdownReportGenerator:
             return f"data:image/png;base64,{img_base64}"
 
         except Exception as e:
-            print(f"创建柱状图时出错: {e}")
+            print(f"Error creating bar chart: {e}")
             return None
 
     def _generate_stage_table(self):
@@ -435,7 +435,7 @@ The life cycle carbon footprint of {product_name} produced by {producer_name}, p
         with open(filepath, "w", encoding="utf-8") as f:
             f.write(report)
 
-        print(f"✓ 报告已生成: {filepath}")
+        print(f"✓ Report generated: {filepath}")
 
         return report, filepath
 
@@ -541,21 +541,21 @@ The top contributing processes to the carbon footprint are ranked below:
     def _create_uncertainty_histogram(self):
 
         try:
-            print("\n🎨 开始创建不确定性分析直方图...")
+            print("\n🎨 Starting uncertainty analysis histogram...")
             uncertainty = self.lca_results.get("uncertainty_analysis", {})
             if not uncertainty or not uncertainty.get("statistics"):
-                print("   ⚠️ 没有 uncertainty 或 statistics 数据，跳过直方图生成")
+                print("   ⚠️ No uncertainty or statistics data, skipping histogram generation")
                 return None
 
             statistics = uncertainty.get("statistics", {})
             if not statistics:
-                print("   ⚠️ statistics 为空，跳过直方图生成")
+                print("   ⚠️ statistics is empty, skipping histogram generation")
                 return None
 
             first_category = list(statistics.keys())[0]
             stats = statistics[first_category]
 
-            print(f"   📊 直方图数据源 - {first_category}")
+            print(f"   📊 Histogram data source - {first_category}")
 
             mean = stats.get("mean", 0)
             std_dev = stats.get("std_dev", 0)
@@ -563,11 +563,11 @@ The top contributing processes to the carbon footprint are ranked below:
             p95 = stats.get("percentile_95", 0)
             median = stats.get("median", 0)
 
-            print(f"   数值: mean={mean}, std_dev={std_dev}, median={median}")
-            print(f"   范围: p5={p5}, p95={p95}")
+            print(f"   Values: mean={mean}, std_dev={std_dev}, median={median}")
+            print(f"   Range: p5={p5}, p95={p95}")
 
             if mean == 0 and std_dev == 0:
-                print("   ⚠️ 数据全是0，跳过直方图生成")
+                print("   ⚠️ All data is 0, skipping histogram generation")
                 return None
 
             import numpy as np
@@ -631,12 +631,12 @@ The top contributing processes to the carbon footprint are ranked below:
             image_base64 = base64.b64encode(buffer.read()).decode()
             plt.close(fig)
 
-            print(f"   ✅ 直方图生成成功（Base64长度: {len(image_base64)} 字符）")
+            print(f"   ✅ Histogram generated successfully (Base64 length: {len(image_base64)} chars)")
 
             return f"data:image/png;base64,{image_base64}"
 
         except Exception as e:
-            print(f"   ❌ 创建不确定性分析直方图时出错: {e}")
+            print(f"   ❌ Error creating uncertainty analysis histogram: {e}")
             import traceback
 
             traceback.print_exc()
@@ -647,12 +647,12 @@ The top contributing processes to the carbon footprint are ranked below:
         uncertainty = self.lca_results.get("uncertainty_analysis", {})
 
         print("\n" + "=" * 80)
-        print("📊 报告生成器 - 不确定性分析数据检查")
+        print("📊 Report generator - uncertainty analysis data check")
         print("=" * 80)
-        print(f"uncertainty 数据: {uncertainty}")
+        print(f"uncertainty data: {uncertainty}")
 
         if not uncertainty or not uncertainty.get("statistics"):
-            print("⚠️ 没有 uncertainty 或 statistics 数据")
+            print("⚠️ No uncertainty or statistics data")
             return """
 ## 3. Uncertainty Analysis Results
 
@@ -665,10 +665,10 @@ The top contributing processes to the carbon footprint are ranked below:
         impact_method = uncertainty.get("impact_method", "N/A")
         unit = self.lca_results.get("unit", "kg CO2-Eq")
 
-        print(f"✅ statistics 包含 {len(statistics)} 个类别")
+        print(f"✅ statistics contains {len(statistics)} categories")
         for cat_name, cat_data in statistics.items():
-            print(f"\n📋 类别: {cat_name}")
-            print(f"   数据: {cat_data}")
+            print(f"\n📋 Category: {cat_name}")
+            print(f"   Data: {cat_data}")
 
         section = f"""
 ## 3. Uncertainty Analysis Results
@@ -700,9 +700,9 @@ The uncertainty analysis provides statistical information about the variability 
             first_category = list(statistics.keys())[0]
             stats = statistics[first_category]
 
-            print(f"\n📊 提取统计数据:")
-            print(f"   类别: {first_category}")
-            print(f"   stats 对象: {stats}")
+            print(f"\n📊 Extracted statistics:")
+            print(f"   Category: {first_category}")
+            print(f"   stats object: {stats}")
             print(f"   mean: {stats.get('mean', 0)}")
             print(f"   std_dev: {stats.get('std_dev', 0)}")
             print(f"   median: {stats.get('median', 0)}")
@@ -762,7 +762,7 @@ The uncertainty analysis provides statistical information about the variability 
         unit = self.lca_results.get("unit", "kg CO2-Eq")
 
         try:
-            print("\n🤖 正在调用AI生成报告解读...")
+            print("\n🤖 Calling AI to generate report interpretation...")
 
             stages = self.lca_results.get("stages", {})
             stage_info = ""
@@ -847,7 +847,7 @@ Use the markers [SECTION1], [SECTION2], [SECTION3] to clearly separate each sect
                     "GROK_API_KEY environment variable not set, cannot call LLM for report interpretation"
                 )
 
-            print(f"🤖 AI解读: 使用模型 {model_name}, base_url={base_url}")
+            print(f"🤖 AI interpretation: using model {model_name}, base_url={base_url}")
 
             client = openai.OpenAI(api_key=api_key, base_url=base_url)
 
@@ -865,8 +865,8 @@ Use the markers [SECTION1], [SECTION2], [SECTION3] to clearly separate each sect
             )
 
             ai_content = response.choices[0].message.content
-            print("✅ AI解读生成成功")
-            print(f"📝 AI返回内容预览: {ai_content[:200]}...")
+            print("✅ AI interpretation generated successfully")
+            print(f"📝 AI response preview: {ai_content[:200]}...")
 
             description = ""
             assumptions = ""
@@ -890,29 +890,29 @@ Use the markers [SECTION1], [SECTION2], [SECTION3] to clearly separate each sect
                 improvements = ai_content[section3_start:].strip()
 
                 description = re.sub(
-                    r"^##?\s*\d*\.?\s*(Description of Results|结果描述).*?\n",
+                    r"^##?\s*\d*\.?\s*(Description of Results).*?\n",
                     "",
                     description,
                     flags=re.IGNORECASE | re.MULTILINE,
                 ).strip()
                 assumptions = re.sub(
-                    r"^##?\s*\d*\.?\s*(Statement of Assumptions and Limitations|假设和局限性说明).*?\n",
+                    r"^##?\s*\d*\.?\s*(Statement of Assumptions and Limitations).*?\n",
                     "",
                     assumptions,
                     flags=re.IGNORECASE | re.MULTILINE,
                 ).strip()
                 improvements = re.sub(
-                    r"^##?\s*\d*\.?\s*(Suggestions for Improvement|改进建议).*?\n",
+                    r"^##?\s*\d*\.?\s*(Suggestions for Improvement).*?\n",
                     "",
                     improvements,
                     flags=re.IGNORECASE | re.MULTILINE,
                 ).strip()
 
                 print(
-                    f"✅ 成功解析AI内容：描述({len(description)}字), 假设({len(assumptions)}字), 建议({len(improvements)}字)"
+                    f"✅ Successfully parsed AI content: description ({len(description)} chars), assumptions ({len(assumptions)} chars), suggestions ({len(improvements)} chars)"
                 )
             else:
-                print("⚠️ AI返回格式不符合预期，使用默认内容")
+                print("⚠️ AI response format unexpected, using default content")
                 description = f"The life cycle carbon footprint of {product_name} is {total_cf:.3f} {unit}. The {self._get_largest_stage()} stage accounts for the largest share of carbon emissions."
                 assumptions = "[Information provided by the user]"
                 improvements = "[Information provided by the user]"
@@ -924,7 +924,7 @@ Use the markers [SECTION1], [SECTION2], [SECTION3] to clearly separate each sect
             }
 
         except Exception as e:
-            print(f"⚠️ AI解读生成失败: {e}")
+            print(f"⚠️ AI interpretation generation failed: {e}")
             import traceback
 
             traceback.print_exc()
@@ -955,7 +955,7 @@ Use the markers [SECTION1], [SECTION2], [SECTION3] to clearly separate each sect
 
             return "Helvetica"
         except Exception as e:
-            print(f"PDF字体注册警告: {e}")
+            print(f"PDF font registration warning: {e}")
             return "Helvetica"
 
     def generate_pdf_report(self):
@@ -1142,11 +1142,11 @@ Use the markers [SECTION1], [SECTION2], [SECTION3] to clearly separate each sect
 
             doc.build(story)
 
-            print(f"✓ PDF报告已生成: {filepath}")
+            print(f"✓ PDF report generated: {filepath}")
             return filepath, True
 
         except Exception as e:
-            print(f"✗ PDF生成失败: {e}")
+            print(f"✗ PDF generation failed: {e}")
             import traceback
 
             traceback.print_exc()
@@ -1188,8 +1188,8 @@ def demo_usage():
     generator = MarkdownReportGenerator(project_info, report_info, lca_results)
     content, filepath = generator.generate_report()
 
-    print("Demo报告生成完成！")
-    print(f"文件路径: {filepath}")
+    print("Demo report generation complete!")
+    print(f"File path: {filepath}")
 
 
 if __name__ == "__main__":

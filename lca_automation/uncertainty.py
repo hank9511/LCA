@@ -561,11 +561,11 @@ Return ONLY the JSON object, no other text."""
                 if code.upper() == "ROW":
                     result[key.lower()] = "RoW"
 
-        print(f"🌍 LLM地理映射提取结果: {result}")
+        print(f"🌍 LLM geography mapping result: {result}")
         return result
 
     except Exception as e:
-        print(f"⚠️ LLM地理映射提取失败: {e}")
+        print(f"⚠️ LLM geography mapping extraction failed: {e}")
         return {}
 
 
@@ -614,7 +614,7 @@ def _get_expected_location_codes(
         else:
             result.append("RoW")
         result.append("GLO")
-        print(f"🌍 过程 '{process_context}' 的地理匹配优先级: {' → '.join(result)}")
+        print(f"🌍 Geography match priority for process '{process_context}': {' → '.join(result)}")
         return result
 
     stage = _determine_process_stage(process_context)
@@ -635,12 +635,12 @@ def _get_expected_location_codes(
                 result.append("RoW")
             result.append("GLO")
             print(
-                f"🌍 过程 '{process_context}' 阶段={stage}，使用系统边界默认地区: {' → '.join(result)}"
+                f"🌍 Process '{process_context}' stage={stage}, using system-boundary default region: {' → '.join(result)}"
             )
             return result
 
         print(
-            f"🌍 过程 '{process_context}' 阶段={stage} 但无法从描述中提取对应地区，回退到 GLO"
+            f"🌍 Process '{process_context}' stage={stage} but no matching region found in description; falling back to GLO"
         )
         return ["GLO"]
 

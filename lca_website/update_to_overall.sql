@@ -9,7 +9,7 @@
 .headers on
 .width 50 20 20
 
-SELECT '===== 更新前的状态 =====' as info;
+SELECT '===== Status before update =====' as info;
 SELECT '' as info;
 
 SELECT 
@@ -23,38 +23,32 @@ WHERE
     OR LOWER(process_name) LIKE '%lca%'
     OR LOWER(process_name) LIKE '%system%'
     OR LOWER(process_name) LIKE '%overall%'
-    OR LOWER(process_name) LIKE '%complete%'
-    OR process_name LIKE '%全生命周期%'
-    OR process_name LIKE '%整体%'
-    OR process_name LIKE '%系统%';
+    OR LOWER(process_name) LIKE '%complete%';
 
 SELECT '' as info;
-SELECT '===== 开始更新 =====' as info;
+SELECT '===== Starting update =====' as info;
 
 -- Apply the update
 UPDATE process_lifecycle_stage
 SET 
     lifecycle_stage = 'overall',
-    llm_reasoning = '自动更新为总体环节（基于关键词识别）'
+    llm_reasoning = 'Auto-updated to overall stage (keyword-based)'
 WHERE 
     LOWER(process_name) LIKE '%life cycle%'
     OR LOWER(process_name) LIKE '%lifecycle%'
     OR LOWER(process_name) LIKE '%lca%'
     OR LOWER(process_name) LIKE '%system%'
     OR LOWER(process_name) LIKE '%overall%'
-    OR LOWER(process_name) LIKE '%complete%'
-    OR process_name LIKE '%全生命周期%'
-    OR process_name LIKE '%整体%'
-    OR process_name LIKE '%系统%';
+    OR LOWER(process_name) LIKE '%complete%';
 
 -- Show the update result
 SELECT '' as info;
-SELECT '===== 更新完成 =====' as info;
-SELECT '更新了 ' || changes() || ' 条记录' as result;
+SELECT '===== Update complete =====' as info;
+SELECT 'Updated ' || changes() || ' record(s)' as result;
 
 -- Show the current stage distribution
 SELECT '' as info;
-SELECT '===== 当前环节分布 =====' as info;
+SELECT '===== Current stage distribution =====' as info;
 SELECT '' as info;
 
 SELECT 
@@ -75,5 +69,5 @@ ORDER BY
     END;
 
 SELECT '' as info;
-SELECT '✅ 更新成功！现在请刷新浏览器查看可视化页面。' as info;
+SELECT '✅ Update successful! Please refresh the browser to view the visualization page.' as info;
 

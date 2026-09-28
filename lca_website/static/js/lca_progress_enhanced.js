@@ -13,44 +13,44 @@ function debugLog(message, data = null) {
 const LCA_STEPS = [
     {
         id: 1,
-        name: "连接openLCA",
-        description: "正在连接到openLCA软件...",
+        name: "Connect openLCA",
+        description: "Connecting to openLCA software...",
         icon: "🔌"
     },
     {
         id: 2,
-        name: "解析数据",
-        description: "解析Excel文件中的LCA数据...",
+        name: "Parse Data",
+        description: "Parsing LCA data from Excel file...",
         icon: "📊"
     },
     {
         id: 3,
-        name: "创建流程",
-        description: "在openLCA中创建物质流和过程...",
+        name: "Create Flows",
+        description: "Creating flows and processes in openLCA...",
         icon: "🔄"
     },
     {
         id: 4,
-        name: "建立系统",
-        description: "构建产品系统模型...",
+        name: "Build System",
+        description: "Building product system model...",
         icon: "🏗️"
     },
     {
         id: 5,
-        name: "计算分析",
-        description: "运行LCA计算分析...",
+        name: "Calculate",
+        description: "Running LCA calculation...",
         icon: "⚙️"
     },
     {
         id: 6,
-        name: "评估影响",
-        description: "进行环境影响评估...",
+        name: "Assess Impacts",
+        description: "Performing environmental impact assessment...",
         icon: "🌍"
     },
     {
         id: 7,
-        name: "生成结果",
-        description: "整理和保存分析结果...",
+        name: "Generate Results",
+        description: "Organizing and saving analysis results...",
         icon: "✨"
     }
 ];
@@ -59,13 +59,13 @@ function createEnhancedLCAProgressUI(fileName) {
     return `
         <div class="lca-status-container">
             <div class="lca-status-icon">🔄</div>
-            <div class="lca-status-text">正在进行LCA分析</div>
-            <div class="lca-status-details">分析文件: ${fileName}</div>
+            <div class="lca-status-text">LCA analysis in progress</div>
+            <div class="lca-status-details">Analysis file: ${fileName}</div>
             
             <!-- Progress information -->
             <div class="lca-progress-info">
                 <span class="lca-progress-percentage" id="progressPercentage">0%</span>
-                <span class="lca-progress-eta" id="progressETA">预计剩余时间: 计算中...</span>
+                <span class="lca-progress-eta" id="progressETA">Estimated time remaining: calculating...</span>
             </div>
             
             <!-- Progress bar -->
@@ -82,25 +82,25 @@ function createEnhancedLCAProgressUI(fileName) {
                             <div class="lca-step-title">${step.name}</div>
                             <div class="lca-step-description">${step.description}</div>
                         </div>
-                        <div class="lca-step-status pending">等待中</div>
+                        <div class="lca-step-status pending">Pending</div>
                     </div>
                 `).join('')}
             </div>
             
             <!-- Timer -->
             <div class="lca-status-timer">
-                <small>已用时: <span id="analysisTimer">0</span> 秒</small>
+                <small>Elapsed: <span id="analysisTimer">0</span> sec</small>
                 <br>
-                <small>💡 采用后台分析模式，您可以安全关闭此窗口</small>
+                <small>💡 Background analysis mode — you can safely close this window</small>
                 <br>
-                <small style="color: #999; cursor: pointer;" onclick="window.LCA_DEBUG = !window.LCA_DEBUG; alert(window.LCA_DEBUG ? '✅ 调试模式已启用，请查看浏览器控制台' : '❌ 调试模式已关闭');">
-                    🔧 点击切换调试模式
+                <small style="color: #999; cursor: pointer;" onclick="window.LCA_DEBUG = !window.LCA_DEBUG; alert(window.LCA_DEBUG ? '✅ Debug mode enabled; check the browser console' : '❌ Debug mode disabled');">
+                    🔧 Click to toggle debug mode
                 </small>
             </div>
             
             <!-- Debug panel (shown only in debug mode) -->
             <div id="debugInfo" style="display: none; margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px; font-size: 12px; text-align: left;">
-                <strong>🔍 调试信息：</strong>
+                <strong>🔍 Debug info:</strong>
                 <pre id="debugContent" style="margin: 5px 0; white-space: pre-wrap; font-family: monospace; font-size: 11px;"></pre>
             </div>
         </div>
@@ -134,7 +134,7 @@ function updateStepStatus(stepNumber, status) {
         statusBadge.className = `lca-step-status ${status}`;
         
         if (status === 'completed') {
-            statusBadge.textContent = '已完成';
+            statusBadge.textContent = 'Completed';
             
             const iconElement = stepElement.querySelector('.lca-step-icon');
             if (iconElement) {
@@ -142,9 +142,9 @@ function updateStepStatus(stepNumber, status) {
                 iconElement.classList.add('completed');
             }
         } else if (status === 'active') {
-            statusBadge.textContent = '进行中';
+            statusBadge.textContent = 'In Progress';
         } else {
-            statusBadge.textContent = '等待中';
+            statusBadge.textContent = 'Pending';
         }
     }
 }
@@ -157,7 +157,7 @@ function getStepIdByName(stepName) {
     if (stepNumberMatch) {
         const stepNum = parseInt(stepNumberMatch[1]);
         if (stepNum >= 1 && stepNum <= 7) {
-            console.log(`✅ 从"${stepName}"中提取到步骤编号: ${stepNum}`);
+            console.log(`✅ Extracted step number from "${stepName}": ${stepNum}`);
             return stepNum;
         }
     }
@@ -165,46 +165,46 @@ function getStepIdByName(stepName) {
     
     const keywords = {
         
-        '连接': 1,
+        'Connect': 1,
         'connect': 1,
         'connection': 1,
         'ipc': 1,
         'openlca': 1,
         
         
-        '解析': 2,
+        'Parse': 2,
         'pars': 2,
         'parse': 2,
         'read': 2,
         'excel': 2,
         
         
-        '流程': 3,
+        'Flow': 3,
         'flow': 3,
         'creating flow': 3,
         'create flow': 3,
         
         
-        '系统': 4,
+        'System': 4,
         'system': 4,
         'product system': 4,
         'building system': 4,
         
         
-        '计算': 5,
+        'Calc': 5,
         'calculat': 5,
         'calculate': 5,
         'computing': 5,
         
         
-        '影响': 6,
+        'Impact': 6,
         'impact': 6,
-        '评估': 6,
+        'Assess': 6,
         'assess': 6,
         'lcia': 6,
         
         
-        '结果': 7,
+        'Result': 7,
         'result': 7,
         'generat': 7,
         'saving': 7,
@@ -215,27 +215,27 @@ function getStepIdByName(stepName) {
     
     for (const [keyword, stepId] of Object.entries(keywords)) {
         if (lowerStepName.includes(keyword.toLowerCase())) {
-            console.log(`✅ 通过关键词"${keyword}"从"${stepName}"中识别到步骤: ${stepId}`);
+            console.log(`✅ Identified step via keyword "${keyword}" from "${stepName}": ${stepId}`);
             return stepId;
         }
     }
     
-    console.warn(`⚠️ 无法识别步骤名称: "${stepName}"`);
+    console.warn(`⚠️ Unrecognized step name: "${stepName}"`);
     return 0; 
 }
 
 function calculateETA(elapsedSeconds, progress) {
-    if (progress <= 0) return '计算中...';
+    if (progress <= 0) return 'Calculating...';
     
     const totalEstimated = (elapsedSeconds / progress) * 100;
     const remaining = totalEstimated - elapsedSeconds;
     
     if (remaining < 60) {
-        return `约 ${Math.round(remaining)} 秒`;
+        return `About ${Math.round(remaining)} sec`;
     } else if (remaining < 3600) {
-        return `约 ${Math.round(remaining / 60)} 分钟`;
+        return `About ${Math.round(remaining / 60)} min`;
     } else {
-        return `约 ${(remaining / 3600).toFixed(1)} 小时`;
+        return `About ${(remaining / 3600).toFixed(1)} hr`;
     }
 }
 
@@ -243,7 +243,7 @@ function updateETA(elapsedSeconds, progress) {
     const etaElement = document.getElementById('progressETA');
     if (etaElement && progress > 0) {
         const eta = calculateETA(elapsedSeconds, progress);
-        etaElement.textContent = `预计剩余时间: ${eta}`;
+        etaElement.textContent = `Estimated time remaining: ${eta}`;
     }
 }
 
@@ -279,7 +279,7 @@ function pollLCATaskStatusEnhanced(taskId, fileId, fileName) {
                 const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
                 
                 
-                debugLog('收到后端状态更新', {
+                debugLog('Received backend status update', {
                     status,
                     progress,
                     currentStep,
@@ -290,14 +290,14 @@ function pollLCATaskStatusEnhanced(taskId, fileId, fileName) {
                 
                 
                 updateDebugInfo({
-                    后端状态: status,
-                    进度百分比: progress + '%',
-                    当前步骤编号: currentStep,
-                    总步骤数: totalSteps,
-                    步骤名称: stepName,
-                    已用时间: elapsedSeconds + '秒',
-                    上次识别步骤: lastStepId,
-                    轮询次数: checkStatus.callCount || 0
+                    Backend status: status,
+                    Progress percent: progress + '%',
+                    Current step number: currentStep,
+                    Total steps: totalSteps,
+                    Step name: stepName,
+                    Elapsed time: elapsedSeconds + 'sec',
+                    Last detected step: lastStepId,
+                    Poll count: checkStatus.callCount || 0
                 });
                 checkStatus.callCount = (checkStatus.callCount || 0) + 1;
                 
@@ -311,11 +311,11 @@ function pollLCATaskStatusEnhanced(taskId, fileId, fileName) {
                 const detectedStepId = getStepIdByName(stepName);
                 
                 if (detectedStepId > 0) {
-                    console.log(`🎯 检测到步骤变化: ${lastStepId} → ${detectedStepId}`);
+                    console.log(`🎯 Step change detected: ${lastStepId} → ${detectedStepId}`);
                     
                     
                     if (detectedStepId > lastStepId + 1) {
-                        console.log(`⚡ 检测到步骤跳跃，自动补全中间步骤 ${lastStepId + 1} 到 ${detectedStepId - 1}`);
+                        console.log(`⚡ Step jump detected; auto-completing intermediate steps ${lastStepId + 1} to ${detectedStepId - 1}`);
                         for (let i = lastStepId + 1; i < detectedStepId; i++) {
                             updateStepStatus(i, 'completed');
                             
@@ -335,12 +335,12 @@ function pollLCATaskStatusEnhanced(taskId, fileId, fileName) {
                     if (detectedStepId !== lastStepId) {
                         updateStepStatus(detectedStepId, 'active');
                         lastStepId = detectedStepId;
-                        console.log(`✅ 当前活动步骤更新为: ${detectedStepId}`);
+                        console.log(`✅ Active step updated to: ${detectedStepId}`);
                     }
                 } else {
                     
                     if (currentStep > 0 && currentStep !== lastStepId) {
-                        console.log(`🔄 使用后端返回的步骤编号: ${currentStep}`);
+                        console.log(`🔄 Using step number from backend: ${currentStep}`);
                         
                         
                         for (let i = lastStepId + 1; i < currentStep; i++) {
@@ -379,13 +379,13 @@ function pollLCATaskStatusEnhanced(taskId, fileId, fileName) {
                     clearInterval(timerInterval);
                     checkLCACompletionInDB(fileId, fileName, timerInterval);
                 } else {
-                    console.error('获取状态失败:', data.error);
+                    console.error('Failed to get status:', data.error);
                     setTimeout(checkStatus, 3000); 
                 }
             }
         })
         .catch(error => {
-            console.error('检查状态失败:', error);
+            console.error('Failed to check status:', error);
             setTimeout(checkStatus, 5000); 
         });
     }
@@ -401,19 +401,19 @@ function handleAnalysisComplete(data, responseTime, fileId) {
     content.innerHTML = `
         <div class="lca-status-container">
             <div class="lca-status-icon">✅</div>
-            <div class="lca-status-text">LCA分析完成！</div>
+            <div class="lca-status-text">LCA analysis complete!</div>
             <div class="lca-status-details">
-                <p><strong>分析结果摘要：</strong></p>
+                <p><strong>Analysis result summary:</strong></p>
                 <ul>
-                    <li>分析状态: ${result?.success ? '成功' : '失败'}</li>
-                    <li>分析耗时: ${Math.floor(responseTime)} 秒</li>
-                    <li>物质流: ${data.flows_count || 'N/A'} 个</li>
-                    <li>过程: ${data.processes_count || 'N/A'} 个</li>
+                    <li>Analysis status: ${result?.success ? 'Success' : 'Failed'}</li>
+                    <li>Duration: ${Math.floor(responseTime)} sec</li>
+                    <li>Flows: ${data.flows_count || 'N/A'}</li>
+                    <li>Processes: ${data.processes_count || 'N/A'}</li>
                 </ul>
             </div>
             <div class="modal-actions">
-                <button class="btn btn-primary" onclick="showLCAResults(${fileId})">查看详细结果</button>
-                <button class="btn btn-secondary" onclick="closeLCAAnalysisModal()">关闭</button>
+                <button class="btn btn-primary" onclick="showLCAResults(${fileId})">View Detailed Results</button>
+                <button class="btn btn-secondary" onclick="closeLCAAnalysisModal()">Close</button>
             </div>
         </div>
     `;
@@ -430,19 +430,19 @@ function handleAnalysisError(data, fileId, fileName) {
     content.innerHTML = `
         <div class="lca-status-container">
             <div class="lca-status-icon">❌</div>
-            <div class="lca-status-text">LCA分析失败</div>
+            <div class="lca-status-text">LCA analysis failed</div>
             <div class="lca-status-details">
-                <p class="error-text">${data.error || '未知错误'}</p>
-                <p style="margin-top: 15px;">请检查：</p>
+                <p class="error-text">${data.error || 'Unknown error'}</p>
+                <p style="margin-top: 15px;">Please check:</p>
                 <ul style="text-align: left; display: inline-block;">
-                    <li>openLCA软件是否正在运行</li>
-                    <li>IPC服务器是否已启用</li>
-                    <li>Excel数据格式是否正确</li>
+                    <li>Whether openLCA software is running</li>
+                    <li>Whether the IPC server is enabled</li>
+                    <li>Whether the Excel data format is correct</li>
                 </ul>
             </div>
             <div class="modal-actions">
-                <button class="btn btn-secondary" onclick="closeLCAAnalysisModal()">关闭</button>
-                <button class="btn btn-primary" onclick="closeLCAAnalysisModal(); runLCAAnalysis(${fileId}, '${fileName}')">重试</button>
+                <button class="btn btn-secondary" onclick="closeLCAAnalysisModal()">Close</button>
+                <button class="btn btn-primary" onclick="closeLCAAnalysisModal(); runLCAAnalysis(${fileId}, '${fileName}')">Retry</button>
             </div>
         </div>
     `;

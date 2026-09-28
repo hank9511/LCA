@@ -21,12 +21,12 @@ def classify_lifecycle_stage(process_name):
         "full cycle",
         "end to end",
         "end-to-end",
-        "全生命周期",
-        "整体",
-        "系统",
-        "总体",
-        "完整",
-        "全过程",
+        "life cycle",
+        "overall",
+        "system",
+        "total",
+        "complete",
+        "whole process",
     ]
 
     raw_material_keywords = [
@@ -202,9 +202,9 @@ def get_stage_confidence(process_name):
         "extraction",
         "crude oil",
         "natural gas",
-        "全生命周期",
-        "整体",
-        "系统",
+        "life cycle",
+        "overall",
+        "system",
     ]
 
     medium_confidence_patterns = [
@@ -233,7 +233,7 @@ def classify_with_details(process_name):
     stage = classify_lifecycle_stage(process_name)
     confidence = get_stage_confidence(process_name)
 
-    reasoning = f"基于过程名称关键词分析，推断为'{stage}'环节"
+    reasoning = f"Based on process name keyword analysis, inferred as '{stage}' stage"
 
     return {"stage": stage, "confidence": confidence, "reasoning": reasoning}
 
@@ -251,10 +251,10 @@ if __name__ == "__main__":
         "Electricity, high voltage, at grid",
     ]
 
-    print("生命周期环节智能分类测试:\n")
+    print("Life cycle stage intelligent classification test:\n")
     for test_name in test_cases:
         result = classify_with_details(test_name)
-        print(f"过程: {test_name}")
-        print(f"  → 环节: {result['stage']}")
-        print(f"  → 置信度: {result['confidence']:.2f}")
-        print(f"  → 推理: {result['reasoning']}\n")
+        print(f"Process: {test_name}")
+        print(f"  → Stage: {result['stage']}")
+        print(f"  → Confidence: {result['confidence']:.2f}")
+        print(f"  → Reasoning: {result['reasoning']}\n")

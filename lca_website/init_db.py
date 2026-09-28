@@ -8,7 +8,7 @@ def init_database():
     with app.app_context():
 
         db.create_all()
-        print("数据库表创建成功！")
+        print("Database tables created successfully!")
 
         if User.query.first() is None:
 
@@ -21,8 +21,8 @@ def init_database():
             db.session.add(admin_user)
 
             sample_project = Project(
-                name="示例LCA项目",
-                description="这是一个示例项目，用于演示系统功能",
+                name="Sample LCA Project",
+                description="This is a sample project to demonstrate system features",
                 status="active",
                 user_id=1,
                 created_at=datetime.utcnow(),
@@ -32,21 +32,21 @@ def init_database():
             sample_data = [
                 LCAData(
                     project_id=1,
-                    data_type="原材料消耗",
+                    data_type="Raw material consumption",
                     value=100.0,
                     unit="kg",
                     created_at=datetime.utcnow(),
                 ),
                 LCAData(
                     project_id=1,
-                    data_type="能源消耗",
+                    data_type="Energy consumption",
                     value=50.0,
                     unit="kWh",
                     created_at=datetime.utcnow(),
                 ),
                 LCAData(
                     project_id=1,
-                    data_type="废弃物产生",
+                    data_type="Waste generation",
                     value=10.0,
                     unit="kg",
                     created_at=datetime.utcnow(),
@@ -57,10 +57,10 @@ def init_database():
                 db.session.add(data)
 
             db.session.commit()
-            print("初始数据创建成功！")
-            print("管理员账户: admin / admin123")
+            print("Initial data created successfully!")
+            print("Admin account: admin / admin123")
         else:
-            print("数据库已存在数据，跳过初始化。")
+            print("Database already has data, skipping initialization.")
 
 
 if __name__ == "__main__":

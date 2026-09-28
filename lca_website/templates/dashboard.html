@@ -15,7 +15,7 @@
                     class="btn btn-danger"
                     disabled
                 >
-                    {{ '批量删除' if get_lang() == 'zh' else 'Batch Delete' }}
+                    {{ 'Batch Delete' if get_lang() == 'zh' else 'Batch Delete' }}
                 </button>
             </div>
         </div>
@@ -23,7 +23,7 @@
         <div class="dashboard-stats">
             <div class="stat-card">
                 <div class="stat-number">{{ projects|length }}</div>
-                <div class="stat-label">{{ t('dashboard', 'project_name') if get_lang() == 'en' else '总项目数' }}</div>
+                <div class="stat-label">{{ t('dashboard', 'project_name') if get_lang() == 'en' else t('dashboard', 'project_name') }}</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number">{{ projects|selectattr('status', 'equalto', 'active')|list|length }}</div>
@@ -49,7 +49,7 @@
                                     name="project_ids"
                                     value="{{ project.id }}"
                                 >
-                                <span class="project-select-text">{{ '选择' if get_lang() == 'zh' else 'Select' }}</span>
+                                <span class="project-select-text">{{ 'Select' if get_lang() == 'zh' else 'Select' }}</span>
                             </label>
                             <h3>{{ project.name }}</h3>
                             <span class="project-status status-{{ project.status }}">
@@ -62,7 +62,7 @@
                                 {% endif %}
                             </span>
                         </div>
-                        <p class="project-description">{{ project.description or (t('common', 'info') if get_lang() == 'en' else '暂无描述') }}</p>
+                        <p class="project-description">{{ project.description or (t('common', 'info') if get_lang() == 'en' else t('common', 'info')) }}</p>
                         <div class="project-meta">
                             <span>{{ t('dashboard', 'created_at') }}: {{ project.created_at.strftime('%Y-%m-%d') }}</span>
                         </div>
@@ -99,8 +99,8 @@
             const selectedCount = checkboxes.filter(checkbox => checkbox.checked).length;
             batchDeleteBtn.disabled = selectedCount === 0;
             batchDeleteBtn.textContent = selectedCount > 0
-                ? `{{ '批量删除' if get_lang() == 'zh' else 'Batch Delete' }} (${selectedCount})`
-                : `{{ '批量删除' if get_lang() == 'zh' else 'Batch Delete' }}`;
+                ? `{{ 'Batch Delete' if get_lang() == 'zh' else 'Batch Delete' }} (${selectedCount})`
+                : `{{ 'Batch Delete' if get_lang() == 'zh' else 'Batch Delete' }}`;
         };
 
         checkboxes.forEach(checkbox => {
@@ -109,7 +109,7 @@
 
         form.addEventListener('submit', (event) => {
             const selectedCount = checkboxes.filter(checkbox => checkbox.checked).length;
-            const confirmMessage = `{{ '确认要删除选中的项目吗？该操作不可恢复。' if get_lang() == 'zh' else 'Are you sure you want to delete selected projects? This action cannot be undone.' }}`;
+            const confirmMessage = `{{ 'Are you sure you want to delete selected projects? This action cannot be undone.' if get_lang() == 'zh' else 'Are you sure you want to delete selected projects? This action cannot be undone.' }}`;
             if (selectedCount === 0 || !window.confirm(confirmMessage)) {
                 event.preventDefault();
             }

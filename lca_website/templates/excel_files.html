@@ -1,20 +1,20 @@
 {% extends "base.html" %}
 
-{% block title %}Excel文件列表 - {{ project.name }}{% endblock %}
+{% block title %}Excel File List - {{ project.name }}{% endblock %}
 
 {% block content %}
 <div class="excel-files-container">
     <div class="page-header">
-        <h1>Excel文件列表</h1>
+        <h1>Excel File List</h1>
         <div class="header-actions">
-            <a href="{{ url_for('upload_excel', project_id=project.id) }}" class="btn btn-primary">+ 上传新文件</a>
-            <a href="{{ url_for('project_detail', project_id=project.id) }}" class="btn btn-secondary">返回项目</a>
+            <a href="{{ url_for('upload_excel', project_id=project.id) }}" class="btn btn-primary">+ Upload New File</a>
+            <a href="{{ url_for('project_detail', project_id=project.id) }}" class="btn btn-secondary">Back to Project</a>
         </div>
     </div>
 
     <div class="project-info-card">
         <h3>{{ project.name }}</h3>
-        <p>{{ project.description or '暂无描述' }}</p>
+        <p>{{ project.description or 'No description' }}</p>
     </div>
 
     {% if excel_files %}
@@ -30,26 +30,26 @@
                 </div>
 
                 <div class="file-meta">
-                    <span class="upload-time">上传时间: {{ (file.upload_time | localtime).strftime('%Y-%m-%d %H:%M') }}</span>
+                    <span class="upload-time">Upload time: {{ (file.upload_time | localtime).strftime('%Y-%m-%d %H:%M') }}</span>
                     {% if file.analysis_time %}
-                        <span class="analysis-time">分析时间: {{ (file.analysis_time | localtime).strftime('%Y-%m-%d %H:%M') }}</span>
+                        <span class="analysis-time">Analysis time: {{ (file.analysis_time | localtime).strftime('%Y-%m-%d %H:%M') }}</span>
                     {% endif %}
                 </div>
 
                 {% if file.llm_analysis %}
                 <div class="llm-analysis">
-                    <h5>AI分析结果:</h5>
+                    <h5>AI Analysis Result:</h5>
                     <div class="analysis-content">
                         {{ file.llm_analysis[:200] }}{% if file.llm_analysis|length > 200 %}...{% endif %}
                     </div>
-                    <button class="btn btn-outline btn-sm" onclick="showFullAnalysis({{ file.id }})">查看完整分析</button>
+                    <button class="btn btn-outline btn-sm" onclick="showFullAnalysis({{ file.id }})">View Full Analysis</button>
                 </div>
                 {% endif %}
 
                 <div class="file-actions">
-                    <a href="{{ url_for('download_excel', file_id=file.id) }}" class="btn btn-secondary btn-sm">下载</a>
+                    <a href="{{ url_for('download_excel', file_id=file.id) }}" class="btn btn-secondary btn-sm">Download</a>
                     {% if file.llm_analysis %}
-                        <button class="btn btn-primary btn-sm" onclick="showFullAnalysis({{ file.id }})">查看分析</button>
+                        <button class="btn btn-primary btn-sm" onclick="showFullAnalysis({{ file.id }})">View Analysis</button>
                     {% endif %}
                 </div>
             </div>
@@ -57,8 +57,8 @@
         </div>
     {% else %}
         <div class="empty-state">
-            <p>暂无Excel文件</p>
-            <a href="{{ url_for('upload_excel', project_id=project.id) }}" class="btn btn-primary">上传第一个文件</a>
+            <p>No Excel files</p>
+            <a href="{{ url_for('upload_excel', project_id=project.id) }}" class="btn btn-primary">Upload First File</a>
         </div>
     {% endif %}
 </div>
@@ -66,7 +66,7 @@
 <div id="analysisModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
-        <h2>AI分析结果</h2>
+        <h2>AI Analysis Result</h2>
         <div id="modalContent"></div>
     </div>
 </div>

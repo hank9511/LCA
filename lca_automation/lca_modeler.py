@@ -65,7 +65,7 @@ from .flow_name_translator import (
     ELEMENTARY_EMISSION_OVERRIDES,
 )
 
-PHOTOVOLTAIC_EXCEL_FLOW_NAME = "光伏发电"
+PHOTOVOLTAIC_EXCEL_FLOW_NAME = "photovoltaic power"
 PHOTOVOLTAIC_TARGET_FLOW_NAME = "electricity, low voltage"
 PHOTOVOLTAIC_PROVIDER_NAME = (
     "electricity production, photovoltaic, 3kWp facade installation, "
@@ -150,7 +150,7 @@ class UniversalLCAModeler:
 
         self.excel_process_names: Set[str] = set()
         print(
-            "🧪 Provider选择模式: "
+            "🧪 Provider selection mode: "
             f"provider_mode={self.provider_selection_mode}, "
             f"candidate_mode={self.candidate_constraint_mode}, "
             f"stage_classification={self.enable_lifecycle_stage_classification}"
@@ -296,7 +296,7 @@ class UniversalLCAModeler:
         scored.sort(key=lambda item: item[0], reverse=True)
         best_score, best_provider = scored[0]
         print(
-            f"🧪 [semantic_only] 选择provider: {best_provider.name} "
+            f"🧪 [semantic_only] Selected provider: {best_provider.name} "
             f"(semantic_score={best_score:.3f}, candidates={len(candidate_refs)})"
         )
         return best_provider, {
@@ -1027,7 +1027,7 @@ Please only return the number of the best match (1-{len(candidate_info)}), or re
     ) -> Optional[o.Ref]:
         """Attempt to match an English name candidate against the ecoinvent database."""
 
-        if original_chinese_name == "解析气" or "off-gas" in english_name:
+        if original_chinese_name == "off-gas" or "off-gas" in english_name:
 
             exact_match = self._find_exact_flow_by_name_and_type(
                 english_name,
@@ -1193,11 +1193,11 @@ Candidate flows from ecoinvent database:
 
 RULES:
 1. Match the SUBSTANCE/MATERIAL, ignoring Chinese adjectives like procurement source, temperature, pressure, grade.
-2. "外购电石" means purchased calcium carbide → match "calcium carbide".
-3. "5℃水" means water at 5°C → match "water" or "water, cooling".
-4. "1.0MPa蒸汽" means steam at 1.0MPa → match "steam, in chemical industry".
-5. "工厂空气" means factory air → match "compressed air" or "air".
-6. "循环水" means circulating/cooling water → match "water, cooling" or "tap water".
+2. "purchased calcium carbide" → match "calcium carbide".
+3. "5°C water" means water at 5°C → match "water" or "water, cooling".
+4. "1.0MPa steam" means steam at 1.0MPa → match "steam, in chemical industry".
+5. "plant air" / "factory air" → match "compressed air" or "air".
+6. "circulating water" means circulating/cooling water → match "water, cooling" or "tap water".
 7. Prioritize functional/substance equivalence over exact naming.
 8. Return the NUMBER of the best match, or 0 if none are suitable.
 
@@ -1315,7 +1315,7 @@ Answer (number only):"""
 
             normalized_cn = normalize_chinese_flow_name(flow_name)
 
-            if normalized_cn == "解析气":
+            if normalized_cn == "off-gas":
                 existing_cn = self._find_exact_flow_by_name_and_type(
                     flow_name, self._normalize_flow_type(flow_spec.flow_type or "")
                 )
@@ -1368,7 +1368,7 @@ Answer (number only):"""
                     first_en, self._normalize_flow_type(flow_spec.flow_type or "")
                 )
                 if (
-                    normalized_cn != "解析气"
+                    normalized_cn != "off-gas"
                     and cached_mapping
                     and cached_mapping == first_en
                     and not existing_first_en
@@ -1391,7 +1391,7 @@ Answer (number only):"""
                         }
                     return new_flow_ref
 
-                if normalized_cn == "解析气":
+                if normalized_cn == "off-gas":
                     existing_cn = self._find_exact_flow_by_name_and_type(
                         flow_name, self._normalize_flow_type(flow_spec.flow_type or "")
                     )
@@ -1902,7 +1902,7 @@ Answer (number only):"""
 
                         if self._stage_geography_cache is None:
                             print(
-                                f"🌍 LLM地理映射尚未初始化，在create_process中补充调用..."
+                                f"🌍 LLM geographic mapping not initialized yet; calling supplementally in create_process..."
                             )
                             self._stage_geography_cache = (
                                 llm_extract_stage_geography_mapping(
@@ -1934,19 +1934,19 @@ Answer (number only):"""
                         if global_codes:
                             _process_inferred_location = global_codes[0]
                         print(
-                            f"🧪 [no_stage_classification] 过程 '{process_spec.name}' "
-                            f"使用全局地理推断: {_process_inferred_location or 'GLO'}"
+                            f"🧪 [no_stage_classification] Process '{process_spec.name}' "
+                            f"using global geographic inference: {_process_inferred_location or 'GLO'}"
                         )
 
                     if _process_inferred_location:
                         print(
-                            f"📍 过程 '{process_spec.name}' 推断地理位置: {_process_inferred_location}"
+                            f"📍 Process '{process_spec.name}' inferred location: {_process_inferred_location}"
                         )
 
             if not _process_inferred_location:
                 _process_inferred_location = "CN"
                 print(
-                    f"📍 过程 '{process_spec.name}' 未识别到具体地区信息，默认使用中国地区: CN"
+                    f"📍 Process '{process_spec.name}' has no specific region; defaulting to China: CN"
                 )
 
             exchange_internal_id = 1
@@ -2460,30 +2460,19 @@ Answer (number only):"""
             no_alloc_keywords = [
                 "none",
                 "no allocation",
-                "不分配",
-                "无分配",
-                "系统扩展",
                 "system expansion",
                 "substitution",
-                "替代法",
             ]
             economic_keywords = [
                 "economic",
                 "price",
                 "market",
                 "revenue",
-                "货币",
-                "经济",
-                "价格",
-                "收益",
                 "value",
-                "价值",
             ]
             causal_keywords = [
                 "causal",
                 "cause",
-                "因果",
-                "归因",
             ]
             physical_keywords = [
                 "physical",
@@ -2491,11 +2480,6 @@ Answer (number only):"""
                 "energy",
                 "weight",
                 "volume",
-                "物理",
-                "质量",
-                "能量",
-                "重量",
-                "体积",
             ]
 
             if any(k in text for k in no_alloc_keywords):
@@ -2804,7 +2788,7 @@ Answer (number only):"""
             )
             excel_lookup_lower = (excel_lookup_name or "").strip().lower()
             is_process_specific_offgas = (
-                normalized_excel_flow == "解析气" or "off-gas" in excel_lookup_lower
+                normalized_excel_flow == "off-gas" or "off-gas" in excel_lookup_lower
             )
 
             cache_lookup = (
@@ -2814,7 +2798,7 @@ Answer (number only):"""
             )
             cache_scope = (process_context or "") if is_process_specific_offgas else ""
             amount_key = ""
-            if normalized_excel_flow == "解析气" and requested_amount is not None:
+            if normalized_excel_flow == "off-gas" and requested_amount is not None:
                 try:
                     amount_key = f"{float(requested_amount):.12g}"
                 except Exception:
@@ -2830,14 +2814,14 @@ Answer (number only):"""
                     cache_key, photovoltaic_provider, flow_ref
                 ):
                     print(
-                        f"🌞 光伏发电规则命中：'{excel_lookup_name}' → "
+                        f"🌞 Photovoltaic power rule matched: '{excel_lookup_name}' → "
                         f"'{PHOTOVOLTAIC_TARGET_FLOW_NAME}' provider "
                         f"'{photovoltaic_provider.name}'"
                     )
                     self._apply_provider_metadata(photovoltaic_provider, flow_ref)
                     return photovoltaic_provider, {}
                 print(
-                    f"⚠️ 光伏规则找到提供者但流校验未通过: "
+                    f"⚠️ Photovoltaic rule found provider but flow validation failed: "
                     f"{photovoltaic_provider.name}"
                 )
 
@@ -2851,7 +2835,7 @@ Answer (number only):"""
                     output_amount = self._check_provider_output_amount(
                         explicit_provider_ref, flow_ref
                     )
-                    print(f"✅ 使用Excel显式指定的提供者: {explicit_provider}")
+                    print(f"✅ Using Excel-specified provider: {explicit_provider}")
                     self._apply_provider_metadata(explicit_provider_ref, flow_ref)
                     return explicit_provider_ref, {}
 
@@ -2860,7 +2844,7 @@ Answer (number only):"""
                     output_amount = self._check_provider_output_amount(
                         explicit_provider_ref, flow_ref
                     )
-                    print(f"✅ 在背景数据库中找到显式指定的提供者: {explicit_provider}")
+                    print(f"✅ Found explicitly specified provider in background database: {explicit_provider}")
                     return explicit_provider_ref, {}
 
                 print(
@@ -2893,7 +2877,7 @@ Answer (number only):"""
                     output_amount = self._check_provider_output_amount(
                         explicit_provider_ref, flow_ref
                     )
-                    print(f"✅ 使用预注册的Excel提供者: {excel_explicit_name}")
+                    print(f"✅ Using pre-registered Excel provider: {excel_explicit_name}")
                     self.flow_provider_cache[cache_key] = (explicit_provider_ref, {})
                     return explicit_provider_ref, {}
 
@@ -2906,7 +2890,7 @@ Answer (number only):"""
                             explicit_provider_ref, flow_ref
                         )
                         print(
-                            f"✅ 在背景数据库中找到预注册的提供者: {excel_explicit_name}"
+                            f"✅ Found pre-registered provider in background database: {excel_explicit_name}"
                         )
                         if self._cache_flow_provider(
                             cache_key, explicit_provider_ref, flow_ref
@@ -2951,8 +2935,8 @@ Answer (number only):"""
                         consumer_ctx = process_context or ""
 
                         preferred_supplier_tokens = []
-                        if "电石装置" in consumer_ctx:
-                            preferred_supplier_tokens = ["甲醇装置", "醋酸装置"]
+                        if "calcium carbide plant" in consumer_ctx:
+                            preferred_supplier_tokens = ["methanol plant", "acetic acid plant"]
 
                         preferred_available = []
                         for token in preferred_supplier_tokens:
@@ -3134,7 +3118,7 @@ Answer (number only):"""
                         if "GLO" not in expected_codes:
                             expected_codes.append("GLO")
                         print(
-                            f"📍 Excel指定地区 '{desired_location}' → 优先级: {' → '.join(expected_codes)}"
+                            f"📍 Excel-specified region '{desired_location}' → priority: {' → '.join(expected_codes)}"
                         )
                     else:
                         expected_codes = _get_expected_location_codes(
@@ -3142,11 +3126,11 @@ Answer (number only):"""
                         )
                         if expected_codes == ["GLO"]:
                             print(
-                                f"🌍 过程 '{process_context_for_selection}' 无法推断地区，回退到 GLO"
+                                f"🌍 Process '{process_context_for_selection}' could not infer region; falling back to GLO"
                             )
                         else:
                             print(
-                                f"🌍 过程 '{process_context_for_selection}' 推断地区优先级: {' → '.join(expected_codes)}"
+                                f"🌍 Process '{process_context_for_selection}' inferred region priority: {' → '.join(expected_codes)}"
                             )
 
                     all_scored = []
@@ -3178,7 +3162,7 @@ Answer (number only):"""
                     )
                     if needs_db_location:
                         print(
-                            f"🔍 所有候选名称无地区信息，对 {min(len(pool), 50)} 个候选执行数据库地区查询..."
+                            f"🔍 No region info in candidate names; querying database locations for {min(len(pool), 50)} candidates..."
                         )
                         rescored_pool = []
                         for prov_ref, tier_val, is_mkt, _ in pool[:50]:
@@ -3203,12 +3187,12 @@ Answer (number only):"""
                         best_tier = rescored_pool[0][1]
                         best_loc = rescored_pool[0][4]
                         geo_matched = sum(1 for s in rescored_pool if s[3] >= 0.4)
-                        print(f"✅ 数据库地区查询完成：{geo_matched} 个地区匹配")
+                        print(f"✅ Database location query completed: {geo_matched} region matches")
                         if best_prov:
                             provider_ref = best_prov
                             is_mkt_flag = "🏪" if rescored_pool[0][2] else ""
                             print(
-                                f"{is_mkt_flag}🔗 选择提供者 for '{flow_name}': {provider_ref.name} (db_loc:{best_loc}, expected:{expected_codes[0]}, tier:{best_tier})"
+                                f"{is_mkt_flag}🔗 Selected provider for '{flow_name}': {provider_ref.name} (db_loc:{best_loc}, expected:{expected_codes[0]}, tier:{best_tier})"
                             )
                     else:
                         pool.sort(key=lambda s: s[1], reverse=True)
@@ -3224,7 +3208,7 @@ Answer (number only):"""
                             )
                             src = "market" if market_scored else "all"
                             print(
-                                f"{is_mkt}🔗 选择提供者 for '{flow_name}': {provider_ref.name} (loc:{loc}, expected:{expected_codes[0]}, tier:{best_tier}, from:{src})"
+                                f"{is_mkt}🔗 Selected provider for '{flow_name}': {provider_ref.name} (loc:{loc}, expected:{expected_codes[0]}, tier:{best_tier}, from:{src})"
                             )
 
                     if not provider_ref:
@@ -3301,7 +3285,7 @@ Answer (number only):"""
                 if all(token in process_norm for token in required_tokens):
                     return process_ref
         except Exception as error:
-            print(f"⚠️ 光伏provider检索失败: {error}")
+            print(f"⚠️ Photovoltaic provider lookup failed: {error}")
 
         return None
 
@@ -4501,7 +4485,7 @@ Please return only the number (1-{len(candidate_info)}) of the best provider, or
                 except Exception as e:
                     print(f"⚠️ Failed to save ProcessLinks: {e}")
 
-                print(f"\nℹ️ 保留过程中的 default_provider 引用（不修改数据库）")
+                print(f"\nℹ️ Keeping default_provider references in processes (database not modified)")
 
                 print(f"\n💾 Final save to openLCA...")
                 process_count_before_save = (
@@ -5966,7 +5950,7 @@ Please return only the number (1-{len(candidate_info)}) of the best provider, or
                 from .uncertainty import llm_extract_stage_geography_mapping
 
                 _all_proc_names = [p.name for p in lca_case.processes]
-                print(f"🌍 预提取地理映射：使用LLM分析系统边界中各阶段的地理位置...")
+                print(f"🌍 Pre-extracting geographic mapping: using LLM to analyze locations of stages in the system boundary...")
                 self._stage_geography_cache = llm_extract_stage_geography_mapping(
                     self.project_context.system_boundary.description,
                     self.llm_clients,
@@ -6175,9 +6159,9 @@ Please return only the number (1-{len(candidate_info)}) of the best provider, or
 
             if hasattr(setup, "amount"):
                 setup.amount = 1.0
-                print(f"✅ 设置蒙特卡洛模拟参考数量: 1.0 kg (固定功能单位)")
+                print(f"✅ Set Monte Carlo simulation reference amount: 1.0 kg (fixed functional unit)")
             else:
-                print(f"⚠️ CalculationSetup不支持amount属性，可能使用系统默认值")
+                print(f"⚠️ CalculationSetup does not support amount attribute; may use system default")
 
             print(f"\n🎯 Starting Monte Carlo simulation...")
             print(
@@ -6214,16 +6198,16 @@ Please return only the number (1-{len(candidate_info)}) of the best provider, or
                 if filtered_categories:
                     impact_categories = filtered_categories
                     print(
-                        f"✅ 只计算 {len(impact_categories)} 个选定的影响类别（配置：MONTE_CARLO_SELECTED_CATEGORIES）"
+                        f"✅ Calculating only {len(impact_categories)} selected impact categories (config: MONTE_CARLO_SELECTED_CATEGORIES)"
                     )
                     for cat in impact_categories:
                         print(f"   - {cat.name}")
                 else:
                     print(
-                        f"⚠️ 未找到配置的影响类别，将计算所有 {len(impact_categories)} 个类别"
+                        f"⚠️ Configured impact categories not found; calculating all {len(impact_categories)} categories"
                     )
             else:
-                print(f"📊 将计算所有 {len(impact_categories)} 个影响类别")
+                print(f"📊 Will calculate all {len(impact_categories)} impact categories")
 
             monte_carlo_results = {}
             category_refs = {}
@@ -6274,7 +6258,7 @@ Please return only the number (1-{len(candidate_info)}) of the best provider, or
                     print(f"⚠️ Error getting impact value for {category_name}: {e}")
                     category_data["values"].append(0.0)
             print(
-                f"\n   💡 比较上面的值与确定性结果：如果第一次迭代就有巨大偏差，问题在 simulate() 采样"
+                f"\n   💡 Compare the values above with deterministic results: if the first iteration already has a large deviation, the issue is in simulate() sampling"
             )
 
             for i in range(1, iterations):
@@ -6376,7 +6360,7 @@ Please return only the number (1-{len(candidate_info)}) of the best provider, or
     def _diagnose_product_system_for_mc(self, system: o.ProductSystem) -> None:
         """Diagnose product-system integrity before Monte Carlo simulation."""
         if not system:
-            print("⚠️ MC诊断: 产品系统对象为空，跳过结构检查")
+            print("⚠️ MC diagnostics: product system object is empty; skipping structure check")
             return
 
         processes = list(getattr(system, "processes", None) or [])
@@ -6426,13 +6410,13 @@ Please return only the number (1-{len(candidate_info)}) of the best provider, or
                 seen_keys.add(key)
 
         print(
-            f"🔎 MC前系统诊断: processes={len(processes)}, links={len(links)}, "
+            f"🔎 Pre-MC system diagnostics: processes={len(processes)}, links={len(links)}, "
             f"orphan_process_links={orphan_process_links}, orphan_provider_links={orphan_provider_links}, "
             f"self_loops={self_loop_links}, missing_exchange_id={missing_exchange_id_links}, "
             f"duplicate_links={len(duplicate_keys)}"
         )
         if self_loop_examples:
-            print("⚠️ MC前诊断发现自环链接示例:")
+            print("⚠️ Pre-MC diagnostics found self-loop link examples:")
             for item in self_loop_examples:
                 print(f"   - {item}")
 
@@ -7951,16 +7935,16 @@ Please return only the number (1-{len(candidate_info)}) of the best provider, or
                                     ):
                                         climate_impacts.append(impact)
                                         print(
-                                            f"  ✓ 发现Climate Change类别: {category_name}"
+                                            f"  ✓ Found Climate Change category: {category_name}"
                                         )
                                     elif other_impact is None:
                                         other_impact = impact
 
                         if not climate_impacts and other_impact:
                             climate_impacts = [other_impact]
-                            print(f"⚠️ 未找到Climate Change类别，使用第一个非零类别")
+                            print(f"⚠️ Climate Change category not found; using first non-zero category")
 
-                        print(f"📊 将为 {len(climate_impacts)} 个影响类别计算贡献")
+                        print(f"📊 Will calculate contributions for {len(climate_impacts)} impact categories")
 
                         for idx, selected_impact in enumerate(climate_impacts):
                             if not (
@@ -8082,7 +8066,7 @@ Please return only the number (1-{len(candidate_info)}) of the best provider, or
 
                                         if len(category_contributions) > 5:
                                             print(
-                                                f"  ... 以及其他 {len(category_contributions) - 5} 个过程"
+                                                f"  ... and {len(category_contributions) - 5} other processes"
                                             )
                                         print(
                                             f"✅ Collected {len(category_contributions)} process contributions for {category_name}"
@@ -8100,7 +8084,7 @@ Please return only the number (1-{len(candidate_info)}) of the best provider, or
                                     category_contributions
                                 )
                                 print(
-                                    f"✅ 已保存 {category_name} 的 {len(category_contributions)} 个过程贡献"
+                                    f"✅ Saved {len(category_contributions)} process contributions for {category_name}"
                                 )
 
                             if (
@@ -8310,11 +8294,11 @@ Please return only the number (1-{len(candidate_info)}) of the best provider, or
                 "available_categories": list(all_category_contributions.keys()),
             }
 
-            print(f"\n📊 贡献分析完成:")
-            print(f"  - 默认类别: {selected_category_name}")
-            print(f"  - 总共分析了 {len(all_category_contributions)} 个影响类别")
+            print(f"\n📊 Contribution analysis completed:")
+            print(f"  - Default category: {selected_category_name}")
+            print(f"  - Analyzed {len(all_category_contributions)} impact categories in total")
             print(
-                f"  - 可用类别: {', '.join(list(all_category_contributions.keys())[:3])}..."
+                f"  - Available categories: {', '.join(list(all_category_contributions.keys())[:3])}..."
             )
 
             return contribution_info

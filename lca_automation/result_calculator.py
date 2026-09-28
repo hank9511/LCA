@@ -51,13 +51,13 @@ class ResultCalculator:
         system_uuid: str = None,
     ) -> dict:
 
-        print(f"\n📊 开始LCA计算...")
-        print(f"  - 产品系统: {system_name}")
+        print(f"\n📊 Starting LCA calculation...")
+        print(f"  - Product system: {system_name}")
         if system_uuid:
-            print(f"  - 系统UUID: {system_uuid}")
-        print(f"  - 不确定性分析: {'启用' if self.uncertainty_enabled else '不启用'}")
+            print(f"  - System UUID: {system_uuid}")
+        print(f"  - Uncertainty analysis: {'enabled' if self.uncertainty_enabled else 'disabled'}")
         if self.uncertainty_enabled:
-            print(f"  - Monte Carlo迭代次数: {self.mc_iterations}")
+            print(f"  - Monte Carlo iterations: {self.mc_iterations}")
 
         if provider_cv_results:
             self.modeler.provider_cv_results = provider_cv_results
@@ -67,7 +67,7 @@ class ResultCalculator:
                 system_name, system_uuid=system_uuid
             )
 
-            print(f"\n✅ LCA计算完成!")
+            print(f"\n✅ LCA calculation completed!")
 
             if comprehensive_results:
                 self._print_results_summary(comprehensive_results)
@@ -75,7 +75,7 @@ class ResultCalculator:
             return comprehensive_results
 
         except Exception as e:
-            print(f"\n❌ LCA计算失败: {e}")
+            print(f"\n❌ LCA calculation failed: {e}")
             import traceback
 
             traceback.print_exc()
@@ -83,18 +83,18 @@ class ResultCalculator:
 
     def calculate_deterministic_only(self, system_name: str) -> dict:
 
-        print(f"\n📊 开始确定性LCA计算...")
-        print(f"  - 产品系统: {system_name}")
+        print(f"\n📊 Starting deterministic LCA calculation...")
+        print(f"  - Product system: {system_name}")
 
         try:
             results = self.modeler.calculate_results(system_name)
 
-            print(f"\n✅ 确定性计算完成!")
+            print(f"\n✅ Deterministic calculation completed!")
 
             return results
 
         except Exception as e:
-            print(f"\n❌ 确定性计算失败: {e}")
+            print(f"\n❌ Deterministic calculation failed: {e}")
             import traceback
 
             traceback.print_exc()
@@ -104,9 +104,9 @@ class ResultCalculator:
         self, system_name: str, provider_cv_results: dict = None
     ) -> dict:
 
-        print(f"\n🎲 开始Monte Carlo不确定性分析...")
-        print(f"  - 产品系统: {system_name}")
-        print(f"  - 迭代次数: {self.mc_iterations}")
+        print(f"\n🎲 Starting Monte Carlo uncertainty analysis...")
+        print(f"  - Product system: {system_name}")
+        print(f"  - Iterations: {self.mc_iterations}")
 
         if provider_cv_results:
             self.modeler.provider_cv_results = provider_cv_results
@@ -114,12 +114,12 @@ class ResultCalculator:
         try:
             mc_results = self.modeler.run_monte_carlo_analysis(system_name)
 
-            print(f"\n✅ Monte Carlo分析完成!")
+            print(f"\n✅ Monte Carlo analysis completed!")
 
             return mc_results
 
         except Exception as e:
-            print(f"\n❌ Monte Carlo分析失败: {e}")
+            print(f"\n❌ Monte Carlo analysis failed: {e}")
             import traceback
 
             traceback.print_exc()
@@ -127,26 +127,26 @@ class ResultCalculator:
 
     def get_contribution_analysis(self, system_name: str) -> dict:
 
-        print(f"\n🌳 开始贡献分析...")
-        print(f"  - 产品系统: {system_name}")
+        print(f"\n🌳 Starting contribution analysis...")
+        print(f"  - Product system: {system_name}")
 
         try:
 
             system_ref = self.client.find(o.ProductSystem, system_name)
             if not system_ref:
-                print(f"❌ 产品系统未找到: {system_name}")
+                print(f"❌ Product system not found: {system_name}")
                 return None
 
             system = self.client.get(o.ProductSystem, system_ref.id)
 
             contribution_results = self.modeler._get_contribution_analysis(system)
 
-            print(f"\n✅ 贡献分析完成!")
+            print(f"\n✅ Contribution analysis completed!")
 
             return contribution_results
 
         except Exception as e:
-            print(f"\n❌ 贡献分析失败: {e}")
+            print(f"\n❌ Contribution analysis failed: {e}")
             import traceback
 
             traceback.print_exc()
@@ -155,22 +155,22 @@ class ResultCalculator:
     def _print_results_summary(self, results: dict):
 
         print(f"\n{'='*60}")
-        print(f"📊 LCA结果摘要")
+        print(f"📊 LCA results summary")
         print(f"{'='*60}")
 
         if "system_info" in results:
             sys_info = results["system_info"]
-            print(f"\n📦 系统信息:")
-            print(f"  - 名称: {sys_info.get('name', 'N/A')}")
-            print(f"  - 过程数: {sys_info.get('process_count', 'N/A')}")
+            print(f"\n📦 System info:")
+            print(f"  - Name: {sys_info.get('name', 'N/A')}")
+            print(f"  - Process count: {sys_info.get('process_count', 'N/A')}")
 
         if "impact_analysis" in results:
             impact = results["impact_analysis"]
-            print(f"\n🌍 影响评价:")
-            print(f"  - 方法: {impact.get('impact_method', 'N/A')}")
+            print(f"\n🌍 Impact assessment:")
+            print(f"  - Method: {impact.get('impact_method', 'N/A')}")
             impact_results = impact.get("impact_results", [])
             if impact_results:
-                print(f"  - 影响类别数: {len(impact_results)}")
+                print(f"  - Impact category count: {len(impact_results)}")
 
                 for i, imp in enumerate(impact_results[:3], 1):
                     cat_name = imp.get("category", "Unknown")
@@ -178,15 +178,15 @@ class ResultCalculator:
                     unit = imp.get("unit", "")
                     print(f"    {i}. {cat_name}: {value:.6e} {unit}")
                 if len(impact_results) > 3:
-                    print(f"    ... 还有 {len(impact_results) - 3} 个影响类别")
+                    print(f"    ... and {len(impact_results) - 3} more impact categories")
 
         if "uncertainty_analysis" in results and results["uncertainty_analysis"]:
             unc = results["uncertainty_analysis"]
-            print(f"\n🎲 不确定性分析:")
+            print(f"\n🎲 Uncertainty analysis:")
             if "iterations" in unc:
-                print(f"  - Monte Carlo迭代: {unc['iterations']}")
+                print(f"  - Monte Carlo iterations: {unc['iterations']}")
             if "impact_categories" in unc:
-                print(f"  - 分析的影响类别: {len(unc['impact_categories'])}")
+                print(f"  - Impact categories analyzed: {len(unc['impact_categories'])}")
 
         print(f"\n{'='*60}")
 
@@ -197,15 +197,15 @@ class ResultCalculator:
         if format == "json":
             with open(output_path, "w", encoding="utf-8") as f:
                 json.dump(results, f, indent=2, ensure_ascii=False)
-            print(f"✅ 结果已导出到: {output_path}")
+            print(f"✅ Results exported to: {output_path}")
 
         elif format == "excel":
-            print(f"⚠️ Excel导出功能尚未实现")
+            print(f"⚠️ Excel export is not implemented yet")
         elif format == "html":
-            print(f"⚠️ HTML导出功能尚未实现")
+            print(f"⚠️ HTML export is not implemented yet")
 
 
 if __name__ == "__main__":
 
-    print("ResultCalculator模块 - 用于LCA结果计算")
-    print("包括清单分析、影响评价、贡献分析和不确定性分析")
+    print("ResultCalculator module - for LCA result calculation")
+    print("Includes inventory analysis, impact assessment, contribution analysis, and uncertainty analysis")

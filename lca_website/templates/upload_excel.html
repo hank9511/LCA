@@ -8,7 +8,7 @@
         <h2 class="form-title">{{ t('upload_excel', 'title') }}</h2>
         <div class="project-info">
             <h3>{{ t('project_detail', 'project_name') }}: {{ project.name }}</h3>
-            <p>{{ project.description or (t('project_detail', 'no_description') if get_lang() == 'en' else '暂无描述') }}</p>
+            <p>{{ project.description or (t('project_detail', 'no_description') if get_lang() == 'en' else t('project_detail', 'no_description')) }}</p>
         </div>
 
         <form method="POST" enctype="multipart/form-data" class="upload-form">
