@@ -14,4 +14,4 @@ Provider selection in this snapshot uses **semantic name matching** among databa
 
 ## License
 
-Code in this public snapshot is released under the MIT License (see `LICENSE`). Access to the withheld pedigree-matrix provider-screening implementation is separate and non-commercial.
+The module for provider selection based on the pedigree matrix will be provided for academic, non-commercial use upon request. See `LICENSE`.
